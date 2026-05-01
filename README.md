@@ -46,7 +46,7 @@
 
 ## 📜 Credits & License
 
-*   **Lead Developer:** [Nghĩa Zakshin]([https://github.com/your-github-username](https://github.com/ZakShinn))
+*   **Lead Developer:** [Nghĩa Zakshin](https://github.com/ZakShinn)
 *   **Core Engine:** Based on the excellent work by [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator).
 *   **License:** This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
 
