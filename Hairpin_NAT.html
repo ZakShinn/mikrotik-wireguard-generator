@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MikroTik Hairpin NAT Generator | Zakshin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #00d1b2; --bg: #f5f7fa; --card-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+        body { background-color: var(--bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        
+        /* Navbar Layout Fix */
+        .top-nav { background: white; padding: 0.5rem 1.5rem; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        /* Logo bên trái */
+        .brand-logo { flex: 1; display: flex; align-items: center; gap: 10px; }
+        
+        /* Lang switcher ở giữa */
+        .lang-switcher { flex: 1; text-align: center; }
+        
+        /* Author bên phải */
+        .author-info { flex: 1; text-align: right; font-size: 0.85rem; line-height: 1.2; }
+        .author-info strong { color: var(--primary); }
+
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .config-box { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow); height: 100%; border-top: 4px solid var(--primary); }
+        .label.is-size-7 { color: #333; margin-bottom: 0.2rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        
+        /* Tooltip Styles - Đồng bộ image_7329e1.png */
+        .info-tip { position: relative; color: var(--primary); cursor: help; margin-left: 5px; display: inline-block; }
+        .tip-content { 
+            display: none; position: absolute; left: 25px; top: -10px; background: #262a2e; color: #fff; 
+            padding: 12px; border-radius: 8px; width: 320px; z-index: 1000; font-weight: 400; font-size: 0.8rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 1px solid #3d444b; pointer-events: none;
+        }
+        .info-tip:hover .tip-content { display: block; }
+        .tip-header { color: var(--primary); font-weight: 800; font-size: 0.85rem; margin-bottom: 8px; border-bottom: 1px solid #3d444b; padding-bottom: 5px; text-transform: uppercase; }
+        .tip-row { display: flex; align-items: flex-start; margin-bottom: 8px; line-height: 1.4; }
+        .tip-row i { width: 22px; margin-top: 3px; font-size: 0.85rem; text-align: center; }
+        .tip-row .t-label { font-weight: 700; color: #b2bec3; min-width: 85px; margin-left: 5px; }
+        .tip-row .t-val { flex: 1; color: #dfe6e9; }
+        .tip-def { background: #fff; color: #d63384; padding: 2px 6px; border-radius: 4px; font-family: 'Consolas', monospace; font-weight: 600; font-size: 0.75rem; }
+
+        /* Fix nút Copy */
+        .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        pre { background: #1a1c1e !important; color: #00f2ff !important; border-radius: 10px; padding: 1.5rem !important; font-size: 0.85rem; border: 1px solid #333; min-height: 350px; white-space: pre-wrap; position: relative; }
+        .copy-btn { background: var(--primary); color: white; border: none; cursor: pointer; padding: 5px 15px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; transition: 0.3s; }
+        .copy-btn:hover { background: #00b89c; box-shadow: 0 2px 8px rgba(0,209,178,0.3); }
+        
+        .toast-msg { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 10px; text-align: center; }
+            .author-info, .brand-logo { text-align: center; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div v-if="showToast" class="toast-msg">
+            <i class="fas fa-check-circle has-text-success mr-2"></i> {{ t.ui.copied }}
+        </div>
+
+        <nav class="top-nav">
+            <div class="nav-container">
+                <!-- Bên trái: Logo -->
+                <div class="brand-logo">
+                    <i class="fas fa-network-wired is-size-4 has-text-primary"></i>
+                    <h1 class="title is-6 mb-0">MikroTik Tool</h1>
+                </div>
+
+                <!-- Ở giữa: Chuyển đổi ngôn ngữ -->
+                <div class="lang-switcher">
+                    <button class="button is-small is-rounded" @click="toggleLang">
+                        <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                    </button>
+                </div>
+
+                <!-- Bên phải: Thông tin người tạo -->
+                <div class="author-info">
+                    <div><strong>Hải Nghĩa (Zakshin)</strong></div>
+                    <div class="is-size-7 has-text-grey">IT         </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <div class="columns is-desktop">
+                <div class="column is-4-desktop">
+                    <div class="config-box">
+                        <h3 class="subtitle is-6 has-text-weight-bold mb-4"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.serverConfig }}</h3>
+                        
+                        <div v-for="field in fieldsList" :key="field" class="field">
+                            <label class="label is-size-7">
+                                {{ t.labels[field] }}
+                                <span class="info-tip">
+                                    <i class="fas fa-question-circle"></i>
+                                    <div class="tip-content">
+                                        <div class="tip-header">{{ t.labels[field] }}</div>
+                                        <div class="tip-row"><i class="fas fa-info-circle has-text-info"></i> <span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints[field].aim }}</span></div>
+                                        <div class="tip-row"><i class="fas fa-tag has-text-warning"></i> <span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints[field].type }}</span></div>
+                                        <div class="tip-row"><i class="fas fa-cog has-text-grey-light"></i> <span class="t-label">{{ t.ui.tipDef }}:</span> <span class="t-val"><span class="tip-def">{{ t.hints[field].def }}</span></span></div>
+                                    </div>
+                                </span>
+                            </label>
+
+                            <div v-if="field === 'proto'" class="control">
+                                <div class="select is-small is-fullwidth">
+                                    <select v-model="form.proto">
+                                        <option value="tcp">TCP</option>
+                                        <option value="udp">UDP</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div v-else-if="field === 'wanInt'" class="control">
+                                <div class="field has-addons">
+                                    <div class="control is-expanded">
+                                        <input class="input is-small" v-model="form.wanInt" :disabled="form.wanMode === 'all'">
+                                    </div>
+                                    <div class="control">
+                                        <div class="select is-small">
+                                            <select v-model="form.wanMode">
+                                                <option value="custom">Custom</option>
+                                                <option value="all">All PPP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-else class="control">
+                                <input class="input is-small" v-model="form[field]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="config-box">
+                        <div class="script-header">
+                            <h3 class="subtitle is-6 has-text-weight-bold mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h3>
+                            <button class="copy-btn" @click="copyText('main-script')">
+                                <i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}
+                            </button>
+                        </div>
+                        
+                        <pre id="main-script">/ip firewall address-list
+add address={{ form.lanSubnet }} list=LAN
+
+/ip firewall nat
+add action=masquerade chain=srcnat comment="Hairpin NAT" \
+    dst-address=!{{ form.routerIp }} src-address-list=LAN
+
+add action=dst-nat chain=dstnat comment="Internal Hairpin - {{ form.purpose }}" \
+    dst-address-type=local dst-port={{ form.port }} protocol={{ form.proto }} \
+    src-address-list=LAN to-addresses={{ form.serverIp }} to-ports={{ form.port }}
+
+add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose }}" \
+    dst-port={{ form.port }} {{ form.wanMode === 'all' ? 'in-interface-list=all-ppp' : 'in-interface=' + form.wanInt }} \
+    protocol={{ form.proto }} to-addresses={{ form.serverIp }} to-ports={{ form.port }}</pre>
+                        
+                        <div class="notification is-light is-info is-size-7 mt-4 p-3">
+                            <i class="fas fa-info-circle mr-2"></i> {{ t.ui.note }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp } = Vue;
+        const i18n = {
+            vi: {
+                labels: { purpose: 'Mục đích NAT', lanSubnet: 'Dải IP LAN', routerIp: 'IP Gateway', serverIp: 'IP của máy chủ trong mạng nội bộ', port: 'Cổng (Port)', proto: 'Giao thức', wanInt: 'Cổng WAN muốn mở port' },
+                hints: { 
+                    purpose: { aim: 'Ghi chú quản lý, tên này sẽ ghi lại trong comment của script', type: 'String', def: 'Web Service' },
+                    lanSubnet: { aim: 'Dải mạng nội bộ của Router', type: 'IP/CIDR', def: '192.168.88.0/24' },
+                    routerIp: { aim: 'IP Gateway của Router', type: 'IP', def: '192.168.88.1' },
+                    serverIp: { aim: 'IP của máy chủ khi đặt trong mạng nội bộ, IP này phải được đặt tĩnh', type: 'IP', def: '192.168.88.100' },
+                    port: { aim: 'Cổng dịch vụ cần mở', type: 'Số', def: '80' },
+                    proto: { aim: 'Giao thức kết nối', type: 'Lựa chọn', def: 'TCP' },
+                    wanInt: { aim: 'Cổng WAN cần mở port. Nếu có nhiều pppoe-out và muốn mở port tất cả thì chọn All PPP.', type: 'String', def: 'pppoe-out1' }
+                },
+                ui: { serverConfig: 'Cấu hình thông số', scriptTitle: 'MikroTik Script', copy: 'Copy Script', note: 'Lưu ý: Đảm bảo các quy tắc Mangle không xung đột với cấu hình NAT này. Quy tắc Hairpin NAT (Masquerade) chỉ cần khởi tạo một lần duy nhất; nếu đã tồn tại trên hệ thống, không cần thực thi lại.', copied: 'Đã sao chép!', tipAim: 'Mục đích', tipType: 'Kiểu', tipDef: 'Mặc định' }
+            },
+            en: {
+                labels: { purpose: 'NAT Purpose', lanSubnet: 'LAN IP Range', routerIp: 'Gateway IP', serverIp: 'Internal Server IP', port: 'Port', proto: 'Protocol', wanInt: 'Target WAN Interface' },
+                hints: { 
+                    purpose: { aim: 'Management note, this name will be recorded in the script comment', type: 'String', def: 'Web Service' },
+                    lanSubnet: { aim: 'Router\'s local network range', type: 'IP/CIDR', def: '192.168.88.0/24' },
+                    routerIp: { aim: 'Router\'s Gateway IP', type: 'IP', def: '192.168.88.1' },
+                    serverIp: { aim: 'IP of the server in the local network, this IP must be set as static', type: 'IP', def: '192.168.88.100' },
+                    port: { aim: 'Service port to open', type: 'Number', def: '80' },
+                    proto: { aim: 'Connection protocol', type: 'Selection', def: 'TCP' },
+                    wanInt: { aim: 'WAN interface to open port. If there are multiple pppoe-out and you want to open all, select All PPP.', type: 'String', def: 'pppoe-out1' }
+                },
+                ui: { serverConfig: 'Configuration', scriptTitle: 'MikroTik Script', copy: 'Copy Script', note: 'Please verify that your Mangle rules are compatible with this NAT setup. Avoid duplicate Hairpin NAT entries; only one Masquerade rule is required for the entire LAN.', copied: 'Copied!', tipAim: 'Purpose', tipType: 'Type', tipDef: 'Default' }
+            }
+        };
+
+        createApp({
+            data() {
+                return {
+                    lang: 'vi',
+                    showToast: false,
+                    fieldsList: ['purpose', 'lanSubnet', 'routerIp', 'serverIp', 'port', 'proto', 'wanInt'],
+                    form: { purpose: 'Web Service', lanSubnet: '192.168.88.0/24', routerIp: '192.168.88.1', serverIp: '192.168.88.100', port: '80', proto: 'tcp', wanInt: 'pppoe-out1', wanMode: 'custom' }
+                }
+            },
+            computed: { t() { return i18n[this.lang]; } },
+            methods: {
+                toggleLang() { this.lang = this.lang === 'vi' ? 'en' : 'vi'; },
+                copyText(id) {
+                    const text = document.getElementById(id).innerText;
+                    navigator.clipboard.writeText(text);
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 2000);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
