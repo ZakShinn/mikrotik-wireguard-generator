@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO -->
+    <title>MikroTik WireGuard Generator | Nghĩa Zakshin</title>
+    <meta name="description" content="Công cụ tạo cấu hình WireGuard chuyên dụng cho router MikroTik. Dễ dàng tạo peer, xuất file .conf và mã QR hoàn toàn miễn phí.">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+
+    <!-- Open Graph (Facebook, Telegram, Zalo) -->
+    <meta property="og:title" content="MikroTik WireGuard Generator | Nghĩa Zakshin">
+    <meta property="og:description" content="Tạo cấu hình WireGuard cho MikroTik chỉ trong vài giây. Hỗ trợ QR Code và tải file hàng loạt.">
+    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta property="og:type" content="website">
+
+    <title>WireGuard Generator | Zakshin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #00d1b2; --bg: #f5f7fa; --card-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+        body { background-color: var(--bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .top-nav { background: white; padding: 0.75rem 1rem; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .nav-center-actions { display: flex; align-items: center; gap: 15px; justify-content: center; flex-grow: 1; }
+        .main-content { max-width: 100%; margin: 0 auto; padding: 20px; }
+        .config-box { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow); height: 100%; border-top: 4px solid var(--primary); }
+        .sidebar-column { flex: 0 0 430px !important; width: 430px !important; }
+        .label.is-size-7 { color: #333; margin-bottom: 0.1rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        .toast-msg { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
+        .client-section { margin-top: 5px; width: 100%; }
+        .client-column { display: flex; }
+        .client-card { background: white; border-radius: 12px; border: 1px solid #eef2f7; box-shadow: var(--card-shadow); display: flex; flex-direction: column; width: 100%; overflow: hidden;}
+        .client-header { background: #fcfcfd; padding: 12px 20px; border-bottom: 1px solid #f0f3f8; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+        .client-body { padding: 1.25rem; flex-grow: 1; }
+        .ip-badge { background: #ebfffc; color: #00947e; border: 1px solid #b3ffed; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; font-family: 'Courier New', Courier, monospace; white-space: nowrap; }
+        .qr-section { background: white; border: 1px solid #eee; border-radius: 8px; padding: 12px; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 230px; margin: 0 auto; }
+        canvas { width: 100% !important; height: auto !important; max-width: 210px; }
+        .code-container { position: relative; width: 100%; }
+        .copy-btn { position: absolute; top: 10px; right: 10px; z-index: 5; opacity: 0.5; transition: 0.3s; }
+        .copy-btn:hover { opacity: 1; }
+        pre { background: #1a1c1e !important; color: #00f2ff !important; border-radius: 10px; padding: 1.25rem !important; font-size: 0.85rem; border: 1px solid #333; min-height: 200px; white-space: pre-wrap; word-break: break-all; overflow-x: hidden; }
+        .btn-dl { font-weight: 700 !important; text-transform: uppercase; border-radius: 8px; }
+        .btn-generate-main { font-weight: 800 !important; border-radius: 50px !important; min-width: 200px; }
+        .creator-tag { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); font-size: 0.8rem; color: #7a7a7a; pointer-events: none; z-index: 10; }
+        
+        /* --- Tooltip CSS Fix --- */
+        .info-tip { position: relative; color: #00d1b2; cursor: help; margin-left: 5px; display: inline-block; }
+        .tip-content { 
+            display: none; 
+            position: absolute; 
+            left: 25px; 
+            top: -10px; 
+            background: #2d3436; 
+            color: #fff; 
+            padding: 10px; 
+            border-radius: 8px; 
+            width: 320px; 
+            z-index: 1000; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+            font-weight: 400; 
+            text-transform: none;
+        }
+        .info-tip:hover .tip-content { display: block; }
+        .tip-header { color: #00d1b2; font-weight: 700; border-bottom: 1px solid #444; margin-bottom: 6px; padding-bottom: 4px; font-size: 0.9rem; }
+        
+        .tip-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px;      
+            font-size: 0.85rem; 
+            margin-bottom: 4px; 
+            white-space: normal;
+            line-height: 1.3;
+        }
+        .tip-row strong { 
+            color: #b2bec3; 
+            min-width: 70px; 
+            display: inline-block;
+            margin: 0;
+        }
+        .tip-code { background: #fff; color: #d63384; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-weight: 700; margin-left: 2px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div v-if="showToast" class="toast-msg">
+            <i class="fas fa-check-circle has-text-success mr-2"></i> {{ t.ui.copied }}
+        </div>
+
+        <nav class="top-nav">
+            <div class="creator-tag">
+                <div><i class="fas fa-code mr-1"></i> Developed by: <strong>Nghĩa Zakshin</strong></div>
+                <div style="font-size: 0.75rem; color: #7a7a7a;"><i class="fas fa-phone-alt mr-1"></i>Tư vấn MikroTik <strong>Nhân: 0969889796</strong></div>
+            </div>
+            <div class="container is-fluid">
+                <div class="columns is-vcentered is-mobile">
+                    <div class="column is-narrow"><h1 class="title is-5"><i class="fas fa-network-wired has-text-primary"></i>  MikroTik WireGuard Generator</h1></div>
+                    <div class="column">
+                        <div class="nav-center-actions">
+                            <button class="button is-small is-rounded is-light" @click="lang = lang === 'vi' ? 'en' : 'vi'">
+                                <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                            </button>
+                            <button class="button is-primary is-medium btn-generate-main" @click="generate">🚀 {{ t.ui.btnGenerate }}</button>
+                            <template v-if="hasData">
+                                <button class="button is-link is-light" @click="downloadConfZip"><i class="fas fa-file-archive mr-2"></i> ZIP Configs</button>
+                                <button class="button is-info is-light" @click="downloadQrZip"><i class="fas fa-images mr-2"></i> ZIP QRs</button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+		
+            <div class="columns is-desktop">
+                <div class="column sidebar-column">
+                    <div class="config-box">
+                        <h3 class="subtitle is-6 has-text-weight-bold mb-4"><i class="fas fa-server mr-2"></i> {{ t.ui.serverConfig }}</h3>
+                        
+                        <div class="field" v-for="(v, k) in fieldMeta" :key="k">
+                            <label class="label is-size-7">
+                                {{ t.labels[k] }} 
+                                <span class="info-tip">
+                                    <i class="fas fa-question-circle"></i>
+                                    <div class="tip-content">
+                                        <div class="tip-header">{{ t.labels[k] }}</div>
+                                        <div class="tip-row"><span>ℹ️</span> <strong>{{ t.ui.tipAim }}:</strong> <span>{{ t.hints[k].aim }}</span></div>
+                                        <div class="tip-row"><span>🏷️</span> <strong>{{ t.ui.tipType }}:</strong> <span>{{ t.hints[k].type }}</span></div>
+                                        <div class="tip-row"><span>⚙️</span> <strong>{{ t.ui.tipDef }}:</strong> <span class="tip-code">{{ t.hints[k].def }}</span></div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="control"><input class="input is-small" v-model="form[k]"></div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label is-size-7">Server Private Key 
+                                <span class="info-tip">
+                                    <i class="fas fa-question-circle"></i>
+                                    <div class="tip-content">
+                                        <div class="tip-header">Server Private Key</div>
+                                        <div class="tip-row"><span>ℹ️</span> <span>{{ t.hints.pk }}</span></div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="control"><input class="input is-small" v-model="serverKeys.privateKey"></div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label is-size-7">Server Public Key 
+                                <span class="info-tip">
+                                    <i class="fas fa-question-circle"></i>
+                                    <div class="tip-content">
+                                        <div class="tip-header">Server Public Key</div>
+                                        <div class="tip-row"><span>ℹ️</span> <span>{{ t.hints.pub }}</span></div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="control"><input class="input is-small" v-model="serverKeys.publicKey" readonly style="background-color: #f9f9f9;"></div>
+                        </div>
+                        
+                        <div class="columns is-mobile mt-2">
+                            <div class="column">
+                                <div class="field">
+                                    <div class="control">
+                                        <label class="checkbox is-size-7 has-text-weight-bold">
+                                            <input type="checkbox" v-model="usePsk"> {{ t.ui.usePsk }} 
+                                            <span class="info-tip">
+                                                <i class="fas fa-question-circle"></i>
+                                                <div class="tip-content">
+                                                    <div class="tip-header">{{ t.ui.usePsk }}</div>
+                                                    <div class="tip-row"><span>🎯</span> <span>{{ t.hints.psk_tip }}</span></div>
+                                                </div>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <div class="control">
+                                        <label class="checkbox is-size-7 has-text-weight-bold">
+                                            <input type="checkbox" v-model="allowDns"> {{ t.ui.allowDns }} 
+                                            <span class="info-tip">
+                                                <i class="fas fa-question-circle"></i>
+                                                <div class="tip-content">
+                                                    <div class="tip-header">{{ t.ui.allowDns }}</div>
+                                                    <div class="tip-row"><span>🎯</span> <span>{{ t.hints.dns_tip }}</span></div>
+                                                </div>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="config-box">
+                        <h3 class="subtitle is-6 has-text-weight-bold mb-3"><i class="fas fa-code mr-2"></i> MikroTik RouterOS Script</h3>
+                        <div class="code-container">
+                            <button class="button is-dark is-small copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                            <pre id="main-script">/interface wireguard add listen-port={{ form.port }} mtu=1420 name={{ form.interface }} private-key="{{ serverKeys.privateKey }}"
+/ip firewall filter add action=accept chain=input comment="WireGuard: Allow Service Port" dst-port={{ form.port }} protocol=udp
+<template v-if="allowDns">/ip firewall filter add action=accept chain=input comment="WireGuard: Allow DNS Access" dst-port=53 in-interface={{ form.interface }} protocol=udp
+</template>/ip address add address={{ form.network }}.1/24 interface={{ form.interface }} network={{ form.network }}.0
+
+/interface wireguard peers
+<template v-for="(c, ip) in clients" :key="ip">add allowed-address={{ form.network }}.{{ ip }}/32 comment="{{ c.name }}" interface={{ form.interface }} public-key="{{ c.publicKey }}"<template v-if="usePsk"> preshared-key="{{ c.psk }}"</template>
+</template></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="client-section" v-if="hasData">
+                <h3 class="subtitle is-5 has-text-weight-bold mb-4"><i class="fas fa-users mr-2"></i> {{ t.ui.clientManage }}</h3>
+                <div class="columns is-multiline">
+                    <div class="column is-6 client-column" v-for="(c, ip) in clients" :key="ip">
+                        <div class="client-card">
+                            <div class="client-header">
+                                <i class="fas fa-user-circle has-text-grey-light is-size-4"></i>
+                                <input class="input is-small is-borderless has-text-weight-bold p-0" v-model="c.name" style="background:transparent; box-shadow:none; font-size: 1.1rem; flex-grow: 1; border: none;">
+                                <div class="ip-badge">
+                                    <i class="fas fa-network-wired mr-1"></i> {{ form.network }}.{{ ip }}
+                                </div>
+                            </div>
+                            <div class="client-body">
+                                <div class="columns">
+                                    <div class="column is-narrow">
+                                        <div class="qr-section"><canvas :id="'canvas-' + ip"></canvas></div>
+                                    </div>
+                                    <div class="column">
+                                        <div class="code-container">
+                                            <button class="button is-dark is-small copy-btn" @click="copyText('peer-'+ip)"><i class="fas fa-copy"></i></button>
+                                            <pre :id="'peer-'+ip" style="font-size: 0.8rem;">[Interface]
+Address = {{ form.network }}.{{ ip }}/32
+PrivateKey = {{ c.privateKey }}
+DNS = {{ allowDns ? form.network + '.1' : form.dns }}
+
+[Peer]
+PublicKey = {{ serverKeys.publicKey }}
+<template v-if="usePsk">PresharedKey = {{ c.psk }}
+</template>Endpoint = {{ form.server }}:{{ form.port }}
+AllowedIPs = {{ form.allowedIps }}
+PersistentKeepalive = 10</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="columns is-mobile mt-2">
+                                    <div class="column"><button class="button is-success is-fullwidth btn-dl" @click="downloadSingleConf(ip)"><i class="fas fa-file-download mr-2"></i> .CONF</button></div>
+                                    <div class="column"><button class="button is-link is-fullwidth btn-dl" @click="downloadSingleQR(ip)"><i class="fas fa-qrcode mr-2"></i> IMAGE</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bwip-js@3.0.4/dist/bwip-js-min.js"></script>
+    <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+    <script>
+        const { createApp } = Vue;
+        const genKey = () => btoa(Array.from(crypto.getRandomValues(new Uint8Array(32)), b => String.fromCharCode(b)).join("")).substring(0, 43) + "=";
+
+        const i18n = {
+            vi: { 
+                labels: { server: 'Địa chỉ IP/DDNS', port: 'Cổng UDP', interface: 'Interface', dns: 'DNS', network: 'Dãy IP cấp cho VPN', allowedIps: 'Dải IP cho phép', start: 'IP Bắt đầu', count: 'Số lượng Client' },
+                hints: { 
+                    server: { aim: 'Địa chỉ WAN hoặc DDNS để Client kết nối.', type: 'IP/DDNS', def: 'ddns.hainghia.net' }, 
+                    port: { aim: 'Mở cổng UDP này trên Firewall', type: 'Number', def: '13333' }, 
+                    interface: { aim: 'Tên interface WireGuard trên MikroTik', type: 'String', def: 'wg-vpn' }, 
+                    dns: { aim: 'DNS Client sử dụng. Nếu bật "Dùng DNS nội bộ" tính năng tự động vô hiệu hoá.', type: 'IP', def: '1.1.1.1' }, 
+                    network: { aim: 'Dải IP cấp cho VPN (Router nhận .1)', type: 'X.X.X', def: '172.33.0' }, 
+                    allowedIps: { aim: 'Các dải IP được định tuyến qua VPN', type: 'CIDR', def: '0.0.0.0/0' }, 
+                    start: { aim: 'Số cuối IP bắt đầu của Client', type: 'Number (2-254)', def: '2' }, 
+                    count: { aim: 'Số lượng cấu hình cần tạo', type: 'Number', def: '2' }, 
+                    pk: 'Khóa bí mật của Server (Tự động tạo). Có thể lưu khóa này để tiếp tục sử dụng IP VPN đã cấp cho bạn trong những lần sau.',
+                    pub: 'Khóa công khai của Server (Tự động tạo)',
+                    psk_tip: 'Tăng cường bảo mật bằng cách thêm một khóa đối xứng bổ sung. Chống lại tấn công từ máy tính lượng tử trong tương lai.',
+                    dns_tip: 'Cho phép Client sử dụng DNS nội bộ của Router (.1) và tự động thêm luật Firewall mở cổng 53 UDP cho Interface VPN. Khi bật sẽ tự động vô hiệu hoá tính năng DNS phía trên'
+                },
+                ui: { tipAim: 'Mục đích', tipType: 'Kiểu', tipDef: 'Mặc định', btnGenerate: 'TẠO CẤU HÌNH', serverConfig: 'Cấu hình Server', usePsk: 'Bật Preshared Key', allowDns: 'Dùng DNS nội bộ', copy: 'Sao chép', clientManage: 'Quản Lý Client', copied: 'Đã sao chép!' }
+            },
+            en: {
+                labels: { server: 'Server IP/DDNS Address', port: 'UDP Port', interface: 'Interface Name', dns: 'DNS Server', network: 'VPN Subnet', allowedIps: 'Allowed IPs', start: 'Start IP Index', count: 'Client Quantity' },
+                hints: { 
+                    server: { aim: 'Public WAN IP or DDNS for client connection.', type: 'IP/DDNS', def: 'ddns.hainghia.net' }, 
+                    port: { aim: 'The UDP port to open on your Firewall.', type: 'Number', def: '13333' }, 
+                    interface: { aim: 'WireGuard interface name on MikroTik.', type: 'String', def: 'wg-vpn' }, 
+                    dns: { aim: 'The DNS server used by clients. This feature is automatically disabled if \'Use Internal DNS\' is enabled.', type: 'IP', def: '1.1.1.1' }, 
+                    network: { aim: 'VPN IP range (Router assigned to .1).)', type: 'IP/24', def: '172.33.0' }, 
+                    allowedIps: { aim: 'IP ranges to be routed through the VPN tunnel.', type: 'CIDR', def: '0.0.0.0/0' }, 
+                    start: { aim: 'The last octet of the first client IP.', type: 'Number (2-254)', def: '2' }, 
+                    count: { aim: 'Number of configurations to generate.', type: 'Number', def: '2' }, 
+                    pk: 'Server Private Key (Auto-generated). Save this key to keep using your assigned VPN IP in future sessions.',
+                    pub: 'Server Public Key (Auto-generated)',
+                    psk_tip: 'Enhances security by adding an additional symmetric key. Protects against future quantum computing attacks.',
+                    dns_tip: 'Allows clients to use the Router\'s internal DNS (.1) and automatically adds a Firewall rule to open UDP port 53 for the VPN interface. Enabling this will automatically disable the DNS setting above.'
+                },
+                ui: { tipAim: 'Purpose', tipType: 'Type', tipDef: 'Default', btnGenerate: 'GENERATE CONFIGS', serverConfig: 'Server Configuration', usePsk: 'Enable Preshared Key', allowDns: 'Use Internal DNS', copy: 'Copy', clientManage: 'Client Management', copied: 'Copied!' }
+            }
+        };
+
+        createApp({
+            data() {
+                return {
+                    lang: 'vi', usePsk: true, allowDns: true, showToast: false,
+                    form: { server: 'ddns.hainghia.net', port: 13333, interface: 'wg-vpn', dns: '1.1.1.1', network: '172.33.0', allowedIps: '0.0.0.0/0', start: 2, count: 2 },
+                    fieldMeta: { server: '', port: '', interface: '', dns: '', network: '', allowedIps: '', start: '', count: '' },
+                    clients: {}, serverKeys: { privateKey: genKey(), publicKey: genKey() }
+                }
+            },
+            watch: {
+                usePsk() { this.refreshQRs(); },
+                allowDns() { this.refreshQRs(); },
+                'form.allowedIps'() { this.refreshQRs(); },
+                'serverKeys.privateKey'() { this.serverKeys.publicKey = genKey(); this.refreshQRs(); }
+            },
+            computed: { t() { return i18n[this.lang]; }, hasData() { return Object.keys(this.clients).length > 0; } },
+            methods: {
+                refreshQRs() { if (this.hasData) this.$nextTick(() => Object.keys(this.clients).forEach(ip => this.renderQR(ip))); },
+                generate() {
+                    const res = {};
+                    for (let i = 0; i < this.form.count; i++) {
+                        const ip = parseInt(this.form.start) + i;
+                        res[ip] = { name: `Client_${ip}`, privateKey: genKey(), publicKey: genKey(), psk: genKey() };
+                    }
+                    this.clients = res;
+                    this.refreshQRs();
+                },
+                renderQR(ip) {
+                    const c = this.clients[ip];
+                    const dnsValue = this.allowDns ? `${this.form.network}.1` : this.form.dns;
+                    const pskLine = this.usePsk ? `PresharedKey=${c.psk}\n` : '';
+                    const text = `[Interface]\nAddress=${this.form.network}.${ip}/32\nPrivateKey=${c.privateKey}\nDNS=${dnsValue}\n\n[Peer]\nPublicKey=${this.serverKeys.publicKey}\n${pskLine}Endpoint=${this.form.server}:${this.form.port}\nAllowedIPs=${this.form.allowedIps}\nPersistentKeepalive=10`;
+                    bwipjs.toCanvas(`canvas-${ip}`, { bcid: 'qrcode', text: text, scale: 3, height: 50, width: 50, padding: 2, backgroundcolor: 'ffffff' });
+                },
+                copyText(id) { 
+                    navigator.clipboard.writeText(document.getElementById(id).innerText); 
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 3000);
+                },
+                getClientConf(ip) {
+                    const c = this.clients[ip];
+                    const dnsValue = this.allowDns ? `${this.form.network}.1` : this.form.dns;
+                    return `[Interface]\nAddress=${this.form.network}.${ip}/32\nPrivateKey=${c.privateKey}\nDNS=${dnsValue}\n\n[Peer]\nPublicKey=${this.serverKeys.publicKey}\n${this.usePsk ? `PresharedKey=${c.psk}\n` : ''}Endpoint=${this.form.server}:${this.form.port}\nAllowedIPs=${this.form.allowedIps}\nPersistentKeepalive=10`;
+                },
+                downloadSingleConf(ip) { saveAs(new Blob([this.getClientConf(ip)], {type: "text/plain"}), `${this.clients[ip].name}.conf`); },
+                downloadSingleQR(ip) { document.getElementById(`canvas-${ip}`).toBlob(b => saveAs(b, `${this.clients[ip].name}.png`)); },
+                downloadConfZip() {
+                    const zip = new JSZip();
+                    Object.keys(this.clients).forEach(ip => zip.file(`${this.clients[ip].name}.conf`, this.getClientConf(ip)));
+                    zip.generateAsync({type:"blob"}).then(b => saveAs(b, "WG_Configs.zip"));
+                },
+                downloadQrZip() {
+                    const zip = new JSZip();
+                    const ps = Object.keys(this.clients).map(ip => new Promise(res => {
+                        document.getElementById(`canvas-${ip}`).toBlob(b => { zip.file(`${this.clients[ip].name}.png`, b); res(); });
+                    }));
+                    Promise.all(ps).then(() => zip.generateAsync({type:"blob"}).then(b => saveAs(b, "WG_QRs.zip")));
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
