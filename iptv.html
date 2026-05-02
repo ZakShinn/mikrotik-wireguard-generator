@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <script>(function(){try{if(localStorage.getItem('mikrotik-theme')==='dark')document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>IPTV MikroTik (Việt Nam) — VLAN và IGMP proxy | Zakshin</title>
     <meta name="description" content="Tạo script RouterOS cho IPTV các nhà mạng Việt Nam: VLAN trên cổng WAN, DHCP nếu cần, IGMP proxy nối VLAN IPTV với bridge LAN. Chỉ tham khảo — chỉnh theo nhà mạng.">
@@ -11,7 +12,7 @@
     <link rel="canonical" href="https://mikrotik.hainghia.net/iptv">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
-    <meta name="theme-color" content="#0c0f14">
+    <meta name="theme-color" content="#f5f7fa">
     <meta name="format-detection" content="telephone=no">
 
     <meta property="og:site_name" content="MikroTik Tools — Zakshin">
@@ -44,6 +45,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/site.css">
+    <script src="assets/theme-ui.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body class="app-shell">
@@ -59,6 +61,9 @@
                         <h1 class="tool-nav-title"><i class="fas fa-tv accent-icon"></i> IPTV</h1>
                     </div>
                     <div class="tool-nav-actions">
+                        <button type="button" class="btn btn-ghost btn-sm btn-icon" @click="toggleTheme" :aria-label="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark" :title="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark">
+                            <i :class="theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
+                        </button>
                         <button type="button" class="btn btn-ghost btn-sm" @click="toggleLang">
                             <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
                         </button>
@@ -177,7 +182,9 @@
                         { isp: 'Viettel', vlan: '2502', note: 'Nhiều nơi dùng cho IPTV.' },
                         { isp: 'FPT', vlan: '—', note: 'Mỗi vùng khác nhau; hỏi nhà mạng (có nơi dùng 4000).' },
                         { isp: 'VNPT', vlan: '—', note: 'Tùy tỉnh; hỏi nhà mạng lấy đúng số VLAN.' }
-                    ]
+                    ],
+                    themeDark: 'Giao diện tối',
+                    themeLight: 'Giao diện sáng'
                 }
             },
             en: {
@@ -214,7 +221,9 @@
                         { isp: 'Viettel', vlan: '2502', note: 'Widely used for IPTV in Vietnam.' },
                         { isp: 'FPT', vlan: '—', note: 'Varies by area; ask the ISP (4000 in some places).' },
                         { isp: 'VNPT', vlan: '—', note: 'Varies by province; ask the ISP for the VLAN.' }
-                    ]
+                    ],
+                    themeDark: 'Dark theme',
+                    themeLight: 'Light theme'
                 }
             }
         };
@@ -223,6 +232,7 @@
             data() {
                 return {
                     lang: 'vi',
+                    theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light',
                     showToast: false,
                     fieldsList: ['comment', 'wanPort', 'vlanId', 'vlanName', 'bridgeName'],
                     form: {
@@ -257,6 +267,10 @@ ${dhcp}# IGMP proxy: IPTV VLAN = toward ISP; LAN bridge = toward TVs / STBs (bri
             },
             methods: {
                 toggleLang() { this.lang = this.lang === 'vi' ? 'en' : 'vi'; },
+                toggleTheme() {
+                    if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
+                    this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
+                },
                 copyText(id) {
                     navigator.clipboard.writeText(document.getElementById(id).innerText);
                     this.showToast = true;

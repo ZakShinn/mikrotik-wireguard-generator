@@ -1,5 +1,42 @@
-/* MikroTik Tools — shared UI (dark theme, fullscreen shell, mobile-first) */
+/* MikroTik Tools — shared UI (light default + optional dark), fullscreen shell, mobile-first */
 :root {
+    --bg: #f5f7fa;
+    --bg-card: #ffffff;
+    --border: rgba(15, 23, 42, 0.1);
+    --text: #0f172a;
+    --muted: #64748b;
+    --accent: #0d9488;
+    --accent-dim: rgba(13, 148, 136, 0.12);
+    --info: #0284c7;
+    --warn: #ea580c;
+    --danger: #dc2626;
+    --success-icon: #15803d;
+    --input-fill: rgba(15, 23, 42, 0.06);
+    --nav-bg: rgba(255, 255, 255, 0.88);
+    --tip-bg: #ffffff;
+    --tip-text: var(--text);
+    --tip-shadow: rgba(15, 23, 42, 0.12);
+    --script-pre-bg: #f1f5f9;
+    --script-pre-fg: #0c4a6e;
+    --script-pre-border: rgba(15, 23, 42, 0.12);
+    --header-band: rgba(15, 23, 42, 0.04);
+    --ghost-hover-border: rgba(15, 23, 42, 0.18);
+    --ghost-hover-bg: rgba(15, 23, 42, 0.06);
+    --card-hover-shadow: rgba(15, 23, 42, 0.1);
+    --donate-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 247, 250, 1));
+    --toast-shadow: rgba(15, 23, 42, 0.12);
+    --noise-opacity: 0.022;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --touch: 44px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --content-max: min(1320px, 100%);
+}
+
+html.theme-dark {
     --bg: #0c0f14;
     --bg-card: #141a22;
     --border: rgba(255, 255, 255, 0.08);
@@ -10,14 +47,22 @@
     --info: #38bdf8;
     --warn: #fb923c;
     --danger: #f87171;
-    --radius: 16px;
-    --radius-sm: 12px;
-    --touch: 44px;
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-left: env(safe-area-inset-left, 0px);
-    --safe-right: env(safe-area-inset-right, 0px);
-    --content-max: min(1320px, 100%);
+    --success-icon: #4ade80;
+    --input-fill: rgba(0, 0, 0, 0.25);
+    --nav-bg: rgba(20, 26, 34, 0.92);
+    --tip-bg: #1e293b;
+    --tip-text: #fff;
+    --tip-shadow: rgba(0, 0, 0, 0.45);
+    --script-pre-bg: #0d1117;
+    --script-pre-fg: #58d4ff;
+    --script-pre-border: rgba(255, 255, 255, 0.1);
+    --header-band: rgba(0, 0, 0, 0.2);
+    --ghost-hover-border: rgba(255, 255, 255, 0.18);
+    --ghost-hover-bg: rgba(255, 255, 255, 0.06);
+    --card-hover-shadow: rgba(0, 0, 0, 0.35);
+    --donate-bg: linear-gradient(180deg, rgba(20, 26, 34, 0.9), rgba(12, 15, 20, 0.95));
+    --toast-shadow: rgba(0, 0, 0, 0.45);
+    --noise-opacity: 0.04;
 }
 
 *,
@@ -62,7 +107,7 @@ body {
     pointer-events: none;
     position: fixed;
     inset: 0;
-    opacity: 0.04;
+    opacity: var(--noise-opacity);
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     z-index: 0;
 }
@@ -109,8 +154,8 @@ body {
 }
 
 .btn-ghost:hover {
-    border-color: rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--ghost-hover-border);
+    background: var(--ghost-hover-bg);
 }
 
 .btn-accent {
@@ -197,7 +242,7 @@ body {
     padding: 0 0.75rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
-    background: rgba(0, 0, 0, 0.25);
+    background: var(--input-fill);
     color: var(--text);
     font-family: inherit;
     font-size: 0.875rem;
@@ -221,10 +266,14 @@ body {
 .select select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239aa0a6'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     padding-right: 2rem;
+}
+
+html.theme-dark .select select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239aa0a6'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
 }
 
 .checkbox-row {
@@ -372,12 +421,12 @@ body {
 }
 
 .script-pre {
-    background: #0d1117 !important;
-    color: #58d4ff !important;
+    background: var(--script-pre-bg) !important;
+    color: var(--script-pre-fg) !important;
     border-radius: var(--radius-sm);
     padding: 1rem !important;
     font-size: clamp(0.75rem, 2.8vw, 0.85rem);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--script-pre-border);
     white-space: pre-wrap;
     word-break: break-word;
     overflow-x: auto;
@@ -444,15 +493,15 @@ body {
     position: absolute;
     left: 0;
     top: calc(100% + 6px);
-    background: #1e293b;
-    color: #fff;
+    background: var(--tip-bg);
+    color: var(--tip-text);
     padding: 12px;
     border-radius: var(--radius-sm);
     width: min(300px, calc(100vw - 2rem));
     z-index: 1000;
     font-size: 0.78rem;
     font-weight: 400;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 12px 32px var(--tip-shadow);
     border: 1px solid var(--border);
     pointer-events: none;
 }
@@ -489,7 +538,7 @@ body {
 
 .tip-row .t-val {
     flex: 1;
-    color: var(--text);
+    color: var(--tip-text);
 }
 
 .tip-def,
@@ -505,7 +554,7 @@ body {
 /* ---------- Tool nav ---------- */
 .tool-nav {
     flex-shrink: 0;
-    background: rgba(20, 26, 34, 0.92);
+    background: var(--nav-bg);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     padding: 0.5rem clamp(0.75rem, 3vw, 1.25rem);
@@ -610,13 +659,13 @@ body {
     border-radius: 999px;
     z-index: 9999;
     border: 1px solid var(--border);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 12px 40px var(--toast-shadow);
     font-size: 0.875rem;
     max-width: calc(100vw - 2rem);
 }
 
 .text-success {
-    color: #4ade80;
+    color: var(--success-icon);
 }
 
 /* ---------- Tables (IPTV ref) ---------- */
@@ -704,7 +753,7 @@ body {
     gap: 0.65rem;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border);
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--header-band);
     flex-wrap: wrap;
 }
 
@@ -952,7 +1001,7 @@ header.site-header {
 
 .tool-card:hover {
     border-color: rgba(45, 212, 191, 0.25);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 20px 40px var(--card-hover-shadow);
     transform: translateY(-2px);
 }
 
@@ -1114,7 +1163,7 @@ section.donate {
     padding: clamp(1.5rem, 4vw, 2rem);
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    background: linear-gradient(180deg, rgba(20, 26, 34, 0.9), rgba(12, 15, 20, 0.95));
+    background: var(--donate-bg);
     text-align: center;
 }
 

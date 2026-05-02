@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <script>(function(){try{if(localStorage.getItem('mikrotik-theme')==='dark')document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MikroTik WireGuard — Tạo VPN, script RouterOS, QR &amp; .conf | Zakshin</title>
     <meta name="description" content="Tạo cấu hình WireGuard cho MikroTik RouterOS: script Terminal, peer, file .conf, mã QR, ZIP. Miễn phí — khóa chỉ xử lý trên trình duyệt của bạn.">
@@ -11,7 +12,7 @@
     <link rel="canonical" href="https://mikrotik.hainghia.net/wireguard">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
-    <meta name="theme-color" content="#0c0f14">
+    <meta name="theme-color" content="#f5f7fa">
     <meta name="format-detection" content="telephone=no">
 
     <meta property="og:site_name" content="MikroTik Tools — Zakshin">
@@ -44,6 +45,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/site.css">
+    <script src="assets/theme-ui.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body class="app-shell">
@@ -62,6 +64,9 @@
                     </div>
                     <div class="tool-nav-actions">
                         <div class="wg-actions-stack">
+                            <button type="button" class="btn btn-ghost btn-sm btn-icon" @click="toggleTheme" :aria-label="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark" :title="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark">
+                                <i :class="theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
+                            </button>
                             <button type="button" class="btn btn-ghost btn-sm" @click="lang = lang === 'vi' ? 'en' : 'vi'">
                                 <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
                             </button>
@@ -249,7 +254,9 @@ PersistentKeepalive = 10</pre>
                     allowDns: 'Client dùng DNS qua router (.1)',
                     copy: 'Copy',
                     clientManage: 'Danh sách client',
-                    copied: 'Đã sao chép!'
+                    copied: 'Đã sao chép!',
+                    themeDark: 'Giao diện tối',
+                    themeLight: 'Giao diện sáng'
                 }
             },
             en: {
@@ -291,7 +298,9 @@ PersistentKeepalive = 10</pre>
                     allowDns: 'Clients use DNS via router (.1)',
                     copy: 'Copy',
                     clientManage: 'Generated clients',
-                    copied: 'Copied!'
+                    copied: 'Copied!',
+                    themeDark: 'Dark theme',
+                    themeLight: 'Light theme'
                 }
             }
         };
@@ -299,7 +308,7 @@ PersistentKeepalive = 10</pre>
         createApp({
             data() {
                 return {
-                    lang: 'vi', usePsk: true, allowDns: true, showToast: false,
+                    lang: 'vi', theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light', usePsk: true, allowDns: true, showToast: false,
                     form: { server: 'ddns.hainghia.net', port: 13333, interface: 'wg-vpn', dns: '1.1.1.1', network: '172.33.0', allowedIps: '0.0.0.0/0', start: 2, count: 2 },
                     fieldMeta: { server: '', port: '', interface: '', dns: '', network: '', allowedIps: '', start: '', count: '' },
                     clients: {}, serverKeys: { privateKey: genKey(), publicKey: genKey() }
@@ -336,6 +345,10 @@ PersistentKeepalive = 10</pre>
                 }
             },
             methods: {
+                toggleTheme() {
+                    if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
+                    this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
+                },
                 refreshQRs() { if (this.hasData) this.$nextTick(() => Object.keys(this.clients).forEach(ip => this.renderQR(ip))); },
                 generate() {
                     const res = {};
