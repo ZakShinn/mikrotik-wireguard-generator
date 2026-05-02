@@ -3,7 +3,13 @@
     { "source": "/wireguard", "destination": "/wireguard.html" },
     { "source": "/hairpin-nat", "destination": "/hairpin-nat.html" },
     { "source": "/nextdns", "destination": "/nextdns.html" },
-    { "source": "/iptv", "destination": "/iptv.html" }
+    { "source": "/iptv", "destination": "/iptv.html" },
+    { "source": "/firewall", "destination": "/firewall.html" },
+    { "source": "/cloudflare-ddns", "destination": "/cloudflare-ddns.html" },
+    { "source": "/startup", "destination": "/startup.html" },
+    { "source": "/social-block", "destination": "/social-block.html" },
+    { "source": "/telegram-backup", "destination": "/telegram-backup.html" },
+    { "source": "/routing", "destination": "/routing.html" }
   ],
   "redirects": [
     { "source": "/index.html", "destination": "/", "permanent": true },
@@ -12,6 +18,12 @@
     { "source": "/hairpin-nat/", "destination": "/hairpin-nat", "permanent": true },
     { "source": "/nextdns/", "destination": "/nextdns", "permanent": true },
     { "source": "/iptv/", "destination": "/iptv", "permanent": true },
+    { "source": "/firewall/", "destination": "/firewall", "permanent": true },
+    { "source": "/cloudflare-ddns/", "destination": "/cloudflare-ddns", "permanent": true },
+    { "source": "/startup/", "destination": "/startup", "permanent": true },
+    { "source": "/social-block/", "destination": "/social-block", "permanent": true },
+    { "source": "/telegram-backup/", "destination": "/telegram-backup", "permanent": true },
+    { "source": "/routing/", "destination": "/routing", "permanent": true },
 
     { "source": "/wireguard.html", "destination": "/wireguard", "permanent": true },
     { "source": "/hairpin-nat.html", "destination": "/hairpin-nat", "permanent": true },
@@ -19,7 +31,17 @@
     { "source": "/nextdns.html", "destination": "/nextdns", "permanent": true },
     { "source": "/IPTV.html", "destination": "/iptv", "permanent": true },
     { "source": "/iptv.html", "destination": "/iptv", "permanent": true },
-    { "source": "/IPTV", "destination": "/iptv", "permanent": true }
+    { "source": "/IPTV", "destination": "/iptv", "permanent": true },
+    { "source": "/firewall.html", "destination": "/firewall", "permanent": true },
+    { "source": "/Firewall.html", "destination": "/firewall", "permanent": true },
+    { "source": "/Firewall", "destination": "/firewall", "permanent": true },
+    { "source": "/cloudflare-ddns.html", "destination": "/cloudflare-ddns", "permanent": true },
+    { "source": "/startup.html", "destination": "/startup", "permanent": true },
+    { "source": "/social-block.html", "destination": "/social-block", "permanent": true },
+    { "source": "/telegram-backup.html", "destination": "/telegram-backup", "permanent": true },
+    { "source": "/routing.html", "destination": "/routing", "permanent": true },
+    { "source": "/Routing.html", "destination": "/routing", "permanent": true },
+    { "source": "/Routing", "destination": "/routing", "permanent": true }
   ],
   "headers": [
     {

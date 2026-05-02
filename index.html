@@ -38,7 +38,12 @@
         {"@type":"ListItem","position":1,"name":"WireGuard (MT-WG Gen)","item":"https://mikrotik.hainghia.net/wireguard"},
         {"@type":"ListItem","position":2,"name":"Hairpin NAT","item":"https://mikrotik.hainghia.net/hairpin-nat"},
         {"@type":"ListItem","position":3,"name":"NextDNS","item":"https://mikrotik.hainghia.net/nextdns"},
-        {"@type":"ListItem","position":4,"name":"IPTV","item":"https://mikrotik.hainghia.net/iptv"}
+        {"@type":"ListItem","position":4,"name":"IPTV","item":"https://mikrotik.hainghia.net/iptv"},
+        {"@type":"ListItem","position":5,"name":"Firewall (gợi ý)","item":"https://mikrotik.hainghia.net/firewall"},
+        {"@type":"ListItem","position":6,"name":"Cloudflare DDNS","item":"https://mikrotik.hainghia.net/cloudflare-ddns"},
+        {"@type":"ListItem","position":7,"name":"Chặn mạng xã hội","item":"https://mikrotik.hainghia.net/social-block"},
+        {"@type":"ListItem","position":8,"name":"Định tuyến (Policy Routing)","item":"https://mikrotik.hainghia.net/routing"},
+        {"@type":"ListItem","position":9,"name":"Backup + Telegram notify","item":"https://mikrotik.hainghia.net/telegram-backup"}
       ]}
     ]}
     </script>
@@ -130,6 +135,72 @@
                 <p class="desc">{{ t.tools.iptv.desc }}</p>
                 <a class="cta cta-iptv" href="iptv.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
             </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon nat"><i class="fas fa-wand-magic-sparkles"></i></div>
+                    <div>
+                        <h2>{{ t.tools.startup.title }}</h2>
+                        <p class="sub">{{ t.tools.startup.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.startup.desc }}</p>
+                <a class="cta cta-nat" href="startup.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon wg"><i class="fas fa-shield-halved"></i></div>
+                    <div>
+                        <h2>{{ t.tools.fw.title }}</h2>
+                        <p class="sub">{{ t.tools.fw.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.fw.desc }}</p>
+                <a class="cta cta-wg" href="firewall.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon nd"><i class="fas fa-cloud"></i></div>
+                    <div>
+                        <h2>{{ t.tools.cf.title }}</h2>
+                        <p class="sub">{{ t.tools.cf.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.cf.desc }}</p>
+                <a class="cta cta-nd" href="cloudflare-ddns.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon nat"><i class="fas fa-ban"></i></div>
+                    <div>
+                        <h2>{{ t.tools.sb.title }}</h2>
+                        <p class="sub">{{ t.tools.sb.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.sb.desc }}</p>
+                <a class="cta cta-nat" href="social-block.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon nd"><i class="fas fa-route"></i></div>
+                    <div>
+                        <h2>{{ t.tools.rt.title }}</h2>
+                        <p class="sub">{{ t.tools.rt.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.rt.desc }}</p>
+                <a class="cta cta-nd" href="routing.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon nd"><i class="fas fa-paper-plane"></i></div>
+                    <div>
+                        <h2>{{ t.tools.tg.title }}</h2>
+                        <p class="sub">{{ t.tools.tg.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.tg.desc }}</p>
+                <a class="cta cta-nd" href="telegram-backup.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
         </section>
 
         <section class="feedback" id="feedback" aria-labelledby="feedback-heading">
@@ -187,6 +258,36 @@
                         title: 'IPTV',
                         sub: 'VLAN + IGMP',
                         desc: 'Gợi ý VLAN IPTV trên WAN và IGMP proxy nối sang TV — chỉnh theo nhà mạng.'
+                    },
+                    startup: {
+                        title: 'Startup Script',
+                        sub: 'Khởi tạo LAN/WiFi',
+                        desc: 'Sinh script khởi đầu: bridge LAN/WiFi, PPPoE, WiFi 2.4/5, DHCP, NAT, DNS, NTP.'
+                    },
+                    fw: {
+                        title: 'Firewall (beta)',
+                        sub: 'Đang hoàn thiện',
+                        desc: 'Tool firewall đang ở giai đoạn beta. Dùng để tham khảo/gợi ý — luôn kiểm tra kỹ script và test Safe Mode trước khi áp vào router thật.'
+                    },
+                    cf: {
+                        title: 'Cloudflare DDNS',
+                        sub: 'Update DNS record',
+                        desc: 'Sinh script RouterOS cập nhật record A/AAAA qua Cloudflare API (DDNS) + scheduler.'
+                    },
+                    sb: {
+                        title: 'Chặn mạng xã hội',
+                        sub: 'Chặn theo khung giờ',
+                        desc: 'Chọn MXH cần chặn và khung giờ bật/tắt. Tool sinh script firewall + scheduler để copy/paste.'
+                    },
+                    rt: {
+                        title: 'Định tuyến (Policy Routing)',
+                        sub: 'PPPoE / Ether / VPN',
+                        desc: 'Định tuyến theo subnet/nguồn qua pppoe-out, ether, WireGuard/VPN… Sinh script routing table + rule (v7) hoặc mangle (v6).'
+                    },
+                    tg: {
+                        title: 'Backup + Telegram',
+                        sub: 'Backup/Export + notify',
+                        desc: 'Sinh script RouterOS backup/export theo lịch, tự dọn file cũ, gửi thông báo/log trạng thái qua Telegram.'
                     }
                 },
                 feedback: {
@@ -228,6 +329,36 @@
                         title: 'IPTV',
                         sub: 'VLAN + IGMP',
                         desc: 'Starter VLAN-on-WAN and IGMP proxy wiring for TV — adjust per ISP.'
+                    },
+                    startup: {
+                        title: 'Startup Script',
+                        sub: 'LAN/WiFi bootstrap',
+                        desc: 'Generate a starter script: LAN/WiFi bridges, PPPoE, dual-band WiFi, DHCP, NAT, DNS, NTP.'
+                    },
+                    fw: {
+                        title: 'Firewall (beta)',
+                        sub: 'Work in progress',
+                        desc: 'Firewall tool is currently beta. Use as a reference only — review the script and test in Safe Mode before applying to production routers.'
+                    },
+                    cf: {
+                        title: 'Cloudflare DDNS',
+                        sub: 'Update DNS record',
+                        desc: 'Generate a RouterOS script to update Cloudflare DNS A/AAAA (DDNS) + scheduler.'
+                    },
+                    sb: {
+                        title: 'Block social media',
+                        sub: 'Time-based blocking',
+                        desc: 'Pick services and a daily time window. Generates firewall rules + scheduler for copy/paste.'
+                    },
+                    rt: {
+                        title: 'Policy Routing',
+                        sub: 'PPPoE / Ether / VPN',
+                        desc: 'Route selected source subnets via pppoe-out, ether, WireGuard/VPN… Generates routing table + rules (v7) or mangle (v6).'
+                    },
+                    tg: {
+                        title: 'Backup + Telegram',
+                        sub: 'Backup/Export + notify',
+                        desc: 'Generate a RouterOS scheduled backup/export script, auto cleanup, and Telegram notify/log.'
                     }
                 },
                 feedback: {
