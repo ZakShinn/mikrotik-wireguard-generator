@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>IPTV MikroTik (Việt Nam) — VLAN và IGMP proxy | Zakshin</title>
+    <meta name="description" content="Tạo script RouterOS cho IPTV các nhà mạng Việt Nam: VLAN trên cổng WAN, DHCP nếu cần, IGMP proxy nối VLAN IPTV với bridge LAN. Chỉ tham khảo cho mạng trong nước.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://mikrotik.hainghia.net/iptv">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta name="theme-color" content="#f5f7fa">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #00d1b2; --bg: #f5f7fa; --card-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+        body { background-color: var(--bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .top-nav { background: white; padding: 0.75rem clamp(1rem, 3vw, 1.5rem); border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .tool-nav-brand { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem; }
+        .tool-nav-title { margin: 0 !important; font-size: 1.25rem !important; font-weight: 600 !important; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .tool-nav-meta { font-size: 0.85rem; line-height: 1.3; text-align: right; }
+        .tool-nav-meta strong { color: var(--primary); }
+        .tool-nav-meta .tool-nav-meta-sub { font-size: 0.72rem; color: #7a7a7a; margin-top: 2px; }
+        .tool-nav-meta-col { display: flex; justify-content: flex-end; align-items: center; }
+        .nav-center-actions { display: flex; align-items: center; gap: 0.75rem; justify-content: center; flex-wrap: wrap; flex-grow: 1; }
+        .main-content { width: 100%; max-width: min(1320px, 100vw); margin: 0 auto; padding: clamp(1rem, 3vw, 2rem); box-sizing: border-box; }
+        .nat-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: stretch; }
+        @media (min-width: 1024px) { .nat-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
+        .config-box {
+            background: white; border-radius: 12px; padding: clamp(1.1rem, 2.5vw, 1.5rem); box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--primary); display: flex; flex-direction: column; min-height: 0; height: 100%;
+        }
+        .nat-panel-script pre { flex: 1 1 auto; min-height: 280px; margin: 0 !important; }
+        .nat-panel-script { min-height: 320px; }
+        .label.is-size-7 { color: #333; margin-bottom: 0.2rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        .info-tip { position: relative; color: var(--primary); cursor: help; margin-left: 5px; display: inline-block; }
+        .tip-content { display:none; position:absolute; left:25px; top:-10px; background:#262a2e; color:#fff; padding:12px; border-radius:8px; width:300px; z-index:1000; font-size:0.8rem; box-shadow:0 8px 20px rgba(0,0,0,0.4); border:1px solid #3d444b; pointer-events:none; }
+        .info-tip:hover .tip-content { display:block; }
+        .tip-header { color: var(--primary); font-weight:800; font-size:0.85rem; margin-bottom:8px; border-bottom:1px solid #3d444b; padding-bottom:5px; }
+        .tip-row { display:flex; align-items:flex-start; margin-bottom:8px; line-height:1.4; font-size:0.8rem; }
+        .tip-row .t-label { font-weight:700; color:#b2bec3; min-width:75px; margin-left:5px; }
+        .tip-row .t-val { flex:1; color:#dfe6e9; }
+        .tip-def { background:#fff; color:#d63384; padding:2px 6px; border-radius:4px; font-family:Consolas,monospace; font-size:0.75rem; }
+        .script-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:0.75rem; flex-wrap:wrap; }
+        @media (max-width:600px) { .script-header .copy-btn { flex:1 1 auto; justify-content:center; min-height:40px; } }
+        pre { background:#1a1c1e !important; color:#00f2ff !important; border-radius:10px; padding:1.5rem !important; font-size:0.85rem; border:1px solid #333; white-space:pre-wrap; }
+        .copy-btn { display:inline-flex; align-items:center; justify-content:center; background:var(--primary); color:#fff; border:none; cursor:pointer; padding:8px 16px; border-radius:8px; font-size:0.8rem; font-weight:600; }
+        .copy-btn:hover { background:#00b89c; }
+        .toast-msg { position:fixed; bottom:20px; right:20px; background:#333; color:#fff; padding:12px 25px; border-radius:50px; z-index:9999; }
+        @media (max-width:1023px) {
+            .tool-nav-meta-col { justify-content:center; width:100%; }
+            .tool-nav-meta { text-align:center !important; }
+            .nat-panel-script pre { min-height:220px; }
+        }
+        .isp-vlan-ref { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee; }
+        .isp-vlan-ref .table { background: transparent; font-size: 0.8rem; }
+        .isp-vlan-ref .table th { color: #363636; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div v-if="showToast" class="toast-msg"><i class="fas fa-check-circle has-text-success mr-2"></i> {{ t.ui.copied }}</div>
+
+        <nav class="top-nav">
+            <div class="container is-fluid px-2">
+                <div class="columns is-vcentered is-mobile is-multiline mb-0">
+                    <div class="column is-narrow py-2">
+                        <div class="tool-nav-brand">
+                            <a href="index.html" class="button is-small is-light is-rounded" title="Trang chủ"><i class="fas fa-home"></i></a>
+                            <h1 class="tool-nav-title"><i class="fas fa-tv has-text-primary"></i> IPTV</h1>
+                        </div>
+                    </div>
+                    <div class="column py-2">
+                        <div class="nav-center-actions">
+                            <button type="button" class="button is-small is-rounded is-light" @click="toggleLang">
+                                <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="column is-narrow py-2 tool-nav-meta-col">
+                        <div class="tool-nav-meta">
+                            <div><strong>Nghĩa Zakshin</strong></div>
+                            <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <div class="nat-grid">
+                <section class="config-box nat-panel-form">
+                    <h3 class="subtitle is-6 has-text-weight-bold mb-1"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.serverConfig }}</h3>
+                    <p class="is-size-7 has-text-grey mb-4">{{ t.ui.scopeLine }}</p>
+
+                    <div v-for="field in fieldsList" :key="field" class="field">
+                        <label class="label is-size-7">
+                            {{ t.labels[field] }}
+                            <span class="info-tip"><i class="fas fa-question-circle"></i>
+                                <div class="tip-content">
+                                    <div class="tip-header">{{ t.labels[field] }}</div>
+                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipAim }}</span><span class="t-val">{{ t.hints[field].aim }}</span></div>
+                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipType }}</span><span class="t-val">{{ t.hints[field].type }}</span></div>
+                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints[field].def }}</span></span></div>
+                                </div>
+                            </span>
+                        </label>
+                        <div class="control"><input class="input is-small" v-model="form[field]"></div>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox is-size-7 has-text-weight-bold">
+                            <input type="checkbox" v-model="form.addDhcpClient"> {{ t.ui.addDhcpClient }}
+                        </label>
+                    </div>
+
+                    <div class="isp-vlan-ref">
+                        <p class="is-size-7 has-text-weight-bold mb-2"><i class="fas fa-network-wired has-text-primary mr-1"></i> {{ t.ui.ispVlanTitle }}</p>
+                        <table class="table is-narrow is-fullwidth is-size-7 mb-0">
+                            <thead>
+                                <tr>
+                                    <th>{{ t.ui.ispCol }}</th>
+                                    <th>{{ t.ui.vlanCol }}</th>
+                                    <th>{{ t.ui.noteCol }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in t.ui.ispVlanRows" :key="row.isp">
+                                    <td class="has-text-weight-semibold">{{ row.isp }}</td>
+                                    <td><code class="has-background-light px-1 py-0" style="border-radius:4px;">{{ row.vlan }}</code></td>
+                                    <td>{{ row.note }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="config-box nat-panel-script">
+                    <div class="script-header">
+                        <h3 class="subtitle is-6 has-text-weight-bold mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h3>
+                        <button type="button" class="copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                    </div>
+                    <pre id="main-script">{{ scriptBody }}</pre>
+                    <div class="notification is-light is-info is-size-7 mt-4 mb-0 p-3">
+                        <i class="fas fa-info-circle mr-2"></i> {{ t.ui.note }}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp } = Vue;
+        const i18n = {
+            vi: {
+                labels: {
+                    comment: 'Tên ghi chú',
+                    wanPort: 'Cổng WAN (từ ONT)',
+                    vlanId: 'Số VLAN IPTV',
+                    vlanName: 'Tên đường VLAN IPTV',
+                    bridgeName: 'Bridge LAN (Wi-Fi / đầu thu)'
+                },
+                hints: {
+                    comment: { aim: 'Để nhận ra nhóm lệnh IPTV khi xem trên router.', type: 'Chữ', def: 'IPTV-FPT' },
+                    wanPort: { aim: 'Cổng đang cắm dây từ modem/ONT ra router — chỗ gắn VLAN IPTV lên.', type: 'Tên cổng', def: 'ether1' },
+                    vlanId: { aim: 'Nhà mạng cho số này. Viettel hay dùng 2502; FPT/VNPT mỗi nơi khác — xem hợp đồng hoặc hỏi tổng đài.', type: 'Số', def: '4000' },
+                    vlanName: { aim: 'Tên gọi trên router cho đường VLAN chỉ IPTV (tự đặt cho dễ nhớ).', type: 'Chữ', def: 'vlan-iptv' },
+                    bridgeName: { aim: 'Bridge mạng nhà bạn đã có sẵn (thường là bridgeLAN). Đầu thu cắm vào cổng thuộc bridge này. Script không tạo bridge mới.', type: 'Chữ', def: 'bridgeLAN' }
+                },
+                ui: {
+                    serverConfig: 'Điền nhanh', scriptTitle: 'Script RouterOS', copy: 'Sao chép script',
+                    scopeLine: 'Công cụ này chỉ phù hợp IPTV các nhà mạng trong Việt Nam; không áp dụng kiểu cấu hình nước ngoài.',
+                    addDhcpClient: 'Xin IP tự động (DHCP) trên VLAN IPTV',
+                    note: 'Bridge LAN phải đã có trước. Kiểm tra tên cổng và bridge đúng với router rồi mới dán script. Mỗi nhà mạng khác số VLAN; đôi khi cần chỉnh thêm firewall.',
+                    copied: 'Đã sao chép!', tipAim: 'Để làm gì', tipType: 'Dạng', tipDef: 'Ví dụ',
+                    ispVlanTitle: 'Số VLAN thường gặp (chỉ tham khảo)',
+                    ispCol: 'Nhà mạng', vlanCol: 'VLAN', noteCol: 'Lưu ý',
+                    ispVlanRows: [
+                        { isp: 'Viettel', vlan: '2502', note: 'Nhiều nơi dùng cho IPTV.' },
+                        { isp: 'FPT', vlan: '—', note: 'Mỗi vùng khác nhau; hỏi nhà mạng (có nơi dùng 4000).' },
+                        { isp: 'VNPT', vlan: '—', note: 'Tùy tỉnh; hỏi nhà mạng lấy đúng số VLAN.' }
+                    ]
+                }
+            },
+            en: {
+                labels: {
+                    comment: 'Short label',
+                    wanPort: 'WAN port (from ONT)',
+                    vlanId: 'IPTV VLAN ID',
+                    vlanName: 'IPTV VLAN name',
+                    bridgeName: 'LAN bridge (Wi-Fi / STB)'
+                },
+                hints: {
+                    comment: { aim: 'Helps you spot these IPTV lines in the router config.', type: 'Text', def: 'IPTV-ISP' },
+                    wanPort: { aim: 'The port cabled from the ONT/modem—where the IPTV VLAN is created.', type: 'Port name', def: 'ether1' },
+                    vlanId: { aim: 'Your Vietnamese ISP gives this number. Viettel often uses 2502; FPT/VNPT vary—check contract or call support.', type: 'Number', def: '4000' },
+                    vlanName: { aim: 'A name on the router for the IPTV-only VLAN (pick anything clear).', type: 'Text', def: 'vlan-iptv' },
+                    bridgeName: { aim: 'Your existing home LAN bridge (often bridgeLAN). STBs plug into ports in this bridge. The script does not create a new bridge.', type: 'Text', def: 'bridgeLAN' }
+                },
+                ui: {
+                    serverConfig: 'Quick fill', scriptTitle: 'RouterOS script', copy: 'Copy script',
+                    scopeLine: 'For Vietnam ISP IPTV only. Other countries use different VLAN and provider rules.',
+                    addDhcpClient: 'Request an IP with DHCP on the IPTV VLAN',
+                    note: 'The LAN bridge must already exist. Match port and bridge names to your router before pasting. VLAN IDs differ by ISP; you may still need firewall tweaks.',
+                    copied: 'Copied!', tipAim: 'What it is for', tipType: 'Kind', tipDef: 'Example',
+                    ispVlanTitle: 'Common VLAN IDs (reference only)',
+                    ispCol: 'ISP', vlanCol: 'VLAN', noteCol: 'Note',
+                    ispVlanRows: [
+                        { isp: 'Viettel', vlan: '2502', note: 'Widely used for IPTV in Vietnam.' },
+                        { isp: 'FPT', vlan: '—', note: 'Varies by area; ask the ISP (4000 in some places).' },
+                        { isp: 'VNPT', vlan: '—', note: 'Varies by province; ask the ISP for the VLAN.' }
+                    ]
+                }
+            }
+        };
+
+        createApp({
+            data() {
+                return {
+                    lang: 'vi',
+                    showToast: false,
+                    fieldsList: ['comment', 'wanPort', 'vlanId', 'vlanName', 'bridgeName'],
+                    form: {
+                        comment: 'IPTV',
+                        wanPort: 'ether1',
+                        vlanId: '4000',
+                        vlanName: 'vlan-iptv',
+                        bridgeName: 'bridgeLAN',
+                        addDhcpClient: true
+                    }
+                };
+            },
+            computed: {
+                t() { return i18n[this.lang]; },
+                scriptBody() {
+                    const c = this.form.comment || 'IPTV';
+                    const dhcp = this.form.addDhcpClient
+                        ? `# DHCP on IPTV VLAN (skip if your ISP uses a fixed IP on this VLAN)
+/ip dhcp-client add interface=${this.form.vlanName} use-peer-dns=no add-default-route=no disabled=no comment="IPTV DHCP — ${c}"
+
+`
+                        : '';
+                    return `# IPTV (Vietnam ISP) — ${c}
+# VLAN IPTV on WAN port — VLAN number from your ISP (e.g. Viettel 2502)
+/interface vlan add name=${this.form.vlanName} vlan-id=${this.form.vlanId} interface=${this.form.wanPort} comment="IPTV VLAN — ${c}"
+
+${dhcp}# IGMP proxy: IPTV VLAN = toward ISP; LAN bridge = toward TVs / STBs (bridge must exist)
+/routing igmp-proxy interface add interface=${this.form.vlanName} upstream=yes alternative-subnets=0.0.0.0/0 comment="IPTV upstream — ${c}"
+/routing igmp-proxy interface add interface=${this.form.bridgeName} upstream=no comment="IPTV LAN — ${c}"
+/routing igmp-proxy set quick-leave=yes`;
+                }
+            },
+            methods: {
+                toggleLang() { this.lang = this.lang === 'vi' ? 'en' : 'vi'; },
+                copyText(id) {
+                    navigator.clipboard.writeText(document.getElementById(id).innerText);
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 2000);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -1,4 +1,30 @@
 # https://mikrotik.hainghia.net
+# Meta / Facebook / Zalo preview crawlers — explicit Allow (Meta khuyến nghị khi gặp 403)
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+User-agent: facebookcatalog
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+# Mặc định
 User-agent: *
 Allow: /
 

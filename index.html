@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>MikroTik Tools — Công cụ web RouterOS (WireGuard, Hairpin NAT) | Zakshin</title>
-    <meta name="description" content="Công cụ web miễn phí cho MikroTik RouterOS: WireGuard (script, peer, file .conf, mã QR), Hairpin NAT (NAT loopback, port forward). Xử lý trên trình duyệt — an toàn.">
-    <meta name="keywords" content="MikroTik, RouterOS, WireGuard, Hairpin NAT, VPN MikroTik, script RouterOS, NAT loopback, Zakshin, MT-WG Gen">
+    <title>MikroTik Tools — WireGuard, Hairpin NAT, NextDNS, IPTV | Zakshin</title>
+    <meta name="description" content="Công cụ web miễn phí cho MikroTik RouterOS: WireGuard, Hairpin NAT, NextDNS (DoH), IPTV (VLAN/IGMP). Script copy-paste, xử lý trên trình duyệt.">
+    <meta name="keywords" content="MikroTik, RouterOS, WireGuard, Hairpin NAT, NextDNS, IPTV, DNS over HTTPS, IGMP proxy, Zakshin">
     <meta name="author" content="Nghĩa Zakshin">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://mikrotik.hainghia.net/">
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
     <meta name="theme-color" content="#0c0f14">
 
     <meta property="og:site_name" content="MikroTik Tools — Zakshin">
     <meta property="og:title" content="MikroTik Tools — Công cụ web cho RouterOS | Zakshin">
-    <meta property="og:description" content="WireGuard & Hairpin NAT cho MikroTik: sinh script, cấu hình client, QR. Miễn phí, chạy trên trình duyệt tại mikrotik.hainghia.net">
+    <meta property="og:description" content="WireGuard, Hairpin NAT, NextDNS, IPTV cho MikroTik — script sẵn, miễn phí, client-side.">
     <meta property="og:url" content="https://mikrotik.hainghia.net/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="vi_VN">
@@ -25,16 +25,18 @@
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MikroTik Tools — Công cụ web RouterOS | Zakshin">
-    <meta name="twitter:description" content="WireGuard & Hairpin NAT cho MikroTik: script, .conf, QR. Miễn phí, client-side.">
+    <meta name="twitter:description" content="Bốn công cụ MikroTik: VPN, NAT, DNS, IPTV — script copy-paste.">
     <meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
 
     <script type="application/ld+json">
     {"@context":"https://schema.org","@graph":[
-      {"@type":"WebSite","@id":"https://mikrotik.hainghia.net/#website","url":"https://mikrotik.hainghia.net/","name":"MikroTik Tools — Zakshin","description":"Công cụ web cho MikroTik RouterOS: WireGuard, Hairpin NAT.","inLanguage":["vi-VN","en-US"],"publisher":{"@id":"https://mikrotik.hainghia.net/#org"}},
+      {"@type":"WebSite","@id":"https://mikrotik.hainghia.net/#website","url":"https://mikrotik.hainghia.net/","name":"MikroTik Tools — Zakshin","description":"Công cụ web cho MikroTik RouterOS: WireGuard, Hairpin NAT, NextDNS, IPTV.","inLanguage":["vi-VN","en-US"],"publisher":{"@id":"https://mikrotik.hainghia.net/#org"}},
       {"@type":"Organization","@id":"https://mikrotik.hainghia.net/#org","name":"Zakshin","url":"https://mikrotik.hainghia.net/"},
       {"@type":"ItemList","name":"Công cụ MikroTik","itemListElement":[
         {"@type":"ListItem","position":1,"name":"WireGuard (MT-WG Gen)","item":"https://mikrotik.hainghia.net/wireguard"},
-        {"@type":"ListItem","position":2,"name":"Hairpin NAT","item":"https://mikrotik.hainghia.net/hairpin-nat"}
+        {"@type":"ListItem","position":2,"name":"Hairpin NAT","item":"https://mikrotik.hainghia.net/hairpin-nat"},
+        {"@type":"ListItem","position":3,"name":"NextDNS","item":"https://mikrotik.hainghia.net/nextdns"},
+        {"@type":"ListItem","position":4,"name":"IPTV","item":"https://mikrotik.hainghia.net/iptv"}
       ]}
     ]}
     </script>
@@ -228,6 +230,8 @@
         }
         .tool-icon.wg { background: rgba(45,212,191,0.12); color: var(--accent); }
         .tool-icon.nat { background: rgba(56,189,248,0.12); color: var(--info); }
+        .tool-icon.nd { background: rgba(167,139,250,0.15); color: #a78bfa; }
+        .tool-icon.iptv { background: rgba(251,146,60,0.15); color: #fb923c; }
         .tool-card h2 {
             margin: 0;
             font-size: 1.2rem;
@@ -254,6 +258,10 @@
         .tool-card a.cta-wg:hover { filter: brightness(1.08); }
         .tool-card a.cta-nat { background: rgba(56,189,248,0.2); color: var(--info); border: 1px solid rgba(56,189,248,0.35); }
         .tool-card a.cta-nat:hover { background: rgba(56,189,248,0.28); }
+        .tool-card a.cta-nd { background: rgba(167,139,250,0.18); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.35); }
+        .tool-card a.cta-nd:hover { background: rgba(167,139,250,0.26); }
+        .tool-card a.cta-iptv { background: rgba(251,146,60,0.18); color: #fdba74; border: 1px solid rgba(251,146,60,0.35); }
+        .tool-card a.cta-iptv:hover { background: rgba(251,146,60,0.26); }
         section.donate {
             margin-top: clamp(2rem, 6vw, 3.5rem);
             padding: clamp(1.5rem, 4vw, 2rem);
@@ -307,7 +315,7 @@
     <div class="noise" aria-hidden="true"></div>
     <div id="app" class="wrap">
         <header class="site-header">
-            <a href="/" class="brand">
+            <a href="index.html" class="brand">
                 <span class="brand-mark"><i class="fas fa-shield-halved"></i></span>
                 <span>
                     <span class="brand-text">Zakshin</span><br>
@@ -344,7 +352,7 @@
                     </div>
                 </div>
                 <p class="desc">{{ t.tools.wg.desc }}</p>
-                <a class="cta cta-wg" href="/wireguard">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+                <a class="cta cta-wg" href="wireguard.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
             </article>
             <article class="tool-card">
                 <div class="tool-card-header">
@@ -355,7 +363,29 @@
                     </div>
                 </div>
                 <p class="desc">{{ t.tools.nat.desc }}</p>
-                <a class="cta cta-nat" href="/hairpin-nat">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+                <a class="cta cta-nat" href="hairpin-nat.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon nd"><i class="fas fa-filter"></i></div>
+                    <div>
+                        <h2>{{ t.tools.nd.title }}</h2>
+                        <p class="sub">{{ t.tools.nd.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.nd.desc }}</p>
+                <a class="cta cta-nd" href="nextdns.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon iptv"><i class="fas fa-tv"></i></div>
+                    <div>
+                        <h2>{{ t.tools.iptv.title }}</h2>
+                        <p class="sub">{{ t.tools.iptv.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.iptv.desc }}</p>
+                <a class="cta cta-iptv" href="iptv.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
             </article>
         </section>
 
@@ -385,7 +415,7 @@
                 badge: 'RouterOS',
                 hero: {
                     title: 'Công cụ web tổng hợp cho MikroTik',
-                    subtitle: 'Đây là hub gom các tiện ích nhỏ cho RouterOS. Hiện mới có 2 công cụ; các mục khác sẽ được bổ sung dần khi có thời gian phát triển.'
+                    subtitle: 'Hub gom các tiện ích cho RouterOS: bốn công cụ (WireGuard, Hairpin NAT, NextDNS, IPTV) — sinh script dán vào Terminal.'
                 },
                 tools: {
                     cta: 'Mở công cụ',
@@ -398,6 +428,16 @@
                         title: 'Hairpin NAT',
                         sub: 'NAT loopback trong LAN',
                         desc: 'Sinh script xử lý truy cập dịch vụ nội bộ qua IP/tên miền WAN khi đang ở trong LAN.'
+                    },
+                    nd: {
+                        title: 'NextDNS',
+                        sub: 'DNS over HTTPS',
+                        desc: 'Sinh lệnh /ip dns với DoH NextDNS (Profile ID, tùy chọn tên thiết bị), RouterOS 7+.'
+                    },
+                    iptv: {
+                        title: 'IPTV',
+                        sub: 'VLAN & IGMP proxy',
+                        desc: 'Script mẫu: VLAN IPTV trên WAN, bridge cổng TV, IGMP proxy — chỉnh theo nhà mạng.'
                     }
                 },
                 donate: {
@@ -411,7 +451,7 @@
                 badge: 'RouterOS',
                 hero: {
                     title: 'A MikroTik web toolkit',
-                    subtitle: 'This hub collects small utilities for RouterOS. Only two tools are available for now; more will be added over time.'
+                    subtitle: 'Four RouterOS helpers: WireGuard, Hairpin NAT, NextDNS, and IPTV — paste-ready scripts.'
                 },
                 tools: {
                     cta: 'Open tool',
@@ -424,6 +464,16 @@
                         title: 'Hairpin NAT',
                         sub: 'LAN loopback NAT',
                         desc: 'Generate scripts for internal access via WAN IP or hostname while on the LAN.'
+                    },
+                    nd: {
+                        title: 'NextDNS',
+                        sub: 'DNS over HTTPS',
+                        desc: 'Build /ip dns DoH commands for NextDNS (profile ID, optional device name), RouterOS v7+.'
+                    },
+                    iptv: {
+                        title: 'IPTV',
+                        sub: 'VLAN & IGMP proxy',
+                        desc: 'Sample script: IPTV VLAN on WAN, TV bridge, IGMP proxy — tune for your ISP.'
                     }
                 },
                 donate: {

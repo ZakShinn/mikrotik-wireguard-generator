@@ -8,27 +8,35 @@
 
 ### Giới thiệu
 
-**MikroTik Tools** là bộ công cụ web hỗ trợ **RouterOS**: hiện gồm **WireGuard (MT-WG Gen)** — tạo script, peer, file `.conf` và mã QR; và **Hairpin NAT** — sinh script NAT loopback trong LAN kèm port forward WAN. Trang chủ là menu chọn công cụ; giao diện có thể dùng tiếng Việt hoặc tiếng Anh.
+**MikroTik Tools** là bộ công cụ web (HTML + Vue, chạy trong trình duyệt) hỗ trợ **RouterOS**:
+
+| Công cụ | Nội dung chính |
+|--------|----------------|
+| **WireGuard** | Sinh script MikroTik, peer, file `.conf`, QR — logic dựa trên [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator). |
+| **Hairpin NAT** | NAT loopback / hairpin + port forward (script copy-paste). |
+| **NextDNS** | **DNS over HTTPS (DoH)** trên RouterOS 7+; tùy chọn: gán `dns-server` qua **DHCP**, **NAT DNS redirect** (ép UDP/TCP 53 từ LAN về router khi client trỏ tới 1.1.1.1, 8.8.8.8, …). |
+| **IPTV** | Mẫu VLAN / bridge / IGMP. |
+
+Trang chủ (`index.html`) là menu chọn công cụ. Mỗi trang hỗ trợ **tiếng Việt** và **tiếng Anh**. URL thân thiện: `/wireguard`, `/hairpin-nat`, `/nextdns`, `/iptv` (cấu hình trên Vercel, xem `vercel.json`).
 
 ### Bảo mật
 
-- **Xử lý nhạy cảm trên trình duyệt của bạn:** sinh khóa, nội dung script và file tải xuống được tạo **trong máy** (client-side). Công cụ **không** gửi khóa hay cấu hình VPN của bạn lên máy chủ ứng dụng để “xử lý đám mây”.
-- **Truy cập web:** khi mở trang, trình duyệt chỉ tải các tệp HTML/JS/CSS và thư viện phụ trợ (Vue, Bulma, v.v.) qua HTTPS như mọi website tĩnh. Hãy luôn kiểm tra thanh địa chỉ là **`https://mikrotik.hainghia.net`** và dấu ổ khóa trình duyệt.
+- **Xử lý nhạy cảm trên trình duyệt của bạn:** sinh khóa, nội dung script và file tải xuống được tạo **trong máy** (client-side). Công cụ **không** gửi khóa hay cấu hình VPN lên máy chủ ứng dụng để xử lý đám mây.
+- **Truy cập web:** trình duyệt tải HTML/JS/CSS và thư viện (Vue, Bulma, …) qua HTTPS. Hãy kiểm tra thanh địa chỉ là **`https://mikrotik.hainghia.net`** và dấu ổ khóa.
 - **Trách nhiệm sử dụng:** bạn chịu trách nhiệm bảo vệ thiết bị, trình duyệt và mạng; không chia sẻ khóa riêng hay file cấu hình cho người không tin cậy.
 
 ### Cách dùng qua website
 
 1. Mở trình duyệt (Chrome, Edge, Firefox, Safari, …).
 2. Truy cập: **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**
-3. Từ trang chủ, chọn **WireGuard** hoặc **Hairpin NAT** và làm theo hướng dẫn trên từng trang.
+3. Từ trang chủ, chọn công cụ và làm theo hướng dẫn trên từng trang.
 
 Nên lưu bookmark đúng địa chỉ trên để tránh nhầm sang trang giả mạo.
 
-Trang con chuẩn SEO: **`/wireguard`**, **`/hairpin-nat`** (tự động qua Vercel). Đường dẫn có đuôi `.html` được chuyển vĩnh viễn (301) về URL ngắn.
+### Chạy / triển khai tĩnh
 
-### SEO & Google Search (tuỳ chọn)
-
-Sau khi deploy **Vercel**, vào [Google Search Console](https://search.google.com/search-console) → thêm property **`mikrotik.hainghia.net`** → mục **Sitemaps** → gửi **`https://mikrotik.hainghia.net/sitemap.xml`**. File **`robots.txt`** tại gốc đã trỏ tới sitemap.
+- Mở trực tiếp `index.html` bằng trình duyệt (một số tính năng cần phục vụ qua HTTP/HTTPS).
+- **Vercel:** repository này có `vercel.json` (rewrites, redirects, security headers) cho site tĩnh.
 
 ### Ghi nhận & giấy phép
 
@@ -42,27 +50,35 @@ Sau khi deploy **Vercel**, vào [Google Search Console](https://search.google.co
 
 ### About the tools
 
-**MikroTik Tools** is a small **RouterOS** web toolkit: **WireGuard (MT-WG Gen)** builds scripts, peers, `.conf` files, and QR codes; **Hairpin NAT** generates hairpin NAT plus WAN port-forward scripts. The home page is a simple menu; the UI supports Vietnamese and English.
+**MikroTik Tools** is a static **RouterOS** web toolkit (HTML + Vue, runs in the browser):
+
+| Tool | What it does |
+|------|----------------|
+| **WireGuard** | MikroTik scripts, peers, `.conf` files, QR — based on [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator). |
+| **Hairpin NAT** | Hairpin / loopback NAT + port forward (copy-paste scripts). |
+| **NextDNS** | **DNS over HTTPS (DoH)** on RouterOS v7+; optional **DHCP `dns-server`**, **NAT DNS redirect** (hijack LAN DNS on UDP/TCP 53 to the router when clients use public resolvers). |
+| **IPTV** | Sample VLAN / bridge / IGMP notes. |
+
+The home page (`index.html`) is a tool menu. Each page supports **Vietnamese** and **English**. Clean URLs: `/wireguard`, `/hairpin-nat`, `/nextdns`, `/iptv` (see `vercel.json` for Vercel).
 
 ### Security
 
-- **Sensitive work stays in your browser:** keys, scripts, and downloads are generated **client-side**. The apps **do not** upload your VPN keys or configs to an application backend for processing.
-- **Web access:** the browser loads static HTML/JS/CSS and common libraries (Vue, Bulma, etc.) over HTTPS like any static site. Always confirm the address bar shows **`https://mikrotik.hainghia.net`** and the browser lock icon.
+- **Sensitive work stays in your browser:** keys, scripts, and downloads are generated **client-side**. The apps **do not** upload your VPN keys or configs to a backend.
+- **Web access:** the browser loads static assets over HTTPS. Confirm the address bar shows **`https://mikrotik.hainghia.net`** and the browser lock icon.
 - **Your responsibility:** protect your device, browser, and network; do not share private keys or config files with untrusted parties.
 
 ### Using the hosted site
 
 1. Open a modern browser.
 2. Go to **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**
-3. From the home page, open **WireGuard** or **Hairpin NAT** and follow the on-page steps.
+3. Pick a tool from the home page and follow the on-page steps.
 
 Bookmark that URL so you always return to the official site.
 
-Canonical URLs: **`/wireguard`**, **`/hairpin-nat`** (configured on Vercel). Requests to `*.html` are **301-redirected** to these short paths.
+### Running / deploying
 
-### SEO & Google Search (optional)
-
-After deploying on **Vercel**, open [Google Search Console](https://search.google.com/search-console) → add property **`mikrotik.hainghia.net`** → **Sitemaps** → submit **`https://mikrotik.hainghia.net/sitemap.xml`**. **`robots.txt`** at the site root references it.
+- You can open `index.html` locally (some features work best over HTTP/HTTPS).
+- **Vercel:** this repo includes `vercel.json` (rewrites, redirects, security headers) for static hosting.
 
 ### Credits & license
 

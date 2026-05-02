@@ -1,12 +1,19 @@
 {
   "rewrites": [
     { "source": "/wireguard", "destination": "/wireguard.html" },
-    { "source": "/hairpin-nat", "destination": "/Hairpin_NAT.html" }
+    { "source": "/hairpin-nat", "destination": "/hairpin-nat.html" },
+    { "source": "/nextdns", "destination": "/nextdns.html" },
+    { "source": "/iptv", "destination": "/iptv.html" }
   ],
   "redirects": [
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/wireguard.html", "destination": "/wireguard", "permanent": true },
-    { "source": "/Hairpin_NAT.html", "destination": "/hairpin-nat", "permanent": true }
+    { "source": "/Hairpin_NAT.html", "destination": "/hairpin-nat.html", "permanent": true },
+    { "source": "/hairpin-nat.html", "destination": "/hairpin-nat", "permanent": true },
+    { "source": "/nextdns.html", "destination": "/nextdns", "permanent": true },
+    { "source": "/IPTV.html", "destination": "/iptv.html", "permanent": true },
+    { "source": "/iptv.html", "destination": "/iptv", "permanent": true },
+    { "source": "/IPTV", "destination": "/iptv.html", "permanent": true }
   ],
   "headers": [
     {

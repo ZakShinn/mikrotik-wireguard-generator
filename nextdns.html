@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NextDNS trên MikroTik — DoH RouterOS | Zakshin</title>
+    <meta name="description" content="Sinh script cấu hình DNS over HTTPS (NextDNS) cho MikroTik RouterOS 7+. Nhập Profile ID, tùy chọn thiết bị, copy vào Terminal.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://mikrotik.hainghia.net/nextdns">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta name="theme-color" content="#f5f7fa">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #00d1b2; --bg: #f5f7fa; --card-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+        body { background-color: var(--bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .top-nav { background: white; padding: 0.75rem clamp(1rem, 3vw, 1.5rem); border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .tool-nav-brand { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem; }
+        .tool-nav-title { margin: 0 !important; font-size: 1.25rem !important; font-weight: 600 !important; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .tool-nav-meta { font-size: 0.85rem; line-height: 1.3; text-align: right; }
+        .tool-nav-meta strong { color: var(--primary); }
+        .tool-nav-meta .tool-nav-meta-sub { font-size: 0.72rem; color: #7a7a7a; margin-top: 2px; }
+        .tool-nav-meta-col { display: flex; justify-content: flex-end; align-items: center; }
+        .nav-center-actions { display: flex; align-items: center; gap: 0.75rem; justify-content: center; flex-wrap: wrap; flex-grow: 1; }
+        .main-content { width: 100%; max-width: min(1320px, 100vw); margin: 0 auto; padding: clamp(1rem, 3vw, 2rem); box-sizing: border-box; }
+        .nat-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: stretch; }
+        @media (min-width: 1024px) { .nat-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
+        .config-box {
+            background: white; border-radius: 12px; padding: clamp(1.1rem, 2.5vw, 1.5rem); box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--primary); display: flex; flex-direction: column; min-height: 0; height: 100%;
+        }
+        .nat-panel-script .script-header { flex-shrink: 0; }
+        .nat-panel-script pre { flex: 1 1 auto; min-height: 280px; margin: 0 !important; }
+        .nat-panel-script { min-height: 320px; }
+        .label.is-size-7 { color: #333; margin-bottom: 0.2rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        .info-tip { position: relative; color: var(--primary); cursor: help; margin-left: 5px; display: inline-block; }
+        .tip-content { display:none; position:absolute; left:25px; top:-10px; background:#262a2e; color:#fff; padding:12px; border-radius:8px; width:300px; z-index:1000; font-size:0.8rem; box-shadow:0 8px 20px rgba(0,0,0,0.4); border:1px solid #3d444b; pointer-events:none; }
+        .info-tip:hover .tip-content { display:block; }
+        .tip-header { color: var(--primary); font-weight:800; font-size:0.85rem; margin-bottom:8px; border-bottom:1px solid #3d444b; padding-bottom:5px; }
+        .tip-row { display:flex; align-items:flex-start; margin-bottom:8px; line-height:1.4; font-size:0.8rem; }
+        .tip-row .t-label { font-weight:700; color:#b2bec3; min-width:75px; margin-left:5px; }
+        .tip-row .t-val { flex:1; color:#dfe6e9; }
+        .tip-def { background:#fff; color:#d63384; padding:2px 6px; border-radius:4px; font-family:Consolas,monospace; font-size:0.75rem; }
+        .script-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:0.75rem; flex-wrap:wrap; }
+        @media (max-width:600px) { .script-header .copy-btn { flex:1 1 auto; justify-content:center; min-height:40px; } }
+        pre { background:#1a1c1e !important; color:#00f2ff !important; border-radius:10px; padding:1.5rem !important; font-size:0.85rem; border:1px solid #333; white-space:pre-wrap; }
+        .copy-btn { display:inline-flex; align-items:center; justify-content:center; background:var(--primary); color:#fff; border:none; cursor:pointer; padding:8px 16px; border-radius:8px; font-size:0.8rem; font-weight:600; }
+        .copy-btn:hover { background:#00b89c; }
+        .toast-msg { position:fixed; bottom:20px; right:20px; background:#333; color:#fff; padding:12px 25px; border-radius:50px; z-index:9999; }
+        @media (max-width:1023px) {
+            .nav-center-actions { flex-wrap:wrap; }
+            .tool-nav-meta-col { justify-content:center; width:100%; }
+            .tool-nav-meta { text-align:center !important; }
+            .nat-panel-script pre { min-height:220px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div v-if="showToast" class="toast-msg"><i class="fas fa-check-circle has-text-success mr-2"></i> {{ t.ui.copied }}</div>
+
+        <nav class="top-nav">
+            <div class="container is-fluid px-2">
+                <div class="columns is-vcentered is-mobile is-multiline mb-0">
+                    <div class="column is-narrow py-2">
+                        <div class="tool-nav-brand">
+                            <a href="index.html" class="button is-small is-light is-rounded" title="Trang chủ"><i class="fas fa-home"></i></a>
+                            <h1 class="tool-nav-title"><i class="fas fa-filter has-text-primary"></i> NextDNS</h1>
+                        </div>
+                    </div>
+                    <div class="column py-2">
+                        <div class="nav-center-actions">
+                            <button type="button" class="button is-small is-rounded is-light" @click="toggleLang">
+                                <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="column is-narrow py-2 tool-nav-meta-col">
+                        <div class="tool-nav-meta">
+                            <div><strong>Nghĩa Zakshin</strong></div>
+                            <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <div class="nat-grid">
+                <section class="config-box nat-panel-form">
+                    <h3 class="subtitle is-6 has-text-weight-bold mb-4"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.serverConfig }}</h3>
+
+                    <div v-for="field in fieldsList" :key="field" class="field">
+                        <label class="label is-size-7">
+                            {{ t.labels[field] }}
+                            <span class="info-tip"><i class="fas fa-question-circle"></i>
+                                <div class="tip-content">
+                                    <div class="tip-header">{{ t.labels[field] }}</div>
+                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipAim }}</span><span class="t-val">{{ t.hints[field].aim }}</span></div>
+                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipType }}</span><span class="t-val">{{ t.hints[field].type }}</span></div>
+                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints[field].def }}</span></span></div>
+                                </div>
+                            </span>
+                        </label>
+                        <div class="control"><input class="input is-small" v-model="form[field]"></div>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox is-size-7 has-text-weight-bold">
+                            <input type="checkbox" v-model="form.allowRemote"> {{ t.ui.allowRemote }}
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label class="checkbox is-size-7 has-text-weight-bold">
+                            <input type="checkbox" v-model="form.verifyCert"> {{ t.ui.verifyCert }}
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label class="checkbox is-size-7 has-text-weight-bold">
+                            <input type="checkbox" v-model="form.includeDhcpDns"> {{ t.ui.includeDhcpDns }}
+                        </label>
+                        <p class="help is-size-7 mb-2">{{ t.ui.includeDhcpDnsHelp }}</p>
+                        <template v-if="form.includeDhcpDns">
+                            <div class="field mb-0">
+                                <label class="label is-size-7">{{ t.labels.routerIp }}</label>
+                                <div class="control"><input class="input is-small" v-model="form.routerIp" :placeholder="t.hints.routerIp.def"></div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="field">
+                        <label class="checkbox is-size-7 has-text-weight-bold">
+                            <input type="checkbox" v-model="form.includeDnsRedirect"> {{ t.ui.includeDnsRedirect }}
+                        </label>
+                        <p class="help is-size-7 mb-2">{{ t.ui.includeDnsRedirectHelp }}</p>
+                    </div>
+                    <div class="field mb-0" v-if="form.includeDhcpDns || form.includeDnsRedirect">
+                        <label class="label is-size-7">{{ t.labels.lanNet }}</label>
+                        <div class="control"><input class="input is-small" v-model="form.lanNet" :placeholder="t.hints.lanNet.def"></div>
+                        <p class="help is-size-7">{{ t.ui.lanNetHelp }}</p>
+                    </div>
+                </section>
+
+                <section class="config-box nat-panel-script">
+                    <div class="script-header">
+                        <h3 class="subtitle is-6 has-text-weight-bold mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h3>
+                        <button type="button" class="copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                    </div>
+                    <pre id="main-script">{{ generatedScript }}</pre>
+                    <div class="notification is-light is-info is-size-7 mt-4 mb-0 p-3">
+                        <i class="fas fa-info-circle mr-2"></i> {{ t.ui.note }}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp } = Vue;
+        const i18n = {
+            vi: {
+                labels: {
+                    profile: 'NextDNS Profile ID',
+                    deviceName: 'Tên thiết bị (tùy chọn)',
+                    maxConn: 'Số kết nối DoH tối đa',
+                    routerIp: 'IP router (DNS cho DHCP)',
+                    lanNet: 'Mạng LAN (CIDR)'
+                },
+                hints: {
+                    profile: { aim: 'ID lấy trong NextDNS → Setup → Rooter / DNS (chuỗi trong URL dns.nextdns.io/XXXX).', type: 'Chuỗi', def: 'abc123' },
+                    deviceName: { aim: 'Tùy chọn NextDNS: gán thiết bị vào profile (Linked IP / Device name). Để trống nếu không dùng.', type: 'Chuỗi / trống', def: 'router-home' },
+                    maxConn: { aim: 'Giới hạn kết nối song song tới DoH (RouterOS).', type: 'Số', def: '5' },
+                    routerIp: { aim: 'IP LAN của router — client DHCP sẽ dùng làm DNS (thường trùng gateway).', type: 'IPv4', def: '192.168.88.1' },
+                    lanNet: { aim: 'Dải LAN: dùng cho DHCP (address=) và/hoặc NAT DNS redirect (src-address). Khớp /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' }
+                },
+                ui: {
+                    serverConfig: 'Cấu hình thông số', scriptTitle: 'MikroTik Script', copy: 'Copy Script',
+                    scriptComment: 'RouterOS 7+',
+                    allowRemote: 'Cho phép truy vấn DNS từ mạng LAN (máy chỉ tới IP Router làm DNS)',
+                    verifyCert: 'Xác minh chứng chỉ DoH (khuyến nghị bật)',
+                    includeDhcpDns: 'Kèm lệnh DHCP: trỏ DNS của toàn bộ client về router',
+                    includeDhcpDnsHelp: 'Bật nếu muốn script thêm lệnh gán dns-server trên mạng DHCP. Tắt nếu bạn tự chỉ DNS từng máy hoặc dùng cách khác.',
+                    includeDnsRedirect: 'Kèm NAT DNS redirect (ép UDP/TCP 53 từ LAN về router)',
+                    includeDnsRedirectHelp: 'Thiết bị chỉ tới 1.1.1.1, 8.8.8.8… vẫn bị chuyển sang resolver trên router (dstnat redirect). Cần bật “Cho phép truy vấn DNS từ LAN”. Tránh trùng rule /ip firewall nat cũ.',
+                    dhcpDnsComment: 'Tùy chọn — client DHCP dùng router làm DNS (sửa find nếu có nhiều mạng)',
+                    dnsRedirectComment: 'Tùy chọn — DNS hijack: redirect cổng 53 về router (dst-address-type=!local = không áp khi đích đã là router)',
+                    lanNetHelp: 'Dùng khi bật DHCP hoặc NAT redirect: khớp mạng LAN (ví dụ 192.168.88.0/24).',
+                    note: 'Cần RouterOS 7 trở lên. Kiểm tra /ip dns in terminal sau khi dán. Nếu đã có cấu hình DNS cũ, hãy sao lưu trước khi chạy lệnh. Muốn LAN dùng DoH qua router: bật “Cho phép truy vấn DNS từ LAN”; DHCP và DNS redirect là hai cách bổ sung (một là gán DNS, một là chặn DNS lệch).',
+                    copied: 'Đã sao chép!', tipAim: 'Mục đích', tipType: 'Kiểu', tipDef: 'Mặc định'
+                }
+            },
+                en: {
+                labels: {
+                    profile: 'NextDNS Profile ID',
+                    deviceName: 'Device name (optional)',
+                    maxConn: 'Max DoH connections',
+                    routerIp: 'Router IP (DHCP DNS)',
+                    lanNet: 'LAN network (CIDR)'
+                },
+                hints: {
+                    profile: { aim: 'From NextDNS dashboard → Setup → router/DNS (ID in https://dns.nextdns.io/XXXX).', type: 'String', def: 'abc123' },
+                    deviceName: { aim: 'Optional NextDNS device binding. Leave empty if unused.', type: 'String / empty', def: 'router-home' },
+                    maxConn: { aim: 'Parallel DoH connections limit (RouterOS).', type: 'Number', def: '5' },
+                    routerIp: { aim: 'Router LAN IP — DHCP clients will use this as their DNS resolver.', type: 'IPv4', def: '192.168.88.1' },
+                    lanNet: { aim: 'LAN subnet for DHCP address= and/or NAT DNS redirect src-address. Match /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' }
+                },
+                ui: {
+                    serverConfig: 'Parameters', scriptTitle: 'MikroTik Script', copy: 'Copy Script',
+                    scriptComment: 'RouterOS 7+',
+                    allowRemote: 'Allow DNS queries from LAN (clients use router as resolver)',
+                    verifyCert: 'Verify DoH TLS certificate (recommended)',
+                    includeDhcpDns: 'Append DHCP: point all DHCP clients’ DNS to the router',
+                    includeDhcpDnsHelp: 'Adds a dhcp-server network command. Turn off if you set DNS per device or use another method.',
+                    includeDnsRedirect: 'Append NAT: DNS redirect (force LAN UDP/TCP 53 to router)',
+                    includeDnsRedirectHelp: 'Devices using 1.1.1.1, 8.8.8.8, etc. still hit the router resolver (dstnat redirect). Requires “Allow DNS from LAN”. Avoid duplicate /ip firewall nat rules.',
+                    dhcpDnsComment: 'Optional — DHCP clients use router as DNS (adjust find if you have multiple networks)',
+                    dnsRedirectComment: 'Optional — DNS hijack: redirect port 53 to router (dst-address-type=!local skips traffic already to the router)',
+                    lanNetHelp: 'Shown when DHCP and/or redirect is enabled: must match your LAN (e.g. 192.168.88.0/24).',
+                    note: 'Requires RouterOS v7+. Run /ip dns print to verify. Back up existing DNS settings before applying. For LAN-wide DoH via the router: enable “Allow DNS from LAN”; DHCP and DNS redirect complement each other (lease DNS vs hijacking hard-coded resolvers).',
+                    copied: 'Copied!', tipAim: 'Purpose', tipType: 'Type', tipDef: 'Default'
+                }
+            }
+        };
+
+        createApp({
+            data() {
+                return {
+                    lang: 'vi',
+                    showToast: false,
+                    fieldsList: ['profile', 'deviceName', 'maxConn'],
+                    form: {
+                        profile: '',
+                        deviceName: '',
+                        maxConn: '5',
+                        allowRemote: true,
+                        verifyCert: true,
+                        includeDhcpDns: false,
+                        includeDnsRedirect: false,
+                        routerIp: '192.168.88.1',
+                        lanNet: '192.168.88.0/24'
+                    }
+                };
+            },
+            computed: {
+                t() { return i18n[this.lang]; },
+                dohUrl() {
+                    const p = (this.form.profile || '').trim();
+                    const d = (this.form.deviceName || '').trim();
+                    if (!p) return 'https://dns.nextdns.io/YOUR_PROFILE';
+                    const base = 'https://dns.nextdns.io/' + p;
+                    return d ? base + '/' + encodeURIComponent(d) : base;
+                },
+                generatedScript() {
+                    const t = this.t.ui;
+                    const ar = this.form.allowRemote ? 'yes' : 'no';
+                    const vc = this.form.verifyCert ? 'yes' : 'no';
+                    const lines = [
+                        '# NextDNS (DoH) — ' + t.scriptComment,
+                        '/ip dns set allow-remote-requests=' + ar + ' servers="" use-doh-server="' + this.dohUrl + '" doh-max-server-connections=' + this.form.maxConn + ' verify-doh-cert=' + vc
+                    ];
+                    if (this.form.includeDhcpDns) {
+                        const ip = (this.form.routerIp || '').trim() || '192.168.88.1';
+                        const net = (this.form.lanNet || '').trim() || '192.168.88.0/24';
+                        lines.push('');
+                        lines.push('# ' + t.dhcpDnsComment);
+                        lines.push('/ip dhcp-server network set [find address=' + net + '] dns-server=' + ip);
+                    }
+                    if (this.form.includeDnsRedirect) {
+                        const net = (this.form.lanNet || '').trim() || '192.168.88.0/24';
+                        lines.push('');
+                        lines.push('# ' + t.dnsRedirectComment);
+                        lines.push('/ip firewall nat add chain=dstnat action=redirect protocol=udp dst-port=53 src-address=' + net + ' dst-address-type=!local to-ports=53 comment="DNS-redirect-UDP"');
+                        lines.push('/ip firewall nat add chain=dstnat action=redirect protocol=tcp dst-port=53 src-address=' + net + ' dst-address-type=!local to-ports=53 comment="DNS-redirect-TCP"');
+                    }
+                    return lines.join('\n');
+                }
+            },
+            methods: {
+                toggleLang() { this.lang = this.lang === 'vi' ? 'en' : 'vi'; },
+                copyText(id) {
+                    navigator.clipboard.writeText(document.getElementById(id).innerText);
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 2000);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
