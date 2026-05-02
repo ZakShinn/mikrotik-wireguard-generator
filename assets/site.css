@@ -895,11 +895,18 @@ header.site-header {
     width: 40px;
     height: 40px;
     border-radius: var(--radius-sm);
-    background: linear-gradient(135deg, var(--accent), #0d9488);
+    background: #0a0a0a;
+    overflow: hidden;
+    flex-shrink: 0;
     display: grid;
     place-items: center;
-    color: #042f2e;
-    font-size: 1.1rem;
+}
+
+.brand-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
 
 .brand-text {
