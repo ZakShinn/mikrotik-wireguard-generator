@@ -1,19 +1,40 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <!-- SEO -->
-    <title>MikroTik WireGuard Generator | Nghĩa Zakshin</title>
-    <meta name="description" content="Công cụ tạo cấu hình WireGuard chuyên dụng cho router MikroTik. Dễ dàng tạo peer, xuất file .conf và mã QR hoàn toàn miễn phí.">
+    <title>MikroTik WireGuard — Tạo VPN, script RouterOS, QR &amp; .conf | Zakshin</title>
+    <meta name="description" content="Tạo cấu hình WireGuard cho MikroTik RouterOS: script Terminal, peer, file .conf, mã QR, ZIP. Miễn phí, khóa chỉ xử lý trên trình duyệt của bạn.">
+    <meta name="keywords" content="MikroTik WireGuard, RouterOS VPN, MT-WG Gen, WireGuard script, QR WireGuard, Zakshin">
+    <meta name="author" content="Nghĩa Zakshin">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://mikrotik.hainghia.net/wireguard">
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta name="theme-color" content="#f5f7fa">
 
-    <!-- Open Graph (Facebook, Telegram, Zalo) -->
-    <meta property="og:title" content="MikroTik WireGuard Generator | Nghĩa Zakshin">
-    <meta property="og:description" content="Tạo cấu hình WireGuard cho MikroTik chỉ trong vài giây. Hỗ trợ QR Code và tải file hàng loạt.">
-    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta property="og:site_name" content="MikroTik Tools — Zakshin">
+    <meta property="og:title" content="MikroTik WireGuard — Generator cho RouterOS | Zakshin">
+    <meta property="og:description" content="Sinh script MikroTik, peer, .conf và QR cho WireGuard VPN. Không upload khóa lên máy chủ.">
+    <meta property="og:url" content="https://mikrotik.hainghia.net/wireguard">
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta property="og:image:alt" content="MikroTik WireGuard Generator">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MikroTik WireGuard Generator | Zakshin">
+    <meta name="twitter:description" content="Script RouterOS, .conf, QR — client-side, miễn phí.">
+    <meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"WebApplication","name":"MikroTik WireGuard Generator (MT-WG Gen)","url":"https://mikrotik.hainghia.net/wireguard","applicationCategory":"NetworkingApplication","operatingSystem":"Web Browser","browserRequirements":"Requires JavaScript. Modern browser recommended.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Nghĩa Zakshin","url":"https://github.com/ZakShinn"},"description":"Công cụ tạo cấu hình WireGuard cho MikroTik: script, peer, .conf, mã QR."},
+      {"@type":"BreadcrumbList","itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Trang chủ","item":"https://mikrotik.hainghia.net/"},
+        {"@type":"ListItem","position":2,"name":"WireGuard","item":"https://mikrotik.hainghia.net/wireguard"}
+      ]}
+    ]}
+    </script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -114,8 +135,8 @@
                 <div class="columns is-vcentered is-mobile is-multiline mb-0">
                     <div class="column is-narrow py-2">
                         <div class="tool-nav-brand">
-                            <a href="index.html" class="button is-small is-light is-rounded" title="Menu công cụ"><i class="fas fa-home"></i></a>
-                            <a href="Hairpin_NAT.html" class="button is-small is-light is-rounded" title="Hairpin NAT"><i class="fas fa-route"></i></a>
+                            <a href="/" class="button is-small is-light is-rounded" title="Menu công cụ"><i class="fas fa-home"></i></a>
+                            <a href="/hairpin-nat" class="button is-small is-light is-rounded" title="Hairpin NAT"><i class="fas fa-route"></i></a>
                             <h1 class="tool-nav-title"><i class="fas fa-network-wired has-text-primary"></i> MT-WG Gen</h1>
                         </div>
                     </div>

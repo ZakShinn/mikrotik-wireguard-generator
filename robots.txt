@@ -1,0 +1,5 @@
+# https://mikrotik.hainghia.net
+User-agent: *
+Allow: /
+
+Sitemap: https://mikrotik.hainghia.net/sitemap.xml

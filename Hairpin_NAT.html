@@ -3,7 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>MikroTik Hairpin NAT Generator | Zakshin</title>
+    <title>MikroTik Hairpin NAT — Script NAT loopback &amp; port forward | Zakshin</title>
+    <meta name="description" content="Sinh script Hairpin NAT cho MikroTik: truy cập dịch vụ nội bộ qua IP WAN khi ở LAN, kèm dst-nat WAN. Dán script vào RouterOS, miễn phí.">
+    <meta name="keywords" content="MikroTik Hairpin NAT, NAT loopback, dst-nat, port forward RouterOS, script RouterOS, Zakshin">
+    <meta name="author" content="Nghĩa Zakshin">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://mikrotik.hainghia.net/hairpin-nat">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta name="theme-color" content="#f5f7fa">
+
+    <meta property="og:site_name" content="MikroTik Tools — Zakshin">
+    <meta property="og:title" content="MikroTik Hairpin NAT — Script cho RouterOS | Zakshin">
+    <meta property="og:description" content="Tạo script firewall &amp; NAT Hairpin trên MikroTik: loopback LAN, mở port WAN.">
+    <meta property="og:url" content="https://mikrotik.hainghia.net/hairpin-nat">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta property="og:image:alt" content="MikroTik Hairpin NAT Generator">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MikroTik Hairpin NAT — Zakshin">
+    <meta name="twitter:description" content="Script Hairpin NAT &amp; port forward cho RouterOS.">
+    <meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"WebApplication","name":"MikroTik Hairpin NAT Generator","url":"https://mikrotik.hainghia.net/hairpin-nat","applicationCategory":"NetworkingApplication","operatingSystem":"Web Browser","browserRequirements":"Requires JavaScript.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Nghĩa Zakshin","url":"https://github.com/ZakShinn"},"description":"Sinh script Hairpin NAT cho MikroTik RouterOS."},
+      {"@type":"BreadcrumbList","itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Trang chủ","item":"https://mikrotik.hainghia.net/"},
+        {"@type":"ListItem","position":2,"name":"Hairpin NAT","item":"https://mikrotik.hainghia.net/hairpin-nat"}
+      ]}
+    ]}
+    </script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -131,8 +163,8 @@
                 <div class="columns is-vcentered is-mobile is-multiline mb-0">
                     <div class="column is-narrow py-2">
                         <div class="tool-nav-brand">
-                            <a href="index.html" class="button is-small is-light is-rounded" title="Menu công cụ"><i class="fas fa-home"></i></a>
-                            <a href="wireguard.html" class="button is-small is-light is-rounded" title="WireGuard (MT-WG Gen)"><i class="fas fa-user-shield"></i></a>
+                            <a href="/" class="button is-small is-light is-rounded" title="Menu công cụ"><i class="fas fa-home"></i></a>
+                            <a href="/wireguard" class="button is-small is-light is-rounded" title="WireGuard (MT-WG Gen)"><i class="fas fa-user-shield"></i></a>
                             <h1 class="tool-nav-title"><i class="fas fa-route has-text-primary"></i> Hairpin NAT</h1>
                         </div>
                     </div>
