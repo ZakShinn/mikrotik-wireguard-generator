@@ -3,247 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>NextDNS trên MikroTik — DoH RouterOS | Zakshin</title>
-    <meta name="description" content="Sinh script cấu hình DNS over HTTPS (NextDNS) cho MikroTik RouterOS 7+. Nhập Profile ID, tùy chọn thiết bị, copy vào Terminal.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <title>NextDNS trên MikroTik — DNS qua HTTPS (DoH) RouterOS | Zakshin</title>
+    <meta name="description" content="Sinh script cấu hình DNS over HTTPS (NextDNS) cho MikroTik RouterOS 7+. Nhập Profile ID, tùy chọn thiết bị, copy vào Terminal. Xử lý trên trình duyệt.">
+    <meta name="keywords" content="MikroTik, RouterOS, NextDNS, DNS over HTTPS, DoH, DHCP DNS, Zakshin">
+    <meta name="author" content="Nghĩa Zakshin">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://mikrotik.hainghia.net/nextdns">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
-    <meta name="theme-color" content="#f5f7fa">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --primary: #00d1b2; --bg: #f5f7fa; --card-shadow: 0 8px 25px rgba(0,0,0,0.05); }
-        body { background-color: var(--bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-        .top-nav { background: white; padding: 0.75rem clamp(1rem, 3vw, 1.5rem); border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .tool-nav-brand { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem; }
-        .tool-nav-title { margin: 0 !important; font-size: 1.25rem !important; font-weight: 600 !important; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-        .tool-nav-meta { font-size: 0.85rem; line-height: 1.3; text-align: right; }
-        .tool-nav-meta strong { color: var(--primary); }
-        .tool-nav-meta .tool-nav-meta-sub { font-size: 0.72rem; color: #7a7a7a; margin-top: 2px; }
-        .tool-nav-meta-col { display: flex; justify-content: flex-end; align-items: center; }
-        .nav-center-actions { display: flex; align-items: center; gap: 0.75rem; justify-content: center; flex-wrap: wrap; flex-grow: 1; }
-        .main-content { width: 100%; max-width: min(1320px, 100vw); margin: 0 auto; padding: clamp(1rem, 3vw, 2rem); box-sizing: border-box; }
-        .nat-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: stretch; }
-        @media (min-width: 1024px) { .nat-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
-        .config-box {
-            background: white; border-radius: 12px; padding: clamp(1.1rem, 2.5vw, 1.5rem); box-shadow: var(--card-shadow);
-            border-top: 4px solid var(--primary); display: flex; flex-direction: column; min-height: 0; height: 100%;
-        }
-        .nat-panel-script .script-header { flex-shrink: 0; }
-        .nat-panel-script pre { flex: 1 1 auto; min-height: 280px; margin: 0 !important; }
-        .nat-panel-script { min-height: 320px; }
-        .label.is-size-7 { color: #333; margin-bottom: 0.2rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
-        .info-tip { position: relative; color: var(--primary); cursor: help; margin-left: 5px; display: inline-block; }
-        .tip-content { display:none; position:absolute; left:25px; top:-10px; background:#262a2e; color:#fff; padding:12px; border-radius:8px; width:300px; z-index:1000; font-size:0.8rem; box-shadow:0 8px 20px rgba(0,0,0,0.4); border:1px solid #3d444b; pointer-events:none; }
-        .info-tip:hover .tip-content { display:block; }
-        .tip-header { color: var(--primary); font-weight:800; font-size:0.85rem; margin-bottom:8px; border-bottom:1px solid #3d444b; padding-bottom:5px; }
-        .tip-row { display:flex; align-items:flex-start; margin-bottom:8px; line-height:1.4; font-size:0.8rem; }
-        .tip-row .t-label { font-weight:700; color:#b2bec3; min-width:75px; margin-left:5px; }
-        .tip-row .t-val { flex:1; color:#dfe6e9; }
-        .tip-def { background:#fff; color:#d63384; padding:2px 6px; border-radius:4px; font-family:Consolas,monospace; font-size:0.75rem; }
-        .script-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:0.75rem; flex-wrap:wrap; }
-        @media (max-width:600px) { .script-header .copy-btn { flex:1 1 auto; justify-content:center; min-height:40px; } }
-        pre { background:#1a1c1e !important; color:#00f2ff !important; border-radius:10px; padding:1.5rem !important; font-size:0.85rem; border:1px solid #333; white-space:pre-wrap; }
-        .copy-btn { display:inline-flex; align-items:center; justify-content:center; background:var(--primary); color:#fff; border:none; cursor:pointer; padding:8px 16px; border-radius:8px; font-size:0.8rem; font-weight:600; }
-        .copy-btn:hover { background:#00b89c; }
-        .toast-msg { position:fixed; bottom:20px; right:20px; background:#333; color:#fff; padding:12px 25px; border-radius:50px; z-index:9999; }
-        @media (max-width:1023px) {
-            .nav-center-actions { flex-wrap:wrap; }
-            .tool-nav-meta-col { justify-content:center; width:100%; }
-            .tool-nav-meta { text-align:center !important; }
-            .nat-panel-script pre { min-height:220px; }
-        }
-    </style>
-</head>
-<body>
-    <div id="app">
-        <div v-if="showToast" class="toast-msg"><i class="fas fa-check-circle has-text-success mr-2"></i> {{ t.ui.copied }}</div>
+    <meta name="theme-color" content="#0c0f14">
+    <meta name="format-detection" content="telephone=no">
 
-        <nav class="top-nav">
-            <div class="container is-fluid px-2">
-                <div class="columns is-vcentered is-mobile is-multiline mb-0">
-                    <div class="column is-narrow py-2">
-                        <div class="tool-nav-brand">
-                            <a href="index.html" class="button is-small is-light is-rounded" title="Trang chủ"><i class="fas fa-home"></i></a>
-                            <h1 class="tool-nav-title"><i class="fas fa-filter has-text-primary"></i> NextDNS</h1>
-                        </div>
+    <meta property="og:site_name" content="MikroTik Tools — Zakshin">
+    <meta property="og:title" content="NextDNS trên MikroTik — DoH RouterOS | Zakshin">
+    <meta property="og:description" content="Sinh lệnh /ip dns NextDNS (DoH), DHCP và NAT redirect DNS — RouterOS 7+.">
+    <meta property="og:url" content="https://mikrotik.hainghia.net/nextdns">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+    <meta property="og:image:alt" content="MikroTik Tools — NextDNS">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="NextDNS trên MikroTik | Zakshin">
+    <meta name="twitter:description" content="Generator DoH NextDNS cho RouterOS — copy script.">
+    <meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
+
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"WebApplication","name":"NextDNS DoH cho MikroTik","url":"https://mikrotik.hainghia.net/nextdns","applicationCategory":"NetworkingApplication","operatingSystem":"Web Browser","browserRequirements":"Requires JavaScript.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Nghĩa Zakshin","url":"https://github.com/ZakShinn"},"description":"Sinh script DNS over HTTPS NextDNS cho MikroTik RouterOS 7+."},
+      {"@type":"BreadcrumbList","itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Trang chủ","item":"https://mikrotik.hainghia.net/"},
+        {"@type":"ListItem","position":2,"name":"NextDNS","item":"https://mikrotik.hainghia.net/nextdns"}
+      ]}
+    ]}
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/site.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="app-shell">
+    <div class="noise" aria-hidden="true"></div>
+    <div id="app" class="app-shell">
+        <div v-if="showToast" class="toast-msg"><i class="fas fa-check-circle text-success mr-2"></i> {{ t.ui.copied }}</div>
+
+        <nav class="tool-nav">
+            <div class="tool-nav-inner">
+                <div class="tool-nav-row">
+                    <div class="tool-nav-brand">
+                        <a href="index.html" class="btn btn-ghost btn-sm btn-icon" title="Trang chủ" aria-label="Trang chủ"><i class="fas fa-home"></i></a>
+                        <h1 class="tool-nav-title"><i class="fas fa-filter accent-icon"></i> NextDNS</h1>
                     </div>
-                    <div class="column py-2">
-                        <div class="nav-center-actions">
-                            <button type="button" class="button is-small is-rounded is-light" @click="toggleLang">
-                                <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
-                            </button>
-                        </div>
+                    <div class="tool-nav-actions">
+                        <button type="button" class="btn btn-ghost btn-sm" @click="toggleLang">
+                            <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                        </button>
                     </div>
-                    <div class="column is-narrow py-2 tool-nav-meta-col">
-                        <div class="tool-nav-meta">
-                            <div><strong>Nghĩa Zakshin</strong></div>
-                            <div class="tool-nav-meta-sub">MikroTik Tools</div>
-                        </div>
+                    <div class="tool-nav-meta">
+                        <div><strong>Nghĩa Zakshin</strong></div>
+                        <div class="tool-nav-meta-sub">MikroTik Tools</div>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <div class="main-content">
-            <div class="nat-grid">
-                <section class="config-box nat-panel-form">
-                    <h3 class="subtitle is-6 has-text-weight-bold mb-4"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.serverConfig }}</h3>
+        <main class="tool-main">
+            <div class="layout-split">
+                <section class="panel nat-panel-form">
+                    <h2 class="section-title"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.serverConfig }}</h2>
 
                     <div v-for="field in fieldsList" :key="field" class="field">
-                        <label class="label is-size-7">
+                        <label class="label">
                             {{ t.labels[field] }}
-                            <span class="info-tip"><i class="fas fa-question-circle"></i>
-                                <div class="tip-content">
-                                    <div class="tip-header">{{ t.labels[field] }}</div>
-                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipAim }}</span><span class="t-val">{{ t.hints[field].aim }}</span></div>
-                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipType }}</span><span class="t-val">{{ t.hints[field].type }}</span></div>
-                                    <div class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints[field].def }}</span></span></div>
-                                </div>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels[field] }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}</span><span class="t-val">{{ t.hints[field].aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}</span><span class="t-val">{{ t.hints[field].type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints[field].def }}</span></span></span>
+                                </span>
                             </span>
                         </label>
-                        <div class="control"><input class="input is-small" v-model="form[field]"></div>
+                        <div class="control"><input class="input" v-model="form[field]"></div>
                     </div>
 
                     <div class="field">
-                        <label class="checkbox is-size-7 has-text-weight-bold">
-                            <input type="checkbox" v-model="form.useUltralowServers"> {{ t.ui.useUltralowServers }}
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.useUltralowServers">
+                            <span class="checkbox-text">{{ t.ui.useUltralowServers }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.ui.useUltralowServersTip }}</span></span>
+                                </span>
+                            </span>
                         </label>
-                        <p class="help is-size-7 mb-2">{{ t.ui.useUltralowServersHelp }}</p>
                         <template v-if="form.useUltralowServers">
-                            <label class="label is-size-7">{{ t.labels.plainDnsServers }}</label>
-                            <div class="control"><input class="input is-small" v-model="form.plainDnsServers" :placeholder="t.hints.plainDnsServers.def"></div>
-                            <p class="help is-size-7">{{ t.hints.plainDnsServers.aim }}</p>
-                            <label class="label is-size-7 mt-2">{{ t.labels.plainDnsServersV6 }}</label>
-                            <div class="control"><input class="input is-small" v-model="form.plainDnsServersV6" :placeholder="t.hints.plainDnsServersV6.def"></div>
-                            <p class="help is-size-7">{{ t.hints.plainDnsServersV6.aim }}</p>
+                            <label class="label">{{ t.labels.plainDnsServers }}
+                                <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                    <span class="tip-content">
+                                        <span class="tip-header">{{ t.labels.plainDnsServers }}</span>
+                                        <span class="tip-row"><span class="t-val">{{ t.hints.plainDnsServers.aim }}</span></span>
+                                        <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints.plainDnsServers.def }}</span></span></span>
+                                    </span>
+                                </span>
+                            </label>
+                            <div class="control"><input class="input" v-model="form.plainDnsServers" :placeholder="t.hints.plainDnsServers.def"></div>
+                            <label class="label">{{ t.labels.plainDnsServersV6 }}
+                                <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                    <span class="tip-content">
+                                        <span class="tip-header">{{ t.labels.plainDnsServersV6 }}</span>
+                                        <span class="tip-row"><span class="t-val">{{ t.hints.plainDnsServersV6.aim }}</span></span>
+                                        <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints.plainDnsServersV6.def }}</span></span></span>
+                                    </span>
+                                </span>
+                            </label>
+                            <div class="control"><input class="input" v-model="form.plainDnsServersV6" :placeholder="t.hints.plainDnsServersV6.def"></div>
                         </template>
                     </div>
                     <div class="field">
-                        <label class="checkbox is-size-7 has-text-weight-bold">
-                            <input type="checkbox" v-model="form.allowRemote"> {{ t.ui.allowRemote }}
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.allowRemote">
+                            <span class="checkbox-text">{{ t.ui.allowRemote }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.ui.allowRemoteTip }}</span></span>
+                                </span>
+                            </span>
                         </label>
                     </div>
                     <div class="field">
-                        <label class="checkbox is-size-7 has-text-weight-bold">
-                            <input type="checkbox" v-model="form.verifyCert"> {{ t.ui.verifyCert }}
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.verifyCert">
+                            <span class="checkbox-text">{{ t.ui.verifyCert }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.ui.verifyCertTip }}</span></span>
+                                </span>
+                            </span>
                         </label>
                     </div>
                     <div class="field">
-                        <label class="checkbox is-size-7 has-text-weight-bold">
-                            <input type="checkbox" v-model="form.includeDhcpDns"> {{ t.ui.includeDhcpDns }}
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.includeDhcpDns">
+                            <span class="checkbox-text">{{ t.ui.includeDhcpDns }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.ui.includeDhcpDnsTip }}</span></span>
+                                </span>
+                            </span>
                         </label>
-                        <p class="help is-size-7 mb-2">{{ t.ui.includeDhcpDnsHelp }}</p>
                         <template v-if="form.includeDhcpDns">
-                            <div class="field mb-0">
-                                <label class="label is-size-7">{{ t.labels.routerIp }}</label>
-                                <div class="control"><input class="input is-small" v-model="form.routerIp" :placeholder="t.hints.routerIp.def"></div>
-                            </div>
+                            <label class="label">{{ t.labels.routerIp }}
+                                <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                    <span class="tip-content">
+                                        <span class="tip-header">{{ t.labels.routerIp }}</span>
+                                        <span class="tip-row"><span class="t-val">{{ t.hints.routerIp.aim }}</span></span>
+                                        <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints.routerIp.def }}</span></span></span>
+                                    </span>
+                                </span>
+                            </label>
+                            <div class="control"><input class="input" v-model="form.routerIp" :placeholder="t.hints.routerIp.def"></div>
                         </template>
                     </div>
                     <div class="field">
-                        <label class="checkbox is-size-7 has-text-weight-bold">
-                            <input type="checkbox" v-model="form.includeDnsRedirect"> {{ t.ui.includeDnsRedirect }}
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.includeDnsRedirect">
+                            <span class="checkbox-text">{{ t.ui.includeDnsRedirect }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.ui.includeDnsRedirectTip }}</span></span>
+                                </span>
+                            </span>
                         </label>
-                        <p class="help is-size-7 mb-2">{{ t.ui.includeDnsRedirectHelp }}</p>
                     </div>
                     <div class="field mb-0" v-if="form.includeDhcpDns || form.includeDnsRedirect">
-                        <label class="label is-size-7">{{ t.labels.lanNet }}</label>
-                        <div class="control"><input class="input is-small" v-model="form.lanNet" :placeholder="t.hints.lanNet.def"></div>
-                        <p class="help is-size-7">{{ t.ui.lanNetHelp }}</p>
+                        <label class="label">{{ t.labels.lanNet }}
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.lanNet }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.lanNet.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}</span><span class="t-val"><span class="tip-def">{{ t.hints.lanNet.def }}</span></span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <div class="control"><input class="input" v-model="form.lanNet" :placeholder="t.hints.lanNet.def"></div>
                     </div>
                 </section>
 
-                <section class="config-box nat-panel-script">
+                <section class="panel panel-script nat-panel-script">
                     <div class="script-header">
-                        <h3 class="subtitle is-6 has-text-weight-bold mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h3>
+                        <h2 class="section-title mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h2>
                         <button type="button" class="copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
                     </div>
-                    <pre id="main-script">{{ generatedScript }}</pre>
-                    <div class="notification is-light is-info is-size-7 mt-4 mb-0 p-3">
-                        <i class="fas fa-info-circle mr-2"></i> {{ t.ui.note }}
+                    <pre id="main-script" class="script-pre">{{ generatedScript }}</pre>
+                    <div class="callout mb-0">
+                        <strong><i class="fas fa-info-circle mr-1"></i></strong> {{ t.ui.note }}
                     </div>
                 </section>
             </div>
-        </div>
+        </main>
     </div>
 
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
         const { createApp } = Vue;
         const i18n = {
             vi: {
                 labels: {
-                    profile: 'NextDNS Profile ID',
-                    deviceName: 'Tên thiết bị (tùy chọn)',
-                    maxConn: 'Số kết nối DoH tối đa',
-                    routerIp: 'IP router (DNS cho DHCP)',
-                    lanNet: 'Mạng LAN (CIDR)',
-                    plainDnsServers: 'DNS thuần IPv4 (servers=)',
-                    plainDnsServersV6: 'DNS thuần IPv6 (servers=)'
+                    profile: 'Profile ID',
+                    deviceName: 'Tên thiết bị trong NextDNS (tuỳ chọn)',
+                    maxConn: 'Số kết nối DoH song song',
+                    routerIp: 'IP LAN của router',
+                    lanNet: 'Dải LAN',
+                    plainDnsServers: 'IPv4 ultralow',
+                    plainDnsServersV6: 'IPv6 ultralow'
                 },
                 hints: {
-                    profile: { aim: 'ID lấy trong NextDNS → Setup → Rooter / DNS (chuỗi trong URL dns.nextdns.io/XXXX).', type: 'Chuỗi', def: 'abc123' },
-                    deviceName: { aim: 'Tùy chọn NextDNS: gán thiết bị vào profile (Linked IP / Device name). Để trống nếu không dùng.', type: 'Chuỗi / trống', def: 'router-home' },
-                    maxConn: { aim: 'Giới hạn kết nối song song tới DoH (RouterOS).', type: 'Số', def: '5' },
-                    routerIp: { aim: 'IP LAN của router — client DHCP sẽ dùng làm DNS (thường trùng gateway).', type: 'IPv4', def: '192.168.88.1' },
-                    lanNet: { aim: 'Dải LAN: dùng cho DHCP (address=) và/hoặc NAT DNS redirect (src-address). Khớp /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' },
-                    plainDnsServers: { aim: 'IPv4 ultralow NextDNS (mẫu). Đối chiếu NextDNS → Setup → Router nếu khác.', type: 'IPv4, phẩy', def: '45.90.28.22,45.90.30.22' },
-                    plainDnsServersV6: { aim: 'IPv6 ultralow NextDNS (mẫu). Để trống nếu không dùng IPv6.', type: 'IPv6, phẩy', def: '2a07:a8c0::,2a07:a8c1::' }
+                    profile: { aim: 'NextDNS → Setup → Router/DNS: ID là đoạn sau dns.nextdns.io/ trong URL.', type: 'Chuỗi', def: 'abc123' },
+                    deviceName: { aim: 'Để NextDNS phân nhóm log (Device name). Không dùng thì để trống.', type: 'Chữ hoặc trống', def: 'router-nha' },
+                    maxConn: { aim: 'RouterOS giới hạn bao nhiêu phiên DoH chạy song song.', type: 'Số', def: '5' },
+                    routerIp: { aim: 'Địa chỉ LAN của router — DHCP sẽ gán đây làm DNS cho máy trong LAN.', type: 'IPv4', def: '192.168.88.1' },
+                    lanNet: { aim: 'Phải khớp address trong /ip dhcp-server network print (VD 192.168.88.0/24). Dùng cho block DHCP và NAT redirect trong script.', type: 'CIDR', def: '192.168.88.0/24' },
+                    plainDnsServers: { aim: 'Danh sách IPv4 ultralow của NextDNS (số có thể khác vùng — lấy trong NextDNS → Setup → Router). Nhiều IP cách nhau dấu phẩy.', type: 'IPv4, phẩy', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServersV6: { aim: 'IPv6 ultralow tương tự; không dùng IPv6 thì để trống.', type: 'IPv6, phẩy', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
-                    serverConfig: 'Cấu hình thông số', scriptTitle: 'MikroTik Script', copy: 'Copy Script',
+                    tipDetails: 'Chi tiết',
+                    tipAim: 'Ý nghĩa',
+                    tipType: 'Kiểu',
+                    tipDef: 'Ví dụ',
+                    serverConfig: 'Thông số',
+                    scriptTitle: 'Script RouterOS',
+                    copy: 'Copy script',
                     scriptComment: 'RouterOS 7+',
-                    allowRemote: 'Cho phép truy vấn DNS từ mạng LAN (máy chỉ tới IP Router làm DNS)',
-                    verifyCert: 'Xác minh chứng chỉ DoH (khuyến nghị bật)',
-                    includeDhcpDns: 'Kèm lệnh DHCP: trỏ DNS của toàn bộ client về router',
-                    includeDhcpDnsHelp: 'Bật nếu muốn script thêm lệnh gán dns-server trên mạng DHCP. Tắt nếu bạn tự chỉ DNS từng máy hoặc dùng cách khác.',
-                    includeDnsRedirect: 'Kèm NAT DNS redirect (ép UDP/TCP 53 từ LAN về router)',
-                    includeDnsRedirectHelp: 'Thiết bị chỉ tới 1.1.1.1, 8.8.8.8… vẫn bị chuyển sang resolver trên router (dstnat redirect). Cần bật “Cho phép truy vấn DNS từ LAN”. Tránh trùng rule /ip firewall nat cũ.',
-                    useUltralowServers: 'Điền servers= — NextDNS ultralow (DNS thuần kèm DoH)',
-                    useUltralowServersHelp: 'Gán IPv4 + IPv6 ultralow vào /ip dns set servers=… (cùng một tham số, cách nhau bởi dấu phẩy). use-doh-server= vẫn là DoH. Tắt nếu muốn servers trống.',
-                    dhcpDnsComment: 'Tùy chọn — client DHCP dùng router làm DNS (sửa find nếu có nhiều mạng)',
-                    dnsRedirectComment: 'Tùy chọn — DNS hijack: redirect cổng 53 về router (dst-address-type=!local = không áp khi đích đã là router)',
-                    lanNetHelp: 'Dùng khi bật DHCP hoặc NAT redirect: khớp mạng LAN (ví dụ 192.168.88.0/24).',
-                    note: 'Cần RouterOS 7 trở lên. Kiểm tra /ip dns print sau khi dán. IP ultralow IPv4/IPv6 có thể khác theo vùng — đối chiếu NextDNS → Setup → Router. Muốn LAN dùng DoH qua router: bật “Cho phép truy vấn DNS từ LAN”; DHCP và DNS redirect là hai cách bổ sung.',
-                    copied: 'Đã sao chép!', tipAim: 'Mục đích', tipType: 'Kiểu', tipDef: 'Mặc định'
+                    allowRemote: 'Cho LAN hỏi DNS qua IP router',
+                    allowRemoteTip: 'Bật khi máy trong LAN đặt DNS là gateway và bạn muốn resolver chạy trên router (thường dùng kèm DoH NextDNS).',
+                    verifyCert: 'Kiểm tra chứng chỉ HTTPS của NextDNS',
+                    verifyCertTip: 'Nên bật để giảm rủi ro máy chủ DoH giả mạo.',
+                    includeDhcpDns: 'Thêm lệnh DHCP: DNS máy con = router',
+                    includeDhcpDnsTip: 'Script chèn /ip dhcp-server network … dns-server=. Chỉ bật nếu DHCP MikroTik phải đẩy DNS xuống client. Nhiều mạng DHCP thì sửa [find …] cho khớp.',
+                    includeDnsRedirect: 'Thêm NAT: ép DNS (cổng 53) trong LAN về router',
+                    includeDnsRedirectTip: 'Máy đặt DNS 8.8.8.8 hay 1.1.1.1 vẫn bị chuyển về resolver trên router (dstnat redirect). Nên bật “Cho LAN hỏi DNS qua router”. Tránh trùng rule NAT cũ.',
+                    useUltralowServers: 'Điền thêm DNS thuần (servers=) kèm DoH',
+                    useUltralowServersTip: 'DoH vẫn qua use-doh-server=; đồng thời điền servers= bằng IPv4+IPv6 ultralow (một chuỗi, phân cách phẩy). Tắt nếu muốn servers trống.',
+                    dhcpDnsComment: 'Tuỳ chọn — DHCP trỏ DNS về router',
+                    dnsRedirectComment: 'Tuỳ chọn — NAT redirect DNS (UDP/TCP 53) về router',
+                    note: 'Cần RouterOS 7+. Sau khi dán chạy /ip dns print. IP ultralow có thể khác vùng — đối chiếu trong NextDNS.',
+                    copied: 'Đã sao chép!'
                 }
             },
-                en: {
+            en: {
                 labels: {
-                    profile: 'NextDNS Profile ID',
-                    deviceName: 'Device name (optional)',
-                    maxConn: 'Max DoH connections',
-                    routerIp: 'Router IP (DHCP DNS)',
-                    lanNet: 'LAN network (CIDR)',
-                    plainDnsServers: 'Plain DNS IPv4 (servers=)',
-                    plainDnsServersV6: 'Plain DNS IPv6 (servers=)'
+                    profile: 'Profile ID',
+                    deviceName: 'NextDNS device label (optional)',
+                    maxConn: 'Parallel DoH sessions',
+                    routerIp: 'Router LAN IP',
+                    lanNet: 'LAN subnet',
+                    plainDnsServers: 'IPv4 ultralow',
+                    plainDnsServersV6: 'IPv6 ultralow'
                 },
                 hints: {
-                    profile: { aim: 'From NextDNS dashboard → Setup → router/DNS (ID in https://dns.nextdns.io/XXXX).', type: 'String', def: 'abc123' },
-                    deviceName: { aim: 'Optional NextDNS device binding. Leave empty if unused.', type: 'String / empty', def: 'router-home' },
-                    maxConn: { aim: 'Parallel DoH connections limit (RouterOS).', type: 'Number', def: '5' },
-                    routerIp: { aim: 'Router LAN IP — DHCP clients will use this as their DNS resolver.', type: 'IPv4', def: '192.168.88.1' },
-                    lanNet: { aim: 'LAN subnet for DHCP address= and/or NAT DNS redirect src-address. Match /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' },
-                    plainDnsServers: { aim: 'NextDNS ultralow IPv4 (example). Match NextDNS → Setup → Router if yours differ.', type: 'Comma-separated IPv4', def: '45.90.28.22,45.90.30.22' },
-                    plainDnsServersV6: { aim: 'NextDNS ultralow IPv6 (example). Leave empty if you do not use IPv6.', type: 'Comma-separated IPv6', def: '2a07:a8c0::,2a07:a8c1::' }
+                    profile: { aim: 'NextDNS → Setup → router/DNS — ID is the segment after dns.nextdns.io/ in the dashboard URL.', type: 'String', def: 'abc123' },
+                    deviceName: { aim: 'Shown in NextDNS logs/analytics as the device name. Leave blank if unused.', type: 'Text or empty', def: 'home-router' },
+                    maxConn: { aim: 'RouterOS cap on concurrent DoH connections.', type: 'Number', def: '5' },
+                    routerIp: { aim: 'Router LAN address DHCP should advertise as the DNS server.', type: 'IPv4', def: '192.168.88.1' },
+                    lanNet: { aim: 'Must match /ip dhcp-server network address= (e.g. 192.168.88.0/24). Used by the DHCP + NAT snippets.', type: 'CIDR', def: '192.168.88.0/24' },
+                    plainDnsServers: { aim: 'Ultralow IPv4 list for servers=. IPs differ by region — copy from NextDNS → Setup → Router.', type: 'Comma-separated IPv4', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServersV6: { aim: 'Ultralow IPv6 list; leave empty if IPv6 is unused.', type: 'Comma-separated IPv6', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
-                    serverConfig: 'Parameters', scriptTitle: 'MikroTik Script', copy: 'Copy Script',
-                    scriptComment: 'RouterOS 7+',
-                    allowRemote: 'Allow DNS queries from LAN (clients use router as resolver)',
-                    verifyCert: 'Verify DoH TLS certificate (recommended)',
-                    includeDhcpDns: 'Append DHCP: point all DHCP clients’ DNS to the router',
-                    includeDhcpDnsHelp: 'Adds a dhcp-server network command. Turn off if you set DNS per device or use another method.',
-                    includeDnsRedirect: 'Append NAT: DNS redirect (force LAN UDP/TCP 53 to router)',
-                    includeDnsRedirectHelp: 'Devices using 1.1.1.1, 8.8.8.8, etc. still hit the router resolver (dstnat redirect). Requires “Allow DNS from LAN”. Avoid duplicate /ip firewall nat rules.',
-                    useUltralowServers: 'Set servers= — NextDNS ultralow (plain DNS alongside DoH)',
-                    useUltralowServersHelp: 'Fills /ip dns set servers=… with ultralow IPv4 and IPv6 (one comma-separated list). use-doh-server= still enables DoH. Turn off for empty servers.',
-                    dhcpDnsComment: 'Optional — DHCP clients use router as DNS (adjust find if you have multiple networks)',
-                    dnsRedirectComment: 'Optional — DNS hijack: redirect port 53 to router (dst-address-type=!local skips traffic already to the router)',
-                    lanNetHelp: 'Shown when DHCP and/or redirect is enabled: must match your LAN (e.g. 192.168.88.0/24).',
-                    note: 'Requires RouterOS v7+. Run /ip dns print after applying. Ultralow IPv4/IPv6 may vary by region — match NextDNS → Setup → Router. For LAN-wide DoH via the router: enable “Allow DNS from LAN”; DHCP and DNS redirect complement each other.',
-                    copied: 'Copied!', tipAim: 'Purpose', tipType: 'Type', tipDef: 'Default'
+                    tipDetails: 'Details',
+                    tipAim: 'Meaning',
+                    tipType: 'Type',
+                    tipDef: 'Example',
+                    serverConfig: 'Parameters',
+                    scriptTitle: 'RouterOS script',
+                    copy: 'Copy script',
+                    scriptComment: 'RouterOS v7+',
+                    allowRemote: 'LAN can query DNS via router IP',
+                    allowRemoteTip: 'Turn on when LAN devices point DNS at the gateway and you resolve DNS on the router (common with NextDNS DoH).',
+                    verifyCert: 'Verify NextDNS TLS certificate',
+                    verifyCertTip: 'Recommended to reduce bogus DoH endpoint risk.',
+                    includeDhcpDns: 'Add DHCP: push router as DNS',
+                    includeDhcpDnsTip: 'Adds /ip dhcp-server network … dns-server=. Enable only if MikroTik DHCP should assign DNS. Adjust [find …] when multiple DHCP networks exist.',
+                    includeDnsRedirect: 'Add NAT: LAN DNS port 53 → router',
+                    includeDnsRedirectTip: 'Even if clients use 8.8.8.8 / 1.1.1.1, UDP/TCP 53 from LAN hits your resolver via dstnat redirect. Pair with “LAN can query DNS”. Avoid duplicate NAT rules.',
+                    useUltralowServers: 'Also fill servers= ultralow IPs',
+                    useUltralowServersTip: 'DoH stays on use-doh-server= while servers= lists ultralow IPv4+IPv6 in one comma-separated string. Disable to leave servers empty.',
+                    dhcpDnsComment: 'Optional — DHCP DNS via router',
+                    dnsRedirectComment: 'Optional — NAT DNS redirect (UDP/TCP 53) to router',
+                    note: 'Requires RouterOS v7+. After paste run /ip dns print. Ultralow IPs may vary — verify inside NextDNS.',
+                    copied: 'Copied!'
                 }
             }
         };

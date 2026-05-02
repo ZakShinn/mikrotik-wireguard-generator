@@ -8,80 +8,106 @@
 
 ### Giới thiệu
 
-**MikroTik Tools** là bộ công cụ web (HTML + Vue, chạy trong trình duyệt) hỗ trợ **RouterOS**:
+**MikroTik Tools** là bộ công cụ web tĩnh (**HTML + Vue 3**, chạy trong trình duyệt) hỗ trợ **RouterOS**:
 
 | Công cụ | Nội dung chính |
 |--------|----------------|
-| **WireGuard** | Sinh script MikroTik, peer, file `.conf`, QR — logic dựa trên [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator). |
+| **WireGuard** | Sinh script MikroTik, peer, file `.conf`, QR — logic tham chiếu [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator). |
 | **Hairpin NAT** | NAT loopback / hairpin + port forward (script copy-paste). |
-| **NextDNS** | **DNS over HTTPS (DoH)** trên RouterOS 7+; tùy chọn **`servers=`** DNS thuần ultralow (**IPv4 + IPv6**), **DHCP `dns-server`**, **NAT DNS redirect** (ép UDP/TCP 53 về router). |
-| **IPTV** | Mẫu VLAN / bridge / IGMP. |
+| **NextDNS** | **DNS over HTTPS (DoH)** trên RouterOS 7+; tùy chọn **`servers=`** ultralow (**IPv4 + IPv6**), **DHCP `dns-server`**, **NAT DNS redirect** (UDP/TCP 53). |
+| **IPTV** | Mẫu VLAN / DHCP VLAN / IGMP proxy (tham khảo nhà mạng Việt Nam). |
 
-Trang chủ (`index.html`) là menu chọn công cụ. Mỗi trang hỗ trợ **tiếng Việt** và **tiếng Anh**. URL thân thiện: `/wireguard`, `/hairpin-nat`, `/nextdns`, `/iptv` (cấu hình trên Vercel, xem `vercel.json`).
+Trang chủ (`index.html`) là menu chọn công cụ. Mỗi trang hỗ trợ **Tiếng Việt** và **English**. URL “sạch” (canonical): `/wireguard`, `/hairpin-nat`, `/nextdns`, `/iptv` — cấu hình trong [`vercel.json`](vercel.json).
+
+### Cấu trúc thư mục (chính)
+
+| Đường dẫn | Vai trò |
+|-----------|---------|
+| [`index.html`](index.html) | Trang chủ, danh sách công cụ |
+| [`wireguard.html`](wireguard.html), [`hairpin-nat.html`](hairpin-nat.html), [`nextdns.html`](nextdns.html), [`iptv.html`](iptv.html) | Từng công cụ |
+| [`assets/site.css`](assets/site.css) | Giao diện dùng chung (dark theme, responsive, fullscreen shell) |
+| [`robots.txt`](robots.txt) | Chính sách crawl + đường dẫn sitemap |
+| [`sitemap.xml`](sitemap.xml) | Sitemap các URL canonical |
+| [`vercel.json`](vercel.json) | Rewrite URL tĩnh, redirect `.html` → clean URL, HTTP headers |
+
+**Stack UI:** Vue 3 (CDN), **DM Sans**, Font Awesome 6, **`assets/site.css`** (không dùng Bulma).
 
 ### Bảo mật
 
-- **Xử lý nhạy cảm trên trình duyệt của bạn:** sinh khóa, nội dung script và file tải xuống được tạo **trong máy** (client-side). Công cụ **không** gửi khóa hay cấu hình VPN lên máy chủ ứng dụng để xử lý đám mây.
-- **Truy cập web:** trình duyệt tải HTML/JS/CSS và thư viện (Vue, Bulma, …) qua HTTPS. Hãy kiểm tra thanh địa chỉ là **`https://mikrotik.hainghia.net`** và dấu ổ khóa.
-- **Trách nhiệm sử dụng:** bạn chịu trách nhiệm bảo vệ thiết bị, trình duyệt và mạng; không chia sẻ khóa riêng hay file cấu hình cho người không tin cậy.
+- **Xử lý nhạy cảm trên trình duyệt của bạn:** khóa, script và file tải xuống được tạo **client-side**. Không upload khóa hay cấu hình VPN lên máy chủ ứng dụng để xử lý đám mây.
+- **Truy cập web:** tài nguyên tải qua HTTPS (CDN cho Vue / thư viện phụ). Kiểm tra địa chỉ **`https://mikrotik.hainghia.net`** và chứng chỉ trình duyệt.
+- **Trách nhiệm:** bạn chịu trách nhiệm bảo vệ thiết bị và mạng; không chia sẻ khóa riêng hay file cấu hình cho người không tin cậy.
 
 ### Cách dùng qua website
 
-1. Mở trình duyệt (Chrome, Edge, Firefox, Safari, …).
-2. Truy cập: **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**
-3. Từ trang chủ, chọn công cụ và làm theo hướng dẫn trên từng trang.
+1. Mở trình duyệt hiện đại (Chrome, Edge, Firefox, Safari, …).
+2. Truy cập **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**.
+3. Chọn công cụ trên trang chủ và làm theo hướng dẫn từng trang.
 
-Nên lưu bookmark đúng địa chỉ trên để tránh nhầm sang trang giả mạo.
+Nên bookmark đúng hostname để tránh nhầm trang giả mạo.
 
-### Chạy / triển khai tĩnh
+### Chạy cục bộ / triển khai
 
-- Mở trực tiếp `index.html` bằng trình duyệt (một số tính năng cần phục vụ qua HTTP/HTTPS).
-- **Vercel:** repository này có `vercel.json` (rewrites, redirects, security headers) cho site tĩnh.
+- Mở `index.html` trực tiếp có thể dùng được một phần; một số clipboard / CDN hoạt động tốt hơn khi phục vụ qua HTTP/HTTPS (ví dụ `npx serve .`).
+- **Vercel:** đặt repo này làm site tĩnh; [`vercel.json`](vercel.json) xử lý rewrite, redirect và headers (bao gồm cache nhẹ cho `assets/`).
 
 ### Ghi nhận & giấy phép
 
-- **Tác giả / phát triển:** [Nghĩa Zakshin](https://github.com/ZakShinn)
-- **WireGuard (MT-WG Gen):** logic dựa trên / tối ưu từ mã nguồn mở [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator)
-- **Giấy phép:** dự án sử dụng **Apache License 2.0** — chi tiết trong tệp [`LICENSE`](LICENSE).
+- **Tác giả:** [Nghĩa Zakshin](https://github.com/ZakShinn).
+- **WireGuard (MT-WG Gen):** tham chiếu / tối ưu từ [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator).
+- **Giấy phép:** **Apache License 2.0** — xem [`LICENSE`](LICENSE).
 
 ---
 
 ## English
 
-### About the tools
+### About
 
-**MikroTik Tools** is a static **RouterOS** web toolkit (HTML + Vue, runs in the browser):
+**MikroTik Tools** is a static **RouterOS** toolkit (**HTML + Vue 3**, runs in the browser):
 
 | Tool | What it does |
 |------|----------------|
-| **WireGuard** | MikroTik scripts, peers, `.conf` files, QR — based on [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator). |
-| **Hairpin NAT** | Hairpin / loopback NAT + port forward (copy-paste scripts). |
-| **NextDNS** | **DNS over HTTPS (DoH)** on RouterOS v7+; optional **`servers=`** ultralow plain DNS (**IPv4 + IPv6**), **DHCP `dns-server`**, **NAT DNS redirect**. |
-| **IPTV** | Sample VLAN / bridge / IGMP notes. |
+| **WireGuard** | MikroTik scripts, peers, `.conf`, QR — builds on ideas from [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator). |
+| **Hairpin NAT** | Hairpin / loopback NAT + WAN port forward (copy-paste scripts). |
+| **NextDNS** | **DNS over HTTPS (DoH)** on RouterOS v7+; optional **`servers=`** ultralow (**IPv4 + IPv6**), **DHCP `dns-server`**, **NAT DNS redirect**. |
+| **IPTV** | Sample VLAN / DHCP on IPTV VLAN / IGMP proxy (Vietnam ISP reference). |
 
-The home page (`index.html`) is a tool menu. Each page supports **Vietnamese** and **English**. Clean URLs: `/wireguard`, `/hairpin-nat`, `/nextdns`, `/iptv` (see `vercel.json` for Vercel).
+The home page (`index.html`) lists all tools. Each page supports **Vietnamese** and **English**. Canonical paths: `/wireguard`, `/hairpin-nat`, `/nextdns`, `/iptv` — see [`vercel.json`](vercel.json).
+
+### Repository layout
+
+| Path | Role |
+|------|------|
+| [`index.html`](index.html) | Landing / tool hub |
+| [`wireguard.html`](wireguard.html), [`hairpin-nat.html`](hairpin-nat.html), [`nextdns.html`](nextdns.html), [`iptv.html`](iptv.html) | Individual tools |
+| [`assets/site.css`](assets/site.css) | Shared UI (dark theme, responsive, full-viewport shell) |
+| [`robots.txt`](robots.txt) | Crawl policy + sitemap URL |
+| [`sitemap.xml`](sitemap.xml) | XML sitemap for canonical URLs |
+| [`vercel.json`](vercel.json) | Static rewrites, redirects, HTTP headers |
+
+**UI stack:** Vue 3 (CDN), **DM Sans**, Font Awesome 6, **`assets/site.css`** (no Bulma).
 
 ### Security
 
-- **Sensitive work stays in your browser:** keys, scripts, and downloads are generated **client-side**. The apps **do not** upload your VPN keys or configs to a backend.
-- **Web access:** the browser loads static assets over HTTPS. Confirm the address bar shows **`https://mikrotik.hainghia.net`** and the browser lock icon.
-- **Your responsibility:** protect your device, browser, and network; do not share private keys or config files with untrusted parties.
+- **Sensitive work stays client-side:** keys, scripts, and downloads are generated in the browser; nothing is uploaded to an app backend for processing.
+- **Serving:** assets load over HTTPS (plus third-party CDNs for Vue and helpers). Prefer **`https://mikrotik.hainghia.net`**.
+- **Your responsibility:** protect devices and credentials; do not share private keys or configs.
 
-### Using the hosted site
+### Hosted usage
 
-1. Open a modern browser.
-2. Go to **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**
-3. Pick a tool from the home page and follow the on-page steps.
+1. Use a modern browser.
+2. Open **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**.
+3. Pick a tool and follow on-page instructions.
 
-Bookmark that URL so you always return to the official site.
+Bookmark that URL to avoid typosquatting.
 
-### Running / deploying
+### Run / deploy
 
-- You can open `index.html` locally (some features work best over HTTP/HTTPS).
-- **Vercel:** this repo includes `vercel.json` (rewrites, redirects, security headers) for static hosting.
+- Local file open works for basic browsing; HTTPS/static hosting (`npx serve .`, **Vercel**, Netlify, …) is recommended.
+- **Vercel:** [`vercel.json`](vercel.json) defines clean URLs, redirects from legacy `.html` paths, and security/cache headers.
 
 ### Credits & license
 
-- **Author / maintainer:** [Nghĩa Zakshin](https://github.com/ZakShinn)
-- **WireGuard (MT-WG Gen):** core logic builds on the open-source work [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator)
-- **License:** this project is licensed under the **Apache License 2.0** — see the [`LICENSE`](LICENSE) file for details.
+- **Author:** [Nghĩa Zakshin](https://github.com/ZakShinn).
+- **WireGuard generator:** builds on [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator).
+- **License:** **Apache License 2.0** — see [`LICENSE`](LICENSE).

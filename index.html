@@ -12,6 +12,7 @@
     <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/vi/8/82/VOZ_di%E1%BB%85n_%C4%91%C3%A0n_logo.png">
     <meta name="theme-color" content="#0c0f14">
+    <meta name="format-detection" content="telephone=no">
 
     <meta property="og:site_name" content="MikroTik Tools — Zakshin">
     <meta property="og:title" content="MikroTik Tools — Công cụ web cho RouterOS | Zakshin">
@@ -44,274 +45,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/site.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <style>
-        :root {
-            --bg: #0c0f14;
-            --bg-card: #141a22;
-            --border: rgba(255,255,255,0.08);
-            --text: #e8eaed;
-            --muted: #9aa0a6;
-            --accent: #2dd4bf;
-            --accent-dim: rgba(45,212,191,0.15);
-            --info: #38bdf8;
-            --radius: 16px;
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-            --safe-top: env(safe-area-inset-top, 0px);
-        }
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            margin: 0;
-            min-height: 100dvh;
-            font-family: "DM Sans", system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
-            padding-top: var(--safe-top);
-            padding-bottom: var(--safe-bottom);
-        }
-        .noise {
-            pointer-events: none;
-            position: fixed;
-            inset: 0;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            z-index: 0;
-        }
-        .wrap {
-            position: relative;
-            z-index: 1;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 1rem clamp(1rem, 4vw, 2rem) 3rem;
-        }
-        header.site-header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            padding: 0.5rem 0 1.25rem;
-        }
-        @media (max-width: 520px) {
-            header.site-header { align-items: flex-start; }
-            .header-actions { flex: 1; min-width: 0; justify-content: flex-end; flex-wrap: wrap; }
-            .header-actions.is-mobile-open .nav-extra {
-                flex-basis: 100%;
-                margin-top: 0.5rem;
-                width: 100%;
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .burger { display: inline-flex; }
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            text-decoration: none;
-            color: var(--text);
-        }
-        .brand-mark {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--accent), #0d9488);
-            display: grid;
-            place-items: center;
-            color: #042f2e;
-            font-size: 1.1rem;
-        }
-        .brand-text { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.02em; }
-        .brand-sub { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
-        .header-actions {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            min-height: 44px;
-            padding: 0 1rem;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--text);
-            text-decoration: none;
-            transition: background 0.2s, border-color 0.2s, transform 0.15s;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-ghost:hover { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); }
-        .btn-accent {
-            background: var(--accent-dim);
-            border-color: rgba(45,212,191,0.35);
-            color: var(--accent);
-        }
-        .btn-accent:hover { background: rgba(45,212,191,0.22); }
-        .hero {
-            padding: clamp(1.5rem, 5vw, 2.75rem) 0 clamp(2rem, 6vw, 3rem);
-            text-align: center;
-        }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--accent);
-            background: var(--accent-dim);
-            border: 1px solid rgba(45,212,191,0.25);
-            margin-bottom: 1rem;
-        }
-        .hero h1 {
-            margin: 0;
-            font-size: clamp(1.65rem, 5vw, 2.35rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-        }
-        .hero p {
-            margin: 1rem auto 0;
-            max-width: 36rem;
-            color: var(--muted);
-            font-size: clamp(0.95rem, 2.8vw, 1.05rem);
-        }
-        .tools-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-        @media (min-width: 640px) {
-            .tools-grid { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-        }
-        .tool-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.35rem clamp(1rem, 3vw, 1.5rem);
-            display: flex;
-            flex-direction: column;
-            min-height: 100%;
-            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-        }
-        .tool-card:hover {
-            border-color: rgba(45,212,191,0.25);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
-            transform: translateY(-2px);
-        }
-        @media (hover: none) {
-            .tool-card:hover { transform: none; }
-        }
-        .tool-card-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 0.75rem;
-        }
-        .tool-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: grid;
-            place-items: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-        }
-        .tool-icon.wg { background: rgba(45,212,191,0.12); color: var(--accent); }
-        .tool-icon.nat { background: rgba(56,189,248,0.12); color: var(--info); }
-        .tool-icon.nd { background: rgba(167,139,250,0.15); color: #a78bfa; }
-        .tool-icon.iptv { background: rgba(251,146,60,0.15); color: #fb923c; }
-        .tool-card h2 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        .tool-card .sub { margin: 0.2rem 0 0; font-size: 0.875rem; color: var(--muted); }
-        .tool-card .desc { margin: 0.75rem 0 1.1rem; font-size: 0.9rem; color: var(--muted); flex-grow: 1; }
-        .tool-card a.cta {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            min-height: 48px;
-            padding: 0 1.25rem;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-decoration: none;
-            width: 100%;
-            text-align: center;
-        }
-        .tool-card a.cta-wg { background: var(--accent); color: #042f2e; }
-        .tool-card a.cta-wg:hover { filter: brightness(1.08); }
-        .tool-card a.cta-nat { background: rgba(56,189,248,0.2); color: var(--info); border: 1px solid rgba(56,189,248,0.35); }
-        .tool-card a.cta-nat:hover { background: rgba(56,189,248,0.28); }
-        .tool-card a.cta-nd { background: rgba(167,139,250,0.18); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.35); }
-        .tool-card a.cta-nd:hover { background: rgba(167,139,250,0.26); }
-        .tool-card a.cta-iptv { background: rgba(251,146,60,0.18); color: #fdba74; border: 1px solid rgba(251,146,60,0.35); }
-        .tool-card a.cta-iptv:hover { background: rgba(251,146,60,0.26); }
-        section.donate {
-            margin-top: clamp(2rem, 6vw, 3.5rem);
-            padding: clamp(1.5rem, 4vw, 2rem);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(20,26,34,0.9), rgba(12,15,20,0.95));
-            text-align: center;
-        }
-        section.donate h3 { margin: 0 0 0.5rem; font-size: 1.15rem; }
-        section.donate > p { margin: 0 0 1rem; color: var(--muted); font-size: 0.9rem; }
-        .donate-qr {
-            max-width: 220px;
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-        .donate-meta { margin-top: 1rem; font-size: 0.9rem; }
-        .donate-meta .bank { color: var(--accent); font-weight: 700; }
-        footer.site-footer {
-            margin-top: 2.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-        footer.site-footer a { color: var(--accent); text-decoration: none; }
-        footer.site-footer a:hover { text-decoration: underline; }
-        .burger {
-            display: none;
-            width: 44px;
-            height: 44px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--bg-card);
-            color: var(--text);
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-        }
-        .nav-extra {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            align-items: center;
-        }
-    </style>
 </head>
-<body>
+<body class="app-shell">
     <div class="noise" aria-hidden="true"></div>
     <div id="app" class="wrap">
         <header class="site-header">
@@ -328,6 +65,7 @@
                 </button>
                 <div class="nav-extra" v-show="!isNarrow || menuOpen">
                     <a class="btn btn-ghost" href="#tools"><i class="fas fa-layer-group"></i> {{ t.nav.tools }}</a>
+                    <a class="btn btn-ghost" href="#feedback"><i class="fab fa-facebook"></i> {{ t.nav.feedback }}</a>
                     <a class="btn btn-ghost" href="https://status.hainghia.net" target="_blank" rel="noopener">{{ t.nav.status }}</a>
                     <a class="btn btn-ghost" href="https://github.com/ZakShinn" target="_blank" rel="noopener"><i class="fab fa-github"></i> GitHub</a>
                     <button type="button" class="btn btn-accent" @click="toggleLang"><i class="fas fa-globe"></i> {{ lang === 'vi' ? 'EN' : 'VI' }}</button>
@@ -389,6 +127,12 @@
             </article>
         </section>
 
+        <section class="feedback" id="feedback" aria-labelledby="feedback-heading">
+            <h3 id="feedback-heading"><i class="fab fa-facebook" aria-hidden="true"></i> {{ t.feedback.title }}</h3>
+            <p class="feedback-desc">{{ t.feedback.desc }}</p>
+            <a class="btn btn-accent feedback-fb" href="https://www.facebook.com/profile.php?id=100006985387032" target="_blank" rel="noopener noreferrer">{{ t.feedback.cta }} <i class="fas fa-arrow-up-right-from-square ml-1"></i></a>
+        </section>
+
         <section class="donate" id="donate">
             <h3><i class="fas fa-mug-hot"></i> {{ t.donate.title }}</h3>
             <p>{{ t.donate.desc }}</p>
@@ -411,34 +155,39 @@
         const { createApp } = Vue;
         const translations = {
             vi: {
-                nav: { tools: 'Công cụ', status: 'Trạng thái', donate: 'Ủng hộ' },
+                nav: { tools: 'Công cụ', feedback: 'Phản hồi', status: 'Trạng thái', donate: 'Ủng hộ' },
                 badge: 'RouterOS',
                 hero: {
-                    title: 'Công cụ web tổng hợp cho MikroTik',
-                    subtitle: 'Hub gom các tiện ích cho RouterOS: bốn công cụ (WireGuard, Hairpin NAT, NextDNS, IPTV) — sinh script dán vào Terminal.'
+                    title: 'Công cụ web cho MikroTik',
+                    subtitle: 'WireGuard, Hairpin NAT, NextDNS, IPTV — điền form, copy script dán Terminal. Chạy trong trình duyệt.'
                 },
                 tools: {
                     cta: 'Mở công cụ',
                     wg: {
                         title: 'WireGuard',
-                        sub: 'MT-WG Gen',
-                        desc: 'Sinh script MikroTik, peer, file .conf và mã QR cho VPN WireGuard.'
+                        sub: 'VPN',
+                        desc: 'Script router, file .conf client, QR tải về.'
                     },
                     nat: {
                         title: 'Hairpin NAT',
-                        sub: 'NAT loopback trong LAN',
-                        desc: 'Sinh script xử lý truy cập dịch vụ nội bộ qua IP/tên miền WAN khi đang ở trong LAN.'
+                        sub: 'Mở port + xem từ trong LAN',
+                        desc: 'NAT loopback: trong LAN vẫn truy cập dịch vụ qua IP hoặc tên miền giống từ internet.'
                     },
                     nd: {
                         title: 'NextDNS',
-                        sub: 'DNS over HTTPS',
-                        desc: 'Sinh lệnh /ip dns với DoH NextDNS (Profile ID, tùy chọn tên thiết bị), RouterOS 7+.'
+                        sub: 'DNS an toàn (DoH)',
+                        desc: 'Lệnh /ip dns NextDNS qua HTTPS. RouterOS 7 trở lên.'
                     },
                     iptv: {
                         title: 'IPTV',
-                        sub: 'VLAN & IGMP proxy',
-                        desc: 'Script mẫu: VLAN IPTV trên WAN, bridge cổng TV, IGMP proxy — chỉnh theo nhà mạng.'
+                        sub: 'VLAN + IGMP',
+                        desc: 'Gợi ý VLAN IPTV trên WAN và IGMP proxy nối sang TV — chỉnh theo nhà mạng.'
                     }
+                },
+                feedback: {
+                    title: 'Báo lỗi / đề xuất công cụ',
+                    desc: 'Gặp lỗi khi dùng trang hoặc muốn thêm tiện ích — nhắn qua Facebook cho tác giả.',
+                    cta: 'Mở Facebook'
                 },
                 donate: {
                     title: 'Ủng hộ tác giả',
@@ -447,34 +196,39 @@
                 footer: { by: 'phát triển bởi', monitor: 'Giám sát' }
             },
             en: {
-                nav: { tools: 'Tools', status: 'Status', donate: 'Donate' },
+                nav: { tools: 'Tools', feedback: 'Feedback', status: 'Status', donate: 'Donate' },
                 badge: 'RouterOS',
                 hero: {
-                    title: 'A MikroTik web toolkit',
-                    subtitle: 'Four RouterOS helpers: WireGuard, Hairpin NAT, NextDNS, and IPTV — paste-ready scripts.'
+                    title: 'MikroTik tools in your browser',
+                    subtitle: 'WireGuard, Hairpin NAT, NextDNS, IPTV — fill the form, copy the script into Terminal.'
                 },
                 tools: {
                     cta: 'Open tool',
                     wg: {
                         title: 'WireGuard',
-                        sub: 'MT-WG Gen',
-                        desc: 'Generate MikroTik scripts, peers, .conf files, and QR codes for WireGuard VPN.'
+                        sub: 'VPN',
+                        desc: 'Router script, client .conf files, QR downloads.'
                     },
                     nat: {
                         title: 'Hairpin NAT',
-                        sub: 'LAN loopback NAT',
-                        desc: 'Generate scripts for internal access via WAN IP or hostname while on the LAN.'
+                        sub: 'Port forward + LAN access',
+                        desc: 'Loopback NAT so LAN clients can reach services via the same WAN IP or hostname.'
                     },
                     nd: {
                         title: 'NextDNS',
                         sub: 'DNS over HTTPS',
-                        desc: 'Build /ip dns DoH commands for NextDNS (profile ID, optional device name), RouterOS v7+.'
+                        desc: '/ip dns with NextDNS DoH. RouterOS v7 or newer.'
                     },
                     iptv: {
                         title: 'IPTV',
-                        sub: 'VLAN & IGMP proxy',
-                        desc: 'Sample script: IPTV VLAN on WAN, TV bridge, IGMP proxy — tune for your ISP.'
+                        sub: 'VLAN + IGMP',
+                        desc: 'Starter VLAN-on-WAN and IGMP proxy wiring for TV — adjust per ISP.'
                     }
+                },
+                feedback: {
+                    title: 'Report bugs / request tools',
+                    desc: 'Something broken or want a new helper? Message the author on Facebook.',
+                    cta: 'Open Facebook'
                 },
                 donate: {
                     title: 'Support the author',
