@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MikroTik Hairpin NAT Generator | Zakshin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -10,22 +10,59 @@
         :root { --primary: #00d1b2; --bg: #f5f7fa; --card-shadow: 0 8px 25px rgba(0,0,0,0.05); }
         body { background-color: var(--bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         
-        /* Navbar Layout Fix */
-        .top-nav { background: white; padding: 0.5rem 1.5rem; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
-        
-        /* Logo bên trái */
-        .brand-logo { flex: 1; display: flex; align-items: center; gap: 10px; }
-        
-        /* Lang switcher ở giữa */
-        .lang-switcher { flex: 1; text-align: center; }
-        
-        /* Author bên phải */
-        .author-info { flex: 1; text-align: right; font-size: 0.85rem; line-height: 1.2; }
-        .author-info strong { color: var(--primary); }
+        .top-nav {
+            background: white;
+            padding: 0.75rem clamp(1rem, 3vw, 1.5rem);
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        .tool-nav-brand { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tool-nav-title { margin: 0 !important; font-size: 1.25rem !important; font-weight: 600 !important; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .tool-nav-meta { font-size: 0.85rem; line-height: 1.3; text-align: right; }
+        .tool-nav-meta strong { color: var(--primary); }
+        .tool-nav-meta .tool-nav-meta-sub { font-size: 0.72rem; color: #7a7a7a; margin-top: 2px; }
+        .tool-nav-meta-col { display: flex; justify-content: flex-end; align-items: center; }
+        .nav-center-actions { display: flex; align-items: center; gap: 0.75rem; justify-content: center; flex-wrap: wrap; flex-grow: 1; }
 
-        .main-content { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .config-box { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow); height: 100%; border-top: 4px solid var(--primary); }
+        .main-content {
+            width: 100%;
+            max-width: min(1320px, 100vw);
+            margin: 0 auto;
+            padding: clamp(1rem, 3vw, 2rem);
+            box-sizing: border-box;
+        }
+        .nat-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            align-items: stretch;
+        }
+        @media (min-width: 1024px) {
+            .nat-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        }
+        .config-box {
+            background: white;
+            border-radius: 12px;
+            padding: clamp(1.1rem, 2.5vw, 1.5rem);
+            box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            height: 100%;
+        }
+        .nat-panel-form .field:last-child { margin-bottom: 0; }
+        .nat-panel-script { min-height: 320px; }
+        .nat-panel-script .script-header { flex-shrink: 0; }
+        .nat-panel-script pre {
+            flex: 1 1 auto;
+            min-height: 280px;
+            margin: 0 !important;
+        }
+        .nat-panel-script .notification { flex-shrink: 0; }
         .label.is-size-7 { color: #333; margin-bottom: 0.2rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
         
         /* Tooltip Styles - Đồng bộ image_7329e1.png */
@@ -44,16 +81,42 @@
         .tip-def { background: #fff; color: #d63384; padding: 2px 6px; border-radius: 4px; font-family: 'Consolas', monospace; font-weight: 600; font-size: 0.75rem; }
 
         /* Fix nút Copy */
-        .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 600px) {
+            .script-header .copy-btn { flex: 1 1 auto; justify-content: center; min-height: 40px; }
+        }
         pre { background: #1a1c1e !important; color: #00f2ff !important; border-radius: 10px; padding: 1.5rem !important; font-size: 0.85rem; border: 1px solid #333; min-height: 350px; white-space: pre-wrap; position: relative; }
-        .copy-btn { background: var(--primary); color: white; border: none; cursor: pointer; padding: 5px 15px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; transition: 0.3s; }
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
         .copy-btn:hover { background: #00b89c; box-shadow: 0 2px 8px rgba(0,209,178,0.3); }
         
         .toast-msg { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; }
 
-        @media (max-width: 768px) {
-            .nav-container { flex-direction: column; gap: 10px; text-align: center; }
-            .author-info, .brand-logo { text-align: center; justify-content: center; }
+        @media (max-width: 1023px) {
+            .nav-center-actions { flex-wrap: wrap; gap: 0.5rem; padding: 0.25rem 0; }
+            .top-nav .columns.is-mobile { flex-wrap: wrap; }
+            .tool-nav-meta-col { justify-content: center; width: 100%; }
+            .tool-nav-meta { text-align: center !important; }
+            .nat-panel-script pre { min-height: 220px; }
         }
     </style>
 </head>
@@ -64,32 +127,35 @@
         </div>
 
         <nav class="top-nav">
-            <div class="nav-container">
-                <!-- Bên trái: Logo -->
-                <div class="brand-logo">
-                    <i class="fas fa-network-wired is-size-4 has-text-primary"></i>
-                    <h1 class="title is-6 mb-0">MikroTik Tool</h1>
-                </div>
-
-                <!-- Ở giữa: Chuyển đổi ngôn ngữ -->
-                <div class="lang-switcher">
-                    <button class="button is-small is-rounded" @click="toggleLang">
-                        <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
-                    </button>
-                </div>
-
-                <!-- Bên phải: Thông tin người tạo -->
-                <div class="author-info">
-                    <div><strong>Hải Nghĩa (Zakshin)</strong></div>
-                    <div class="is-size-7 has-text-grey">IT         </div>
+            <div class="container is-fluid px-2">
+                <div class="columns is-vcentered is-mobile is-multiline mb-0">
+                    <div class="column is-narrow py-2">
+                        <div class="tool-nav-brand">
+                            <a href="index.html" class="button is-small is-light is-rounded" title="Menu công cụ"><i class="fas fa-home"></i></a>
+                            <a href="wireguard.html" class="button is-small is-light is-rounded" title="WireGuard (MT-WG Gen)"><i class="fas fa-user-shield"></i></a>
+                            <h1 class="tool-nav-title"><i class="fas fa-route has-text-primary"></i> Hairpin NAT</h1>
+                        </div>
+                    </div>
+                    <div class="column py-2">
+                        <div class="nav-center-actions">
+                            <button type="button" class="button is-small is-rounded is-light" @click="toggleLang">
+                                <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="column is-narrow py-2 tool-nav-meta-col">
+                        <div class="tool-nav-meta">
+                            <div><strong>Nghĩa Zakshin</strong></div>
+                            <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
 
         <div class="main-content">
-            <div class="columns is-desktop">
-                <div class="column is-4-desktop">
-                    <div class="config-box">
+            <div class="nat-grid">
+                <section class="config-box nat-panel-form">
                         <h3 class="subtitle is-6 has-text-weight-bold mb-4"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.serverConfig }}</h3>
                         
                         <div v-for="field in fieldsList" :key="field" class="field">
@@ -135,14 +201,12 @@
                                 <input class="input is-small" v-model="form[field]">
                             </div>
                         </div>
-                    </div>
-                </div>
+                </section>
 
-                <div class="column">
-                    <div class="config-box">
+                <section class="config-box nat-panel-script">
                         <div class="script-header">
                             <h3 class="subtitle is-6 has-text-weight-bold mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h3>
-                            <button class="copy-btn" @click="copyText('main-script')">
+                            <button type="button" class="copy-btn" @click="copyText('main-script')">
                                 <i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}
                             </button>
                         </div>
@@ -162,11 +226,10 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
     dst-port={{ form.port }} {{ form.wanMode === 'all' ? 'in-interface-list=all-ppp' : 'in-interface=' + form.wanInt }} \
     protocol={{ form.proto }} to-addresses={{ form.serverIp }} to-ports={{ form.port }}</pre>
                         
-                        <div class="notification is-light is-info is-size-7 mt-4 p-3">
+                        <div class="notification is-light is-info is-size-7 mt-4 mb-0 p-3">
                             <i class="fas fa-info-circle mr-2"></i> {{ t.ui.note }}
                         </div>
-                    </div>
-                </div>
+                </section>
             </div>
         </div>
     </div>

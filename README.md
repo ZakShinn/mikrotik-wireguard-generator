@@ -1,56 +1,59 @@
-# 🚀 MikroTik WireGuard Config Generator
+# MikroTik Tools (Zakshin)
 
-[Tiếng Việt](#tiếng-việt) | [English](#english)
+| [Tiếng Việt](#tiếng-việt) | [English](#english) |
 
 ---
 
 ## Tiếng Việt
 
-**MikroTik WireGuard Generator** là công cụ nền tảng web mạnh mẽ giúp đơn giản hóa việc thiết lập VPN WireGuard trên MikroTik RouterOS (phiên bản 7 trở lên). Dự án này được phát triển dựa trên nền tảng logic của mã nguồn mở từ `markeclaudio`, tối ưu hóa giao diện và trải nghiệm người dùng.
+### Giới thiệu
 
-### ✨ Tính năng nổi bật
-*   **Tự động hóa hoàn toàn:** Tạo cặp khóa Private/Public Key và Preshared Key (PSK) chỉ với một cú click.
-*   **Mã QR Tiện lợi:** Tự động tạo QR code để quét và kết nối nhanh trên điện thoại (iOS/Android).
-*   **Xuất dữ liệu thông minh:** Tải về hàng loạt cấu hình dưới dạng tệp `.conf` hoặc nén thành tệp `.zip` tiện lợi.
-*   **Tối ưu cho RouterOS:** Cung cấp Script chuẩn để dán (Paste) trực tiếp vào Terminal MikroTik, bao gồm cả thiết lập Firewall và IP Address.
-*   **Bảo mật tuyệt đối:** Mọi quá trình tính toán diễn ra ngay trên trình duyệt của bạn (Client-side), không có bất kỳ dữ liệu nào được gửi về máy chủ.
+**MikroTik Tools** là bộ công cụ web hỗ trợ **RouterOS**: hiện gồm **WireGuard (MT-WG Gen)** — tạo script, peer, file `.conf` và mã QR; và **Hairpin NAT** — sinh script NAT loopback trong LAN kèm port forward WAN. Trang chủ là menu chọn công cụ; giao diện có thể dùng tiếng Việt hoặc tiếng Anh.
 
-### 🛠 Hướng dẫn sử dụng
-1. Nhập thông tin Server (IP WAN hoặc DDNS, Cổng UDP).
-2. Tùy chỉnh dải IP VPN và số lượng Client (máy khách) cần tạo.
-3. Nhấn **"TẠO CẤU HÌNH"**.
-4. Sao chép đoạn script tại ô **"MikroTik RouterOS Script"** và dán vào Terminal của Router MikroTik.
-5. Quét mã QR hoặc tải tệp `.conf` để thiết lập cho thiết bị khách.
+### Bảo mật
+
+- **Xử lý nhạy cảm trên trình duyệt của bạn:** sinh khóa, nội dung script và file tải xuống được tạo **trong máy** (client-side). Công cụ **không** gửi khóa hay cấu hình VPN của bạn lên máy chủ ứng dụng để “xử lý đám mây”.
+- **Truy cập web:** khi mở trang, trình duyệt chỉ tải các tệp HTML/JS/CSS và thư viện phụ trợ (Vue, Bulma, v.v.) qua HTTPS như mọi website tĩnh. Hãy luôn kiểm tra thanh địa chỉ là **`https://mikrotik.hainghia.net`** và dấu ổ khóa trình duyệt.
+- **Trách nhiệm sử dụng:** bạn chịu trách nhiệm bảo vệ thiết bị, trình duyệt và mạng; không chia sẻ khóa riêng hay file cấu hình cho người không tin cậy.
+
+### Cách dùng qua website
+
+1. Mở trình duyệt (Chrome, Edge, Firefox, Safari, …).
+2. Truy cập: **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**
+3. Từ trang chủ, chọn **WireGuard** hoặc **Hairpin NAT** và làm theo hướng dẫn trên từng trang.
+
+Nên lưu bookmark đúng địa chỉ trên để tránh nhầm sang trang giả mạo.
+
+### Ghi nhận & giấy phép
+
+- **Tác giả / phát triển:** [Nghĩa Zakshin](https://github.com/ZakShinn)
+- **WireGuard (MT-WG Gen):** logic dựa trên / tối ưu từ mã nguồn mở [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator)
+- **Giấy phép:** dự án sử dụng **Apache License 2.0** — chi tiết trong tệp [`LICENSE`](LICENSE).
 
 ---
 
 ## English
 
-**MikroTik WireGuard Generator** is a robust web-based utility designed to simplify WireGuard VPN deployment on MikroTik RouterOS (v7+). This project is built upon the core logic from `markeclaudio`, with enhanced UI/UX and additional features for network administrators.
+### About the tools
 
-### ✨ Key Features
-*   **Full Automation:** Generates Private/Public Key pairs and Preshared Keys (PSK) instantly.
-*   **Instant QR Codes:** Automated QR code generation for seamless mobile setup (iOS/Android).
-*   **Smart Export:** Bulk download client configurations as `.conf` files or a single `.zip` archive.
-*   **RouterOS Optimized:** Provides ready-to-paste scripts for the MikroTik Terminal, including Firewall and IP configurations.
-*   **Maximum Security:** All processing occurs locally in the browser (Client-side). Your keys and configurations are never sent to any server.
+**MikroTik Tools** is a small **RouterOS** web toolkit: **WireGuard (MT-WG Gen)** builds scripts, peers, `.conf` files, and QR codes; **Hairpin NAT** generates hairpin NAT plus WAN port-forward scripts. The home page is a simple menu; the UI supports Vietnamese and English.
 
-### 🛠 How to Use
-1. Enter Server details (Public WAN IP or DDNS, UDP Port).
-2. Customize the VPN Subnet and the number of clients.
-3. Click **"GENERATE CONFIGS"**.
-4. Copy the script from the **"MikroTik RouterOS Script"** box and paste it into your MikroTik Terminal.
-5. Use the generated QR codes or download `.conf` files to configure your clients.
+### Security
 
----
+- **Sensitive work stays in your browser:** keys, scripts, and downloads are generated **client-side**. The apps **do not** upload your VPN keys or configs to an application backend for processing.
+- **Web access:** the browser loads static HTML/JS/CSS and common libraries (Vue, Bulma, etc.) over HTTPS like any static site. Always confirm the address bar shows **`https://mikrotik.hainghia.net`** and the browser lock icon.
+- **Your responsibility:** protect your device, browser, and network; do not share private keys or config files with untrusted parties.
 
-## 📜 Credits & License
+### Using the hosted site
 
-*   **Developer:** [Nghĩa Zakshin](https://github.com/ZakShinn)
-*   **Core Engine:** Based on the excellent work by [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator).
-*   **License:** This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
+1. Open a modern browser.
+2. Go to **[https://mikrotik.hainghia.net](https://mikrotik.hainghia.net)**
+3. From the home page, open **WireGuard** or **Hairpin NAT** and follow the on-page steps.
 
----
+Bookmark that URL so you always return to the official site.
 
-### 🏷️ Tags
-`mikrotik` `wireguard` `routeros` `vpn-generator` `networking-tools` `qrcode` `vuejs` `routeros-v7` `zakshin`
+### Credits & license
+
+- **Author / maintainer:** [Nghĩa Zakshin](https://github.com/ZakShinn)
+- **WireGuard (MT-WG Gen):** core logic builds on the open-source work [markeclaudio/mikrotik-wireguard-config-generator](https://github.com/markeclaudio/mikrotik-wireguard-config-generator)
+- **License:** this project is licensed under the **Apache License 2.0** — see the [`LICENSE`](LICENSE) file for details.
