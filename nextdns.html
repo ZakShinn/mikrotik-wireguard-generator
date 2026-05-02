@@ -107,6 +107,20 @@
 
                     <div class="field">
                         <label class="checkbox is-size-7 has-text-weight-bold">
+                            <input type="checkbox" v-model="form.useUltralowServers"> {{ t.ui.useUltralowServers }}
+                        </label>
+                        <p class="help is-size-7 mb-2">{{ t.ui.useUltralowServersHelp }}</p>
+                        <template v-if="form.useUltralowServers">
+                            <label class="label is-size-7">{{ t.labels.plainDnsServers }}</label>
+                            <div class="control"><input class="input is-small" v-model="form.plainDnsServers" :placeholder="t.hints.plainDnsServers.def"></div>
+                            <p class="help is-size-7">{{ t.hints.plainDnsServers.aim }}</p>
+                            <label class="label is-size-7 mt-2">{{ t.labels.plainDnsServersV6 }}</label>
+                            <div class="control"><input class="input is-small" v-model="form.plainDnsServersV6" :placeholder="t.hints.plainDnsServersV6.def"></div>
+                            <p class="help is-size-7">{{ t.hints.plainDnsServersV6.aim }}</p>
+                        </template>
+                    </div>
+                    <div class="field">
+                        <label class="checkbox is-size-7 has-text-weight-bold">
                             <input type="checkbox" v-model="form.allowRemote"> {{ t.ui.allowRemote }}
                         </label>
                     </div>
@@ -164,14 +178,18 @@
                     deviceName: 'Tên thiết bị (tùy chọn)',
                     maxConn: 'Số kết nối DoH tối đa',
                     routerIp: 'IP router (DNS cho DHCP)',
-                    lanNet: 'Mạng LAN (CIDR)'
+                    lanNet: 'Mạng LAN (CIDR)',
+                    plainDnsServers: 'DNS thuần IPv4 (servers=)',
+                    plainDnsServersV6: 'DNS thuần IPv6 (servers=)'
                 },
                 hints: {
                     profile: { aim: 'ID lấy trong NextDNS → Setup → Rooter / DNS (chuỗi trong URL dns.nextdns.io/XXXX).', type: 'Chuỗi', def: 'abc123' },
                     deviceName: { aim: 'Tùy chọn NextDNS: gán thiết bị vào profile (Linked IP / Device name). Để trống nếu không dùng.', type: 'Chuỗi / trống', def: 'router-home' },
                     maxConn: { aim: 'Giới hạn kết nối song song tới DoH (RouterOS).', type: 'Số', def: '5' },
                     routerIp: { aim: 'IP LAN của router — client DHCP sẽ dùng làm DNS (thường trùng gateway).', type: 'IPv4', def: '192.168.88.1' },
-                    lanNet: { aim: 'Dải LAN: dùng cho DHCP (address=) và/hoặc NAT DNS redirect (src-address). Khớp /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' }
+                    lanNet: { aim: 'Dải LAN: dùng cho DHCP (address=) và/hoặc NAT DNS redirect (src-address). Khớp /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' },
+                    plainDnsServers: { aim: 'IPv4 ultralow NextDNS (mẫu). Đối chiếu NextDNS → Setup → Router nếu khác.', type: 'IPv4, phẩy', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServersV6: { aim: 'IPv6 ultralow NextDNS (mẫu). Để trống nếu không dùng IPv6.', type: 'IPv6, phẩy', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
                     serverConfig: 'Cấu hình thông số', scriptTitle: 'MikroTik Script', copy: 'Copy Script',
@@ -182,10 +200,12 @@
                     includeDhcpDnsHelp: 'Bật nếu muốn script thêm lệnh gán dns-server trên mạng DHCP. Tắt nếu bạn tự chỉ DNS từng máy hoặc dùng cách khác.',
                     includeDnsRedirect: 'Kèm NAT DNS redirect (ép UDP/TCP 53 từ LAN về router)',
                     includeDnsRedirectHelp: 'Thiết bị chỉ tới 1.1.1.1, 8.8.8.8… vẫn bị chuyển sang resolver trên router (dstnat redirect). Cần bật “Cho phép truy vấn DNS từ LAN”. Tránh trùng rule /ip firewall nat cũ.',
+                    useUltralowServers: 'Điền servers= — NextDNS ultralow (DNS thuần kèm DoH)',
+                    useUltralowServersHelp: 'Gán IPv4 + IPv6 ultralow vào /ip dns set servers=… (cùng một tham số, cách nhau bởi dấu phẩy). use-doh-server= vẫn là DoH. Tắt nếu muốn servers trống.',
                     dhcpDnsComment: 'Tùy chọn — client DHCP dùng router làm DNS (sửa find nếu có nhiều mạng)',
                     dnsRedirectComment: 'Tùy chọn — DNS hijack: redirect cổng 53 về router (dst-address-type=!local = không áp khi đích đã là router)',
                     lanNetHelp: 'Dùng khi bật DHCP hoặc NAT redirect: khớp mạng LAN (ví dụ 192.168.88.0/24).',
-                    note: 'Cần RouterOS 7 trở lên. Kiểm tra /ip dns in terminal sau khi dán. Nếu đã có cấu hình DNS cũ, hãy sao lưu trước khi chạy lệnh. Muốn LAN dùng DoH qua router: bật “Cho phép truy vấn DNS từ LAN”; DHCP và DNS redirect là hai cách bổ sung (một là gán DNS, một là chặn DNS lệch).',
+                    note: 'Cần RouterOS 7 trở lên. Kiểm tra /ip dns print sau khi dán. IP ultralow IPv4/IPv6 có thể khác theo vùng — đối chiếu NextDNS → Setup → Router. Muốn LAN dùng DoH qua router: bật “Cho phép truy vấn DNS từ LAN”; DHCP và DNS redirect là hai cách bổ sung.',
                     copied: 'Đã sao chép!', tipAim: 'Mục đích', tipType: 'Kiểu', tipDef: 'Mặc định'
                 }
             },
@@ -195,14 +215,18 @@
                     deviceName: 'Device name (optional)',
                     maxConn: 'Max DoH connections',
                     routerIp: 'Router IP (DHCP DNS)',
-                    lanNet: 'LAN network (CIDR)'
+                    lanNet: 'LAN network (CIDR)',
+                    plainDnsServers: 'Plain DNS IPv4 (servers=)',
+                    plainDnsServersV6: 'Plain DNS IPv6 (servers=)'
                 },
                 hints: {
                     profile: { aim: 'From NextDNS dashboard → Setup → router/DNS (ID in https://dns.nextdns.io/XXXX).', type: 'String', def: 'abc123' },
                     deviceName: { aim: 'Optional NextDNS device binding. Leave empty if unused.', type: 'String / empty', def: 'router-home' },
                     maxConn: { aim: 'Parallel DoH connections limit (RouterOS).', type: 'Number', def: '5' },
                     routerIp: { aim: 'Router LAN IP — DHCP clients will use this as their DNS resolver.', type: 'IPv4', def: '192.168.88.1' },
-                    lanNet: { aim: 'LAN subnet for DHCP address= and/or NAT DNS redirect src-address. Match /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' }
+                    lanNet: { aim: 'LAN subnet for DHCP address= and/or NAT DNS redirect src-address. Match /ip dhcp-server network print.', type: 'CIDR', def: '192.168.88.0/24' },
+                    plainDnsServers: { aim: 'NextDNS ultralow IPv4 (example). Match NextDNS → Setup → Router if yours differ.', type: 'Comma-separated IPv4', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServersV6: { aim: 'NextDNS ultralow IPv6 (example). Leave empty if you do not use IPv6.', type: 'Comma-separated IPv6', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
                     serverConfig: 'Parameters', scriptTitle: 'MikroTik Script', copy: 'Copy Script',
@@ -213,10 +237,12 @@
                     includeDhcpDnsHelp: 'Adds a dhcp-server network command. Turn off if you set DNS per device or use another method.',
                     includeDnsRedirect: 'Append NAT: DNS redirect (force LAN UDP/TCP 53 to router)',
                     includeDnsRedirectHelp: 'Devices using 1.1.1.1, 8.8.8.8, etc. still hit the router resolver (dstnat redirect). Requires “Allow DNS from LAN”. Avoid duplicate /ip firewall nat rules.',
+                    useUltralowServers: 'Set servers= — NextDNS ultralow (plain DNS alongside DoH)',
+                    useUltralowServersHelp: 'Fills /ip dns set servers=… with ultralow IPv4 and IPv6 (one comma-separated list). use-doh-server= still enables DoH. Turn off for empty servers.',
                     dhcpDnsComment: 'Optional — DHCP clients use router as DNS (adjust find if you have multiple networks)',
                     dnsRedirectComment: 'Optional — DNS hijack: redirect port 53 to router (dst-address-type=!local skips traffic already to the router)',
                     lanNetHelp: 'Shown when DHCP and/or redirect is enabled: must match your LAN (e.g. 192.168.88.0/24).',
-                    note: 'Requires RouterOS v7+. Run /ip dns print to verify. Back up existing DNS settings before applying. For LAN-wide DoH via the router: enable “Allow DNS from LAN”; DHCP and DNS redirect complement each other (lease DNS vs hijacking hard-coded resolvers).',
+                    note: 'Requires RouterOS v7+. Run /ip dns print after applying. Ultralow IPv4/IPv6 may vary by region — match NextDNS → Setup → Router. For LAN-wide DoH via the router: enable “Allow DNS from LAN”; DHCP and DNS redirect complement each other.',
                     copied: 'Copied!', tipAim: 'Purpose', tipType: 'Type', tipDef: 'Default'
                 }
             }
@@ -232,6 +258,9 @@
                         profile: '',
                         deviceName: '',
                         maxConn: '5',
+                        useUltralowServers: true,
+                        plainDnsServers: '45.90.28.22,45.90.30.22',
+                        plainDnsServersV6: '2a07:a8c0::,2a07:a8c1::',
                         allowRemote: true,
                         verifyCert: true,
                         includeDhcpDns: false,
@@ -250,14 +279,22 @@
                     const base = 'https://dns.nextdns.io/' + p;
                     return d ? base + '/' + encodeURIComponent(d) : base;
                 },
+                dnsServersParam() {
+                    if (!this.form.useUltralowServers) return '';
+                    function normList(str) {
+                        return (str || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+                    }
+                    const parts = normList(this.form.plainDnsServers).concat(normList(this.form.plainDnsServersV6));
+                    return parts.join(',');
+                },
                 generatedScript() {
                     const t = this.t.ui;
                     const ar = this.form.allowRemote ? 'yes' : 'no';
                     const vc = this.form.verifyCert ? 'yes' : 'no';
-                    const lines = [
-                        '# NextDNS (DoH) — ' + t.scriptComment,
-                        '/ip dns set allow-remote-requests=' + ar + ' servers="" use-doh-server="' + this.dohUrl + '" doh-max-server-connections=' + this.form.maxConn + ' verify-doh-cert=' + vc
-                    ];
+                    const servers = this.dnsServersParam;
+                    const serversArg = servers ? ('servers=' + servers) : 'servers=""';
+                    const lines = ['# NextDNS (DoH) — ' + t.scriptComment];
+                    lines.push('/ip dns set allow-remote-requests=' + ar + ' ' + serversArg + ' use-doh-server="' + this.dohUrl + '" doh-max-server-connections=' + this.form.maxConn + ' verify-doh-cert=' + vc);
                     if (this.form.includeDhcpDns) {
                         const ip = (this.form.routerIp || '').trim() || '192.168.88.1';
                         const net = (this.form.lanNet || '').trim() || '192.168.88.0/24';
