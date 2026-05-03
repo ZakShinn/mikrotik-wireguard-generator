@@ -1062,6 +1062,27 @@ header.site-header {
     letter-spacing: -0.02em;
 }
 
+.tool-card .badge-beta {
+    display: inline-block;
+    margin-left: 0.35rem;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: 0.15em;
+    border-radius: 999px;
+    background: rgba(251, 146, 60, 0.18);
+    color: #ea580c;
+    border: 1px solid rgba(251, 146, 60, 0.45);
+}
+
+.theme-dark .tool-card .badge-beta {
+    background: rgba(251, 146, 60, 0.15);
+    color: #fdba74;
+    border-color: rgba(251, 146, 60, 0.35);
+}
+
 .tool-card .sub {
     margin: 0.2rem 0 0;
     font-size: 0.875rem;

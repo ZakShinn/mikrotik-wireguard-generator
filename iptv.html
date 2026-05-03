@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <script>(function(){try{if(localStorage.getItem('mikrotik-theme')==='dark')document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
+    <script>(function(){try{var k=localStorage.getItem('mikrotik-theme');var d=false;if(k==='dark')d=true;else if(k!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)d=true;if(d)document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>IPTV MikroTik (Việt Nam) — VLAN và IGMP proxy | Zakshin</title>
     <meta name="description" content="Tạo script RouterOS cho IPTV các nhà mạng Việt Nam: VLAN trên cổng WAN, DHCP nếu cần, IGMP proxy nối VLAN IPTV với bridge LAN. Chỉ tham khảo — chỉnh theo nhà mạng.">
@@ -184,7 +184,13 @@
                         { isp: 'VNPT', vlan: '—', note: 'Tùy tỉnh; hỏi nhà mạng lấy đúng số VLAN.' }
                     ],
                     themeDark: 'Giao diện tối',
-                    themeLight: 'Giao diện sáng'
+                    themeLight: 'Giao diện sáng',
+                    scriptLines: {
+                        dhcpBlockIntro: 'DHCP trên VLAN IPTV (bỏ qua nếu ISP gán IP cố định trên VLAN này)',
+                        line1: '# IPTV (nhà mạng VN) — {{tag}}',
+                        line2: '# VLAN IPTV trên cổng WAN — số VLAN do ISP cấp (VD Viettel 2502)',
+                        igmpIntro: '# IGMP proxy: VLAN IPTV = hướng ISP; bridge LAN = hướng TV/đầu thu (bridge phải có sẵn)'
+                    }
                 }
             },
             en: {
@@ -223,7 +229,13 @@
                         { isp: 'VNPT', vlan: '—', note: 'Varies by province; ask the ISP for the VLAN.' }
                     ],
                     themeDark: 'Dark theme',
-                    themeLight: 'Light theme'
+                    themeLight: 'Light theme',
+                    scriptLines: {
+                        dhcpBlockIntro: 'DHCP on IPTV VLAN (skip if your ISP uses a fixed IP on this VLAN)',
+                        line1: '# IPTV (Vietnam ISP) — {{tag}}',
+                        line2: '# IPTV VLAN on WAN — VLAN ID from your ISP (e.g. Viettel 2502)',
+                        igmpIntro: '# IGMP proxy: IPTV VLAN = toward ISP; LAN bridge = toward TVs / STBs (bridge must exist)'
+                    }
                 }
             }
         };
@@ -248,18 +260,19 @@
             computed: {
                 t() { return i18n[this.lang]; },
                 scriptBody() {
+                    const L = this.t.ui.scriptLines;
                     const c = this.form.comment || 'IPTV';
                     const dhcp = this.form.addDhcpClient
-                        ? `# DHCP on IPTV VLAN (skip if your ISP uses a fixed IP on this VLAN)
+                        ? `# ${L.dhcpBlockIntro}
 /ip dhcp-client add interface=${this.form.vlanName} use-peer-dns=no add-default-route=no disabled=no comment="IPTV DHCP — ${c}"
 
 `
                         : '';
-                    return `# IPTV (Vietnam ISP) — ${c}
-# VLAN IPTV on WAN port — VLAN number from your ISP (e.g. Viettel 2502)
+                    const header = `${L.line1.split('{{tag}}').join(c)}\n${L.line2}`;
+                    return `${header}
 /interface vlan add name=${this.form.vlanName} vlan-id=${this.form.vlanId} interface=${this.form.wanPort} comment="IPTV VLAN — ${c}"
 
-${dhcp}# IGMP proxy: IPTV VLAN = toward ISP; LAN bridge = toward TVs / STBs (bridge must exist)
+${dhcp}${L.igmpIntro}
 /routing igmp-proxy interface add interface=${this.form.vlanName} upstream=yes alternative-subnets=0.0.0.0/0 comment="IPTV upstream — ${c}"
 /routing igmp-proxy interface add interface=${this.form.bridgeName} upstream=no comment="IPTV LAN — ${c}"
 /routing igmp-proxy set quick-leave=yes`;
@@ -276,6 +289,14 @@ ${dhcp}# IGMP proxy: IPTV VLAN = toward ISP; LAN bridge = toward TVs / STBs (bri
                     this.showToast = true;
                     setTimeout(() => { this.showToast = false; }, 2000);
                 }
+            },
+            mounted() {
+                const onTheme = (e) => { this.theme = e.detail.theme; };
+                window.addEventListener('mikrotik-theme-effective-change', onTheme);
+                this._offTheme = () => window.removeEventListener('mikrotik-theme-effective-change', onTheme);
+            },
+            beforeUnmount() {
+                if (this._offTheme) this._offTheme();
             }
         }).mount('#app');
     </script>

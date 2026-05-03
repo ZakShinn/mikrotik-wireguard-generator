@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <script>(function(){try{if(localStorage.getItem('mikrotik-theme')==='dark')document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
+    <script>(function(){try{var k=localStorage.getItem('mikrotik-theme');var d=false;if(k==='dark')d=true;else if(k!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)d=true;if(d)document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>NextDNS trên MikroTik — DNS qua HTTPS (DoH) RouterOS | Zakshin</title>
     <meta name="description" content="Sinh script cấu hình DNS over HTTPS (NextDNS) cho MikroTik RouterOS 7+. Nhập Profile ID, tùy chọn thiết bị, copy vào Terminal. Xử lý trên trình duyệt.">
@@ -389,6 +389,14 @@
                     this.showToast = true;
                     setTimeout(() => { this.showToast = false; }, 2000);
                 }
+            },
+            mounted() {
+                const onTheme = (e) => { this.theme = e.detail.theme; };
+                window.addEventListener('mikrotik-theme-effective-change', onTheme);
+                this._offTheme = () => window.removeEventListener('mikrotik-theme-effective-change', onTheme);
+            },
+            beforeUnmount() {
+                if (this._offTheme) this._offTheme();
             }
         }).mount('#app');
     </script>

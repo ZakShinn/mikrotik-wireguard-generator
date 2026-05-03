@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <script>(function(){try{if(localStorage.getItem('mikrotik-theme')==='dark')document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
+    <script>(function(){try{var k=localStorage.getItem('mikrotik-theme');var d=false;if(k==='dark')d=true;else if(k!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)d=true;if(d)document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MikroTik Tools — WireGuard, Hairpin NAT, NextDNS, IPTV | Zakshin</title>
     <meta name="description" content="Công cụ web miễn phí cho MikroTik RouterOS: WireGuard, Hairpin NAT, NextDNS (DoH), IPTV (VLAN/IGMP). Script copy-paste, xử lý trên trình duyệt.">
@@ -101,7 +101,7 @@
                 <div class="tool-card-header">
                     <div class="tool-icon nat"><i class="fas fa-network-wired"></i></div>
                     <div>
-                        <h2>{{ t.tools.nat.title }}</h2>
+                        <h2>{{ t.tools.nat.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
                         <p class="sub">{{ t.tools.nat.sub }}</p>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                 <div class="tool-card-header">
                     <div class="tool-icon nd"><i class="fas fa-filter"></i></div>
                     <div>
-                        <h2>{{ t.tools.nd.title }}</h2>
+                        <h2>{{ t.tools.nd.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
                         <p class="sub">{{ t.tools.nd.sub }}</p>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                 <div class="tool-card-header">
                     <div class="tool-icon iptv"><i class="fas fa-tv"></i></div>
                     <div>
-                        <h2>{{ t.tools.iptv.title }}</h2>
+                        <h2>{{ t.tools.iptv.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
                         <p class="sub">{{ t.tools.iptv.sub }}</p>
                     </div>
                 </div>
@@ -162,6 +162,7 @@
             vi: {
                 nav: { tools: 'Công cụ', feedback: 'Phản hồi', status: 'Trạng thái', donate: 'Ủng hộ', themeDark: 'Giao diện tối', themeLight: 'Giao diện sáng' },
                 badge: 'RouterOS',
+                badgeBeta: 'Beta',
                 hero: {
                     title: 'Công cụ web cho MikroTik',
                     subtitle: 'WireGuard, Hairpin NAT, NextDNS, IPTV — điền form, copy script dán Terminal. Chạy trong trình duyệt.'
@@ -203,6 +204,7 @@
             en: {
                 nav: { tools: 'Tools', feedback: 'Feedback', status: 'Status', donate: 'Donate', themeDark: 'Dark theme', themeLight: 'Light theme' },
                 badge: 'RouterOS',
+                badgeBeta: 'Beta',
                 hero: {
                     title: 'MikroTik tools in your browser',
                     subtitle: 'WireGuard, Hairpin NAT, NextDNS, IPTV — fill the form, copy the script into Terminal.'
@@ -256,12 +258,18 @@
                 t() { return translations[this.lang]; }
             },
             mounted() {
+                const onTheme = (e) => { this.theme = e.detail.theme; };
+                window.addEventListener('mikrotik-theme-effective-change', onTheme);
+                this._offTheme = () => window.removeEventListener('mikrotik-theme-effective-change', onTheme);
                 const mq = () => {
                     this.isNarrow = window.innerWidth <= 520;
                     if (!this.isNarrow) this.menuOpen = false;
                 };
                 window.addEventListener('resize', mq);
                 mq();
+            },
+            beforeUnmount() {
+                if (this._offTheme) this._offTheme();
             },
             methods: {
                 toggleLang() { this.lang = this.lang === 'vi' ? 'en' : 'vi'; },
