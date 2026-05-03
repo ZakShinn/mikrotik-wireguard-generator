@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){try{if(localStorage.getItem('mikrotik-theme')==='dark')document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Backup hằng ngày + Telegram notify (log) — MikroTik Tools | Zakshin</title>
+    <meta name="description" content="Sinh script RouterOS backup/export hằng ngày, tự dọn file cũ và gửi thông báo/log qua Telegram. Copy-paste chạy trên MikroTik.">
+    <meta name="keywords" content="MikroTik, RouterOS, backup, export, scheduler, telegram, notification, log">
+    <meta name="author" content="Nghĩa Zakshin">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://mikrotik.hainghia.net/telegram-backup">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/fdny1jTR/Cheems-PNG-2.png">
+    <meta name="theme-color" content="#f5f7fa">
+    <meta name="format-detection" content="telephone=no">
+
+    <meta property="og:site_name" content="MikroTik Tools — Zakshin">
+    <meta property="og:title" content="Backup + Telegram notify — MikroTik Tools | Zakshin">
+    <meta property="og:description" content="Sinh script RouterOS backup/export hằng ngày và gửi thông báo/log qua Telegram.">
+    <meta property="og:url" content="https://mikrotik.hainghia.net/telegram-backup">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:image" content="https://i.ibb.co/fdny1jTR/Cheems-PNG-2.png">
+    <meta property="og:image:alt" content="MikroTik Telegram Backup tool">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Backup + Telegram notify — MikroTik Tools | Zakshin">
+    <meta name="twitter:description" content="Generator script RouterOS backup/export hằng ngày + gửi thông báo/log qua Telegram.">
+    <meta name="twitter:image" content="https://i.ibb.co/fdny1jTR/Cheems-PNG-2.png">
+
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"WebApplication","name":"Backup + Telegram notify — MikroTik Tools","url":"https://mikrotik.hainghia.net/telegram-backup","applicationCategory":"NetworkingApplication","operatingSystem":"Web Browser","browserRequirements":"Requires JavaScript.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Nghĩa Zakshin","url":"https://github.com/ZakShinn"},"description":"Sinh script RouterOS backup/export hằng ngày, tự dọn file cũ và gửi thông báo/log qua Telegram."},
+      {"@type":"BreadcrumbList","itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Trang chủ","item":"https://mikrotik.hainghia.net/"},
+        {"@type":"ListItem","position":2,"name":"Backup + Telegram","item":"https://mikrotik.hainghia.net/telegram-backup"}
+      ]}
+    ]}
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/site.css">
+    <script src="assets/theme-ui.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="app-shell">
+    <div class="noise" aria-hidden="true"></div>
+    <div id="app" class="app-shell">
+        <div v-if="showToast" class="toast-msg"><i class="fas fa-check-circle text-success mr-2"></i> {{ t.ui.copied }}</div>
+
+        <nav class="tool-nav">
+            <div class="tool-nav-inner">
+                <div class="tool-nav-row">
+                    <div class="tool-nav-brand">
+                        <a href="index.html" class="btn btn-ghost btn-sm btn-icon" :title="t.ui.home" :aria-label="t.ui.home"><i class="fas fa-home"></i></a>
+                        <h1 class="tool-nav-title"><i class="fas fa-paper-plane accent-icon"></i> {{ t.ui.title }}</h1>
+                    </div>
+                    <div class="tool-nav-actions">
+                        <button type="button" class="btn btn-ghost btn-sm btn-icon" @click="toggleTheme" :aria-label="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark" :title="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark">
+                            <i :class="theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-ghost btn-sm" @click="toggleLang">
+                            <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                        </button>
+                    </div>
+                    <div class="tool-nav-meta">
+                        <div><strong>Nghĩa Zakshin</strong></div>
+                        <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="tool-main">
+            <div class="layout-split">
+                <section class="panel nat-panel-form">
+                    <h2 class="section-title"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.params }}</h2>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.botToken }}</label>
+                        <div class="control"><input class="input" v-model="form.botToken" :placeholder="t.hints.botToken.def"></div>
+                        <p class="help">{{ t.hints.botToken.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.chatId }}</label>
+                        <div class="control"><input class="input" v-model="form.chatId" :placeholder="t.hints.chatId.def"></div>
+                        <p class="help">{{ t.hints.chatId.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.deviceLabel }}</label>
+                        <div class="control"><input class="input" v-model="form.deviceLabel" :placeholder="t.hints.deviceLabel.def"></div>
+                        <p class="help">{{ t.hints.deviceLabel.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.mode }}</label>
+                        <div class="control select">
+                            <select v-model="form.mode">
+                                <option value="export">{{ t.ui.modeExport }}</option>
+                                <option value="backup">{{ t.ui.modeBackup }}</option>
+                                <option value="both">{{ t.ui.modeBoth }}</option>
+                            </select>
+                        </div>
+                        <p class="help">{{ t.hints.mode.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.showSensitive">
+                            <span class="checkbox-text">{{ t.labels.showSensitive }}</span>
+                        </label>
+                        <p class="help">{{ t.hints.showSensitive.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.keepFiles }}</label>
+                        <div class="control"><input class="input" v-model="form.keepFiles" :placeholder="t.hints.keepFiles.def"></div>
+                        <p class="help">{{ t.hints.keepFiles.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.startTime }}</label>
+                        <div class="control"><input class="input" v-model="form.startTime" :placeholder="t.hints.startTime.def"></div>
+                        <p class="help">{{ t.hints.startTime.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.interval }}</label>
+                        <div class="control"><input class="input" v-model="form.interval" :placeholder="t.hints.interval.def"></div>
+                        <p class="help">{{ t.hints.interval.aim }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.installScheduler">
+                            <span class="checkbox-text">{{ t.ui.installScheduler }}</span>
+                        </label>
+                        <p class="help">{{ t.ui.installSchedulerTip }}</p>
+                    </div>
+
+                    <template v-if="form.installScheduler">
+                        <div class="field">
+                            <label class="label">{{ t.labels.scriptName }}</label>
+                            <div class="control"><input class="input" v-model="form.scriptName" :placeholder="t.hints.scriptName.def"></div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ t.labels.schedulerName }}</label>
+                            <div class="control"><input class="input" v-model="form.schedulerName" :placeholder="t.hints.schedulerName.def"></div>
+                        </div>
+                    </template>
+                </section>
+
+                <section class="panel panel-script nat-panel-script">
+                    <div class="script-header">
+                        <h2 class="section-title mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h2>
+                        <button type="button" class="copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                    </div>
+                    <pre id="main-script" class="script-pre">{{ generatedScript }}</pre>
+                    <div class="callout mb-0">
+                        <strong><i class="fas fa-circle-info mr-1"></i></strong> {{ t.ui.note }}
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        const i18n = {
+            vi: {
+                labels: {
+                    botToken: 'Telegram Bot Token',
+                    chatId: 'Chat ID (hoặc @channelusername)',
+                    deviceLabel: 'Tên hiển thị thiết bị',
+                    mode: 'Kiểu backup',
+                    showSensitive: 'Export có show-sensitive (cẩn thận)',
+                    keepFiles: 'Giữ lại tối đa (số file)',
+                    startTime: 'Giờ chạy hằng ngày',
+                    interval: 'Chu kỳ',
+                    scriptName: 'Tên script (trên router)',
+                    schedulerName: 'Tên scheduler'
+                },
+                hints: {
+                    botToken: { aim: 'Tạo bot qua @BotFather → lấy token. Không share token.', def: '123456:ABCDEF...' },
+                    chatId: { aim: 'ID chat (ví dụ 123456789) hoặc @channelusername. Bot phải có quyền gửi tin.', def: '123456789' },
+                    deviceLabel: { aim: 'Dùng cho message/log: ví dụ “RB5009-home”. Nếu để trống sẽ dùng identity của router.', def: 'RB5009-home' },
+                    mode: { aim: 'Export (text .rsc), Backup (.backup), hoặc cả hai. Backup binary sẽ chỉ lưu trên router; Telegram chỉ nhận notify/log.', def: 'export' },
+                    showSensitive: { aim: 'Nếu bật, export sẽ chứa secrets (key/password). Chỉ bật khi bạn hiểu rủi ro.', def: '' },
+                    keepFiles: { aim: 'Giữ tối đa N file export và N file backup theo tên (timestamp). File cũ hơn sẽ bị xoá dần.', def: '14' },
+                    startTime: { aim: 'Định dạng RouterOS scheduler: ví dụ 02:00:00.', def: '02:00:00' },
+                    interval: { aim: 'Chu kỳ chạy: khuyến nghị 1d.', def: '1d' },
+                    scriptName: { aim: 'Tên object trong /system script để scheduler gọi.', def: 'tg-backup' },
+                    schedulerName: { aim: 'Tên object trong /system scheduler.', def: 'tg-backup' }
+                },
+                ui: {
+                    title: 'Backup + Telegram',
+                    home: 'Trang chủ',
+                    params: 'Thông số',
+                    modeExport: 'Export (.rsc) + notify Telegram',
+                    modeBackup: 'Backup (.backup) + notify Telegram',
+                    modeBoth: 'Export + Backup + notify Telegram',
+                    installScheduler: 'Sinh luôn lệnh cài script + scheduler',
+                    installSchedulerTip: 'Bật để tạo/cập nhật /system script và /system scheduler tự động.',
+                    scriptTitle: 'Script RouterOS',
+                    copy: 'Copy script',
+                    copied: 'Đã sao chép!',
+                    themeDark: 'Giao diện tối',
+                    themeLight: 'Giao diện sáng',
+                    note: 'Telegram Bot API qua RouterOS fetch phù hợp nhất để gửi thông báo/log. Việc gửi file .backup dạng “attachment” trực tiếp lên Telegram không ổn định do Telegram yêu cầu multipart/form-data; tool này tạo backup/export trên router + gửi notify/log.'
+                }
+            },
+            en: {
+                labels: {
+                    botToken: 'Telegram Bot Token',
+                    chatId: 'Chat ID (or @channelusername)',
+                    deviceLabel: 'Device label',
+                    mode: 'Backup mode',
+                    showSensitive: 'Export with show-sensitive (careful)',
+                    keepFiles: 'Max files to keep',
+                    startTime: 'Daily start time',
+                    interval: 'Interval',
+                    scriptName: 'Script name (on router)',
+                    schedulerName: 'Scheduler name'
+                },
+                hints: {
+                    botToken: { aim: 'Create a bot via @BotFather and copy the token. Do not share it.', def: '123456:ABCDEF...' },
+                    chatId: { aim: 'Chat id (e.g. 123456789) or @channelusername. The bot must be allowed to post there.', def: '123456789' },
+                    deviceLabel: { aim: 'Used in message/log, e.g. “RB5009-home”. Empty = router identity.', def: 'RB5009-home' },
+                    mode: { aim: 'Export (.rsc), Backup (.backup), or both. Binary backup is saved on router; Telegram gets notify/log.', def: 'export' },
+                    showSensitive: { aim: 'If enabled, export may include secrets (keys/passwords). Use only if you understand the risk.', def: '' },
+                    keepFiles: { aim: 'Keep at most N export files and N backup files based on sortable timestamped names. Older ones are deleted first.', def: '14' },
+                    startTime: { aim: 'RouterOS scheduler time format, e.g. 02:00:00.', def: '02:00:00' },
+                    interval: { aim: 'Run interval. Recommended: 1d.', def: '1d' },
+                    scriptName: { aim: 'Name under /system script (called by scheduler).', def: 'tg-backup' },
+                    schedulerName: { aim: 'Name under /system scheduler.', def: 'tg-backup' }
+                },
+                ui: {
+                    title: 'Backup + Telegram',
+                    home: 'Home',
+                    params: 'Parameters',
+                    modeExport: 'Export (.rsc) + Telegram notify',
+                    modeBackup: 'Backup (.backup) + Telegram notify',
+                    modeBoth: 'Export + Backup + Telegram notify',
+                    installScheduler: 'Generate install commands (script + scheduler)',
+                    installSchedulerTip: 'Enable to create/update /system script and /system scheduler automatically.',
+                    scriptTitle: 'RouterOS script',
+                    copy: 'Copy script',
+                    copied: 'Copied!',
+                    themeDark: 'Dark theme',
+                    themeLight: 'Light theme',
+                    note: 'RouterOS fetch is best for Telegram notify/log. Uploading .backup as a Telegram attachment is not reliable because Telegram requires multipart/form-data; this tool generates backup/export on the router and sends notify/log.'
+                }
+            }
+        };
+
+        function escapeRosString(s) {
+            return String(s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        }
+
+        createApp({
+            data() {
+                return {
+                    lang: 'vi',
+                    theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light',
+                    showToast: false,
+                    form: {
+                        botToken: '',
+                        chatId: '',
+                        deviceLabel: '',
+                        mode: 'export',
+                        showSensitive: false,
+                        keepFiles: '14',
+                        startTime: '02:00:00',
+                        interval: '1d',
+                        installScheduler: true,
+                        scriptName: 'tg-backup',
+                        schedulerName: 'tg-backup'
+                    }
+                };
+            },
+            computed: {
+                t() { return i18n[this.lang]; },
+                scriptBody() {
+                    const token = (this.form.botToken || '').trim() || 'YOUR_BOT_TOKEN';
+                    const chatId = (this.form.chatId || '').trim() || 'YOUR_CHAT_ID';
+                    const label = (this.form.deviceLabel || '').trim();
+                    const mode = (this.form.mode || 'export').trim();
+                    const keepFiles = (this.form.keepFiles || '14').trim() || '14';
+                    const showSensitive = !!this.form.showSensitive;
+
+                    const lines = [];
+                    lines.push('# Telegram Backup/Export notify — RouterOS v7+');
+                    lines.push('# - Creates backup/export files on the router');
+                    lines.push('# - Sends status/log via Telegram');
+                    lines.push('');
+                    lines.push(':local TG_TOKEN "' + escapeRosString(token) + '"');
+                    lines.push(':local TG_CHAT "' + escapeRosString(chatId) + '"');
+                    lines.push(':local DEVICE_LABEL "' + escapeRosString(label) + '"');
+                    lines.push(':local KEEP_FILES ' + keepFiles);
+                    lines.push(':local MODE "' + escapeRosString(mode) + '"');
+                    lines.push(':local SHOW_SENSITIVE ' + (showSensitive ? 'true' : 'false'));
+                    lines.push('');
+                    lines.push(':if ([:len $DEVICE_LABEL] = 0) do={ :set DEVICE_LABEL [/system identity get name] }');
+                    lines.push('# Build sortable timestamp: YYYYMMDD-HHMMSS from RouterOS date/time');
+                    lines.push(':local nowDate [/system clock get date]'); // e.g. "may/02/2026"
+                    lines.push(':local nowTime [/system clock get time]'); // e.g. "23:59:00"
+                    lines.push(':local mon [:pick $nowDate 0 3]');
+                    lines.push(':local day [:pick $nowDate 4 6]');
+                    lines.push(':local year [:pick $nowDate 7 11]');
+                    lines.push(':local monNum "00"');
+                    lines.push(':if ($mon="jan") do={:set monNum "01"}');
+                    lines.push(':if ($mon="feb") do={:set monNum "02"}');
+                    lines.push(':if ($mon="mar") do={:set monNum "03"}');
+                    lines.push(':if ($mon="apr") do={:set monNum "04"}');
+                    lines.push(':if ($mon="may") do={:set monNum "05"}');
+                    lines.push(':if ($mon="jun") do={:set monNum "06"}');
+                    lines.push(':if ($mon="jul") do={:set monNum "07"}');
+                    lines.push(':if ($mon="aug") do={:set monNum "08"}');
+                    lines.push(':if ($mon="sep") do={:set monNum "09"}');
+                    lines.push(':if ($mon="oct") do={:set monNum "10"}');
+                    lines.push(':if ($mon="nov") do={:set monNum "11"}');
+                    lines.push(':if ($mon="dec") do={:set monNum "12"}');
+                    lines.push(':local hh [:pick $nowTime 0 2]');
+                    lines.push(':local mm [:pick $nowTime 3 5]');
+                    lines.push(':local ss [:pick $nowTime 6 8]');
+                    lines.push(':local stamp ($year . $monNum . $day . "-" . $hh . $mm . $ss)');
+                    lines.push('');
+                    lines.push(':local ok true');
+                    lines.push(':local err ""');
+                    lines.push(':local expName ("export-" . $DEVICE_LABEL . "-" . $stamp)');
+                    lines.push(':local bakName ("backup-" . $DEVICE_LABEL . "-" . $stamp)');
+                    lines.push('');
+                    lines.push(':do {');
+                    lines.push('  :if (($MODE="export") or ($MODE="both")) do={');
+                    lines.push('    :if ($SHOW_SENSITIVE) do={');
+                    lines.push('      /export show-sensitive file=$expName');
+                    lines.push('    } else={');
+                    lines.push('      /export file=$expName');
+                    lines.push('    }');
+                    lines.push('  }');
+                    lines.push('  :if (($MODE="backup") or ($MODE="both")) do={');
+                    lines.push('    /system backup save name=$bakName');
+                    lines.push('  }');
+                    lines.push('} on-error={');
+                    lines.push('  :set ok false');
+                    lines.push('  :set err ("backup/export failed")');
+                    lines.push('}');
+                    lines.push('');
+                    lines.push('# cleanup: keep only last N files per type (based on sortable filename)');
+                    lines.push(':do {');
+                    lines.push('  :local pExp ("export-" . $DEVICE_LABEL . "-")');
+                    lines.push('  :local pBak ("backup-" . $DEVICE_LABEL . "-")');
+                    lines.push('  :foreach p in=($pExp,$pBak) do={');
+                    lines.push('    :local cnt 0');
+                    lines.push('    :foreach f in=[/file find where name~("^" . $p)] do={ :set cnt ($cnt + 1) }');
+                    lines.push('    :while ($cnt > $KEEP_FILES) do={');
+                    lines.push('      :local oldestName ""');
+                    lines.push('      :local oldestId ""');
+                    lines.push('      :foreach f in=[/file find where name~("^" . $p)] do={');
+                    lines.push('        :local n [/file get $f name]');
+                    lines.push('        :if ([:len $oldestName] = 0) do={ :set oldestName $n; :set oldestId $f } else={');
+                    lines.push('          :if ($n < $oldestName) do={ :set oldestName $n; :set oldestId $f }');
+                    lines.push('        }');
+                    lines.push('      }');
+                    lines.push('      :if ([:len $oldestId] > 0) do={ /file remove $oldestId }');
+                    lines.push('      :set cnt ($cnt - 1)');
+                    lines.push('    }');
+                    lines.push('  }');
+                    lines.push('} on-error={}');
+                    lines.push('');
+                    lines.push('# Telegram notify');
+                    lines.push(':local msg ""');
+                    lines.push(':if ($ok) do={');
+                    lines.push('  :set msg ("MT-BACKUP OK | device=" . $DEVICE_LABEL . " | mode=" . $MODE . " | export=" . $expName . " | backup=" . $bakName)');
+                    lines.push('} else={');
+                    lines.push('  :set msg ("MT-BACKUP FAIL | device=" . $DEVICE_LABEL . " | mode=" . $MODE . " | err=" . $err)');
+                    lines.push('}');
+                    lines.push(':do {');
+                    lines.push('  :local url ("https://api.telegram.org/bot" . $TG_TOKEN . "/sendMessage")');
+                    lines.push('  /tool fetch url=$url http-method=post http-data=("chat_id=" . $TG_CHAT . "&text=" . $msg) output=none');
+                    lines.push('} on-error={ :log warning ("TG notify failed for " . $DEVICE_LABEL) }');
+                    lines.push('');
+                    lines.push(':if ($ok) do={ :log info $msg } else={ :log warning $msg }');
+                    return lines.join('\n');
+                },
+                generatedScript() {
+                    const body = this.scriptBody;
+                    if (!this.form.installScheduler) return body;
+
+                    const scriptName = (this.form.scriptName || 'tg-backup').trim() || 'tg-backup';
+                    const schedulerName = (this.form.schedulerName || 'tg-backup').trim() || 'tg-backup';
+                    const interval = (this.form.interval || '1d').trim() || '1d';
+                    const startTime = (this.form.startTime || '02:00:00').trim() || '02:00:00';
+
+                    const escBody = escapeRosString(body);
+                    const lines = [];
+                    lines.push('# 1) Create/replace script');
+                    lines.push('/system script remove [find name="' + escapeRosString(scriptName) + '"]');
+                    lines.push('/system script add name="' + escapeRosString(scriptName) + '" policy=read,write,test,password,sniff,sensitive source="' + escBody + '"');
+                    lines.push('');
+                    lines.push('# 2) Create/replace scheduler');
+                    lines.push('/system scheduler remove [find name="' + escapeRosString(schedulerName) + '"]');
+                    lines.push('/system scheduler add name="' + escapeRosString(schedulerName) + '" interval=' + escapeRosString(interval) + ' start-time=' + escapeRosString(startTime) + ' on-event="' + escapeRosString(scriptName) + '"');
+                    lines.push('');
+                    lines.push('# 3) Run once now');
+                    lines.push('/system script run "' + escapeRosString(scriptName) + '"');
+                    return lines.join('\n');
+                }
+            },
+            methods: {
+                toggleLang() { this.lang = this.lang === 'vi' ? 'en' : 'vi'; },
+                toggleTheme() {
+                    if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
+                    this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
+                },
+                copyText(id) {
+                    navigator.clipboard.writeText(document.getElementById(id).innerText);
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 2000);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
+
