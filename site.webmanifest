@@ -1,0 +1,23 @@
+{
+  "name": "MikroTik Tools — Zakshin",
+  "short_name": "MikroTik Tools",
+  "description": "Công cụ web cho MikroTik RouterOS: WireGuard, Hairpin NAT, NextDNS, IPTV.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#f5f7fa",
+  "icons": [
+    {
+      "src": "Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

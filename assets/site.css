@@ -584,6 +584,24 @@ html.theme-dark .select select {
     min-width: 0;
 }
 
+.tool-nav-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #0a0a0a;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+}
+
+.tool-nav-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
 .tool-nav-title {
     margin: 0;
     font-size: clamp(1rem, 3.5vw, 1.2rem);
