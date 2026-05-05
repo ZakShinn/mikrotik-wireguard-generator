@@ -41,6 +41,17 @@ Website tĩnh (HTML + Vue 3) chạy ngay trong trình duyệt để **tạo scri
 - **Không chia sẻ** private key/token (WireGuard/Cloudflare/Telegram…).
 - Khi dán script vào router, khuyến nghị bật **Safe Mode** để tránh tự khoá mình.
 
+### Ủng hộ (Donate)
+Trang chủ có mục **Ủng hộ tác giả** trong [`index.html`](index.html): chuyển khoản MB Bank (STK `0968884946`), PayPal [paypal.me/Zakshin](https://paypal.me/Zakshin), hoặc liên hệ qua [Facebook tác giả](https://www.facebook.com/profile.php?id=100006985387032).
+
+<img src="https://img.vietqr.io/image/MB-0968884946-compact.png?addTag=ZakshinTools" alt="VietQR MB Bank — 0968884946" width="220">
+
+<p>
+  <a href="https://paypal.me/Zakshin" title="paypal.me/Zakshin"><img src="Paypal.png" alt="PayPal — paypal.me/Zakshin" width="220"></a>
+  &nbsp;&nbsp;
+  <a href="https://www.facebook.com/profile.php?id=100006985387032" title="Facebook Zakshin"><img src="Logo.png" alt="Zakshin — Facebook" width="220"></a>
+</p>
+
 ### Chạy cục bộ / triển khai
 - Có thể mở `index.html` trực tiếp, nhưng khuyến nghị serve qua HTTP để clipboard/CDN ổn định:
 
@@ -76,6 +87,17 @@ A static website (HTML + Vue 3) that runs in your browser to **generate RouterOS
 1. Open `https://mikrotik.hainghia.net`.
 2. Pick a tool.
 3. Fill the form → copy the script → paste into MikroTik Terminal.
+
+### Support / donate
+The home page has a **Support the author** section in [`index.html`](index.html): MB Bank transfer (`0968884946`), PayPal [paypal.me/Zakshin](https://paypal.me/Zakshin), or the [author’s Facebook page](https://www.facebook.com/profile.php?id=100006985387032).
+
+<img src="https://img.vietqr.io/image/MB-0968884946-compact.png?addTag=ZakshinTools" alt="VietQR MB Bank — 0968884946" width="220">
+
+<p>
+  <a href="https://paypal.me/Zakshin" title="paypal.me/Zakshin"><img src="Paypal.png" alt="PayPal — paypal.me/Zakshin" width="220"></a>
+  &nbsp;&nbsp;
+  <a href="https://www.facebook.com/profile.php?id=100006985387032" title="Zakshin on Facebook"><img src="Logo.png" alt="Zakshin — Facebook" width="220"></a>
+</p>
 
 ### Credits & license
 - **Author**: [Nghĩa Zakshin](https://github.com/ZakShinn)

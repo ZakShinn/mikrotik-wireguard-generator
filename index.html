@@ -227,13 +227,10 @@
                 </article>
                 <article class="donate-panel" role="listitem">
                     <p class="donate-panel-label">{{ t.donate.paypalLabel }}</p>
-                    <a class="donate-tile donate-tile-paypal" href="https://paypal.me/Zakshin" target="_blank" rel="noopener noreferrer" :aria-label="t.donate.paypalAria">
-                        <span class="donate-paypal-inner">
-                            <i class="fab fa-paypal donate-paypal-icon" aria-hidden="true"></i>
-                            <span class="donate-paypal-url">paypal.me/Zakshin</span>
-                            <span class="donate-paypal-sub">{{ t.donate.paypalSub }}</span>
-                        </span>
+                    <a class="donate-tile donate-tile-static donate-tile-link" href="https://paypal.me/Zakshin" target="_blank" rel="noopener noreferrer" :aria-label="t.donate.paypalAria">
+                        <img class="donate-tile-img" src="Paypal.png" width="220" height="220" alt="" decoding="async">
                     </a>
+                    <a class="donate-paypal-link" href="https://paypal.me/Zakshin" target="_blank" rel="noopener noreferrer">paypal.me/Zakshin</a>
                     <p class="donate-panel-note">{{ t.donate.paypalNote }}</p>
                 </article>
                 <article class="donate-panel" role="listitem">
@@ -328,7 +325,6 @@
                     desc: 'Nếu các công cụ hữu ích, bạn có thể mời một ly cà phê qua chuyển khoản, PayPal hoặc liên hệ qua Facebook.',
                     qrLabel: 'Chuyển khoản',
                     paypalLabel: 'PayPal',
-                    paypalSub: 'Donate',
                     paypalNote: 'Thanh toán an toàn qua PayPal.',
                     paypalAria: 'Mở PayPal — paypal.me/Zakshin',
                     brandLabel: 'Zakshin',
@@ -407,7 +403,6 @@
                     desc: 'If these tools help you, you can donate via bank transfer, PayPal, or reach out on Facebook.',
                     qrLabel: 'Bank transfer',
                     paypalLabel: 'PayPal',
-                    paypalSub: 'Donate',
                     paypalNote: 'Secure checkout via PayPal.',
                     paypalAria: 'Open PayPal — paypal.me/Zakshin',
                     brandLabel: 'Zakshin',
