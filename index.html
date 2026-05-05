@@ -213,11 +213,36 @@
 
         <section class="donate" id="donate">
             <h3><i class="fas fa-mug-hot"></i> {{ t.donate.title }}</h3>
-            <p>{{ t.donate.desc }}</p>
-            <img class="donate-qr" src="https://img.vietqr.io/image/MB-0968884946-compact.png?addTag=ZakshinTools" width="220" height="220" alt="VietQR">
-            <div class="donate-meta">
-                <div><strong>Võ Hoàng Hải Nghĩa</strong></div>
-                <div class="bank">MB Bank · 0968884946</div>
+            <p class="donate-intro">{{ t.donate.desc }}</p>
+            <div class="donate-grid" role="list">
+                <article class="donate-panel" role="listitem">
+                    <p class="donate-panel-label">{{ t.donate.qrLabel }}</p>
+                    <div class="donate-tile donate-tile-static">
+                        <img class="donate-tile-img" src="https://img.vietqr.io/image/MB-0968884946-compact.png?addTag=ZakshinTools" width="220" height="220" alt="VietQR MB Bank">
+                    </div>
+                    <div class="donate-meta">
+                        <div><strong>Võ Hoàng Hải Nghĩa</strong></div>
+                        <div class="bank">MB Bank · 0968884946</div>
+                    </div>
+                </article>
+                <article class="donate-panel" role="listitem">
+                    <p class="donate-panel-label">{{ t.donate.paypalLabel }}</p>
+                    <a class="donate-tile donate-tile-paypal" href="https://paypal.me/Zakshin" target="_blank" rel="noopener noreferrer" :aria-label="t.donate.paypalAria">
+                        <span class="donate-paypal-inner">
+                            <i class="fab fa-paypal donate-paypal-icon" aria-hidden="true"></i>
+                            <span class="donate-paypal-url">paypal.me/Zakshin</span>
+                            <span class="donate-paypal-sub">{{ t.donate.paypalSub }}</span>
+                        </span>
+                    </a>
+                    <p class="donate-panel-note">{{ t.donate.paypalNote }}</p>
+                </article>
+                <article class="donate-panel" role="listitem">
+                    <p class="donate-panel-label">{{ t.donate.brandLabel }}</p>
+                    <a class="donate-tile donate-tile-brand" href="https://www.facebook.com/profile.php?id=100006985387032" target="_blank" rel="noopener noreferrer" :aria-label="t.donate.brandAria">
+                        <img class="donate-tile-img" src="Logo.png" width="220" height="220" alt="" decoding="async">
+                    </a>
+                    <a class="donate-brand-name" href="https://www.facebook.com/profile.php?id=100006985387032" target="_blank" rel="noopener noreferrer">Zakshin</a>
+                </article>
             </div>
         </section>
 
@@ -300,7 +325,14 @@
                 },
                 donate: {
                     title: 'Ủng hộ tác giả',
-                    desc: 'Nếu các công cụ hữu ích, bạn có thể mời một ly cà phê qua QR bên dưới.'
+                    desc: 'Nếu các công cụ hữu ích, bạn có thể mời một ly cà phê qua chuyển khoản, PayPal hoặc liên hệ qua Facebook.',
+                    qrLabel: 'Chuyển khoản',
+                    paypalLabel: 'PayPal',
+                    paypalSub: 'Donate',
+                    paypalNote: 'Thanh toán an toàn qua PayPal.',
+                    paypalAria: 'Mở PayPal — paypal.me/Zakshin',
+                    brandLabel: 'Zakshin',
+                    brandAria: 'Mở Facebook Zakshin',
                 },
                 footer: { by: 'phát triển bởi', monitor: 'Giám sát' }
             },
@@ -372,7 +404,14 @@
                 },
                 donate: {
                     title: 'Support the author',
-                    desc: 'If these tools help you, you can buy a coffee via the QR code below.'
+                    desc: 'If these tools help you, you can donate via bank transfer, PayPal, or reach out on Facebook.',
+                    qrLabel: 'Bank transfer',
+                    paypalLabel: 'PayPal',
+                    paypalSub: 'Donate',
+                    paypalNote: 'Secure checkout via PayPal.',
+                    paypalAria: 'Open PayPal — paypal.me/Zakshin',
+                    brandLabel: 'Zakshin',
+                    brandAria: 'Open Zakshin on Facebook',
                 },
                 footer: { by: 'built by', monitor: 'Monitoring' }
             }

@@ -1206,35 +1206,199 @@ section.feedback h3 .fab.fa-facebook {
 
 section.donate {
     margin-top: clamp(2rem, 6vw, 3.5rem);
-    padding: clamp(1.5rem, 4vw, 2rem);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: var(--donate-bg);
     text-align: center;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
 section.donate h3 {
     margin: 0 0 0.5rem;
     font-size: 1.1rem;
+    letter-spacing: -0.02em;
 }
 
-section.donate > p {
-    margin: 0 0 1rem;
+section.donate .donate-intro {
+    margin: 0 auto 1.35rem;
+    max-width: 34rem;
     color: var(--muted);
     font-size: 0.9rem;
+    line-height: 1.55;
 }
 
-.donate-qr {
-    max-width: 220px;
-    width: 100%;
-    height: auto;
+.donate-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 3vw, 1.75rem);
+    align-items: stretch;
+    max-width: min(900px, 100%);
+    margin: 0 auto;
+}
+
+@media (max-width: 720px) {
+    .donate-grid {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+    }
+}
+
+.donate-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0.85rem 1.15rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
+    background: var(--bg-card);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.theme-dark .donate-panel {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+}
+
+.donate-panel-label {
+    margin: 0 0 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.donate-tile {
+    width: min(220px, 100%);
+    max-width: 100%;
+    aspect-ratio: 1;
+    height: auto;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.donate-tile-static {
+    background: #fff;
+    padding: 6px;
+}
+
+.theme-dark .donate-tile-static {
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.donate-tile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.donate-tile-paypal {
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(155deg, #002f6c 0%, #0070ba 42%, #009cde 100%);
+    border-color: rgba(0, 48, 135, 0.45);
+    box-shadow:
+        0 10px 28px rgba(0, 56, 168, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.donate-tile-paypal:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+    box-shadow:
+        0 16px 40px rgba(0, 56, 168, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.donate-tile-paypal:active {
+    transform: translateY(0);
+}
+
+.donate-paypal-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.donate-paypal-icon {
+    font-size: clamp(2.25rem, 8vw, 2.75rem);
+    line-height: 1;
+    opacity: 0.98;
+}
+
+.donate-paypal-url {
+    font-size: clamp(0.78rem, 2.5vw, 0.88rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    word-break: break-all;
+}
+
+.donate-paypal-sub {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.88;
+}
+
+.donate-panel-note {
+    margin: 0.65rem 0 0;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.4;
+    max-width: 14rem;
+}
+
+.donate-tile-brand {
+    padding: 10px;
+    background: #0a0a0a;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+}
+
+.donate-tile-brand:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.18);
+}
+
+.donate-tile-brand:active {
+    transform: translateY(0);
+}
+
+.donate-brand-name {
+    margin-top: 0.65rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.donate-brand-name:hover {
+    border-bottom-color: rgba(45, 212, 191, 0.45);
+    color: var(--text);
 }
 
 .donate-meta {
-    margin-top: 1rem;
-    font-size: 0.9rem;
+    margin-top: 0.85rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
 }
 
 .donate-meta .bank {
