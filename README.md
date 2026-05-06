@@ -7,7 +7,7 @@
 ## Tiếng Việt
 
 ### MikroTik Tools là gì?
-Website tĩnh (HTML + Vue 3) chạy ngay trong trình duyệt để **tạo script RouterOS** dạng **copy/paste** vào Terminal MikroTik.
+Website chạy ngay trong trình duyệt để **tạo script RouterOS** dạng **copy/paste** vào Terminal MikroTik.
 
 ### Có những tính năng gì?
 - **WireGuard**: tạo script router + file client `.conf` + QR.
@@ -71,7 +71,7 @@ npx serve .
 ## English
 
 ### What is MikroTik Tools?
-A static website (HTML + Vue 3) that runs in your browser to **generate RouterOS scripts** for **copy/paste** into MikroTik Terminal.
+A static website that runs in your browser to **generate RouterOS scripts** for **copy/paste** into MikroTik Terminal.
 
 ### Features
 - **WireGuard**: router scripts + client `.conf` + QR.

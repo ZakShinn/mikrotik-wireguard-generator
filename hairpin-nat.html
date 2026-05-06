@@ -127,6 +127,19 @@
                             <input class="input" v-model="form[field]">
                         </div>
                     </div>
+
+                    <div class="wg-checkboxes" style="margin-top:12px">
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="skipMasquerade">
+                            <span class="checkbox-text">{{ t.ui.skipMasquerade }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.ui.skipMasqueradeTip }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                    </div>
                 </section>
 
                 <section class="panel panel-script nat-panel-script">
@@ -141,9 +154,11 @@
 add address={{ form.lanSubnet }} list=LAN
 
 /ip firewall nat
+<template v-if="!skipMasquerade">
 add action=masquerade chain=srcnat comment="Hairpin NAT" \
     dst-address=!{{ form.routerIp }} src-address-list=LAN
 
+</template>
 add action=dst-nat chain=dstnat comment="Internal Hairpin - {{ form.purpose }}" \
     dst-address-type=local dst-port={{ form.port }} protocol={{ form.proto }} \
     src-address-list=LAN to-addresses={{ form.serverIp }} to-ports={{ form.port }}
@@ -186,8 +201,11 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
                     serverConfig: 'Thông số',
                     scriptTitle: 'Script RouterOS',
                     copy: 'Copy script',
+                    skipMasquerade: 'Bỏ rule masquerade Hairpin NAT (nếu đã có sẵn)',
+                    skipMasqueradeTip: 'Dành cho trường hợp router đã có rule masquerade Hairpin NAT từ trước theo script này, tránh trùng rule.',
                     note: 'Masquerade Hairpin chỉ cần một lần cho cả LAN. Kiểm tra không trùng rule NAT/Mangle cũ.',
                     copied: 'Đã sao chép!',
+                    tipDetails: 'Chi tiết',
                     tipAim: 'Giải thích',
                     tipType: 'Kiểu',
                     tipDef: 'Ví dụ',
@@ -218,8 +236,11 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
                     serverConfig: 'Parameters',
                     scriptTitle: 'RouterOS script',
                     copy: 'Copy script',
+                    skipMasquerade: 'Skip Hairpin NAT masquerade rule (if you already have it)',
+                    skipMasqueradeTip: 'Use this if your router already has the Hairpin NAT masquerade rule from a previous run of this script to avoid duplicates.',
                     note: 'One Hairpin masquerade covers the whole LAN. Avoid duplicate NAT/Mangle clashes.',
                     copied: 'Copied!',
+                    tipDetails: 'Details',
                     tipAim: 'Explain',
                     tipType: 'Kind',
                     tipDef: 'Example',
@@ -235,6 +256,7 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
                     lang: 'vi',
                     theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light',
                     showToast: false,
+                    skipMasquerade: false,
                     fieldsList: ['purpose', 'lanSubnet', 'routerIp', 'serverIp', 'port', 'proto', 'wanInt'],
                     form: { purpose: 'Web Service', lanSubnet: '192.168.88.0/24', routerIp: '192.168.88.1', serverIp: '192.168.88.100', port: '80', proto: 'tcp', wanInt: 'pppoe-out1', wanMode: 'custom' }
                 };
