@@ -74,6 +74,7 @@
                     <div class="tool-nav-meta">
                         <div><strong>Nghĩa Zakshin</strong></div>
                         <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        <div class="tool-nav-meta-sub"><i class="fas fa-circle-check mr-1"></i> {{ t.ui.testedOn }}</div>
                     </div>
                 </div>
             </div>
@@ -102,6 +103,58 @@
                                 </select>
                             </div>
                             <p class="help mb-0">{{ t.hints.rulePlacement }}</p>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.blockMethods }}</label>
+                        <div class="control">
+                            <div v-if="form.placement === 'raw' && form.methodLayer7" class="callout" style="margin-bottom:10px;">
+                                <strong><i class="fas fa-triangle-exclamation mr-1"></i></strong> {{ t.ui.warnLayer7Raw }}
+                            </div>
+                            <div class="wg-checkboxes">
+                                <label class="checkbox-row">
+                                    <input type="checkbox" v-model="form.methodAddrList">
+                                    <span class="checkbox-text">{{ t.ui.methodAddrList }}</span>
+                                    <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                        <span class="tip-content">
+                                            <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                            <span class="tip-row"><span class="t-val">{{ t.ui.methodAddrListTip }}</span></span>
+                                        </span>
+                                    </span>
+                                </label>
+                                <label class="checkbox-row">
+                                    <input type="checkbox" v-model="form.methodTlsHost">
+                                    <span class="checkbox-text">{{ t.ui.methodTlsHost }}</span>
+                                    <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                        <span class="tip-content">
+                                            <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                            <span class="tip-row"><span class="t-val">{{ t.ui.methodTlsHostTip }}</span></span>
+                                        </span>
+                                    </span>
+                                </label>
+                                <label class="checkbox-row">
+                                    <input type="checkbox" v-model="form.methodContent">
+                                    <span class="checkbox-text">{{ t.ui.methodContent }}</span>
+                                    <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                        <span class="tip-content">
+                                            <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                            <span class="tip-row"><span class="t-val">{{ t.ui.methodContentTip }}</span></span>
+                                        </span>
+                                    </span>
+                                </label>
+                                <label class="checkbox-row">
+                                    <input type="checkbox" v-model="form.methodLayer7">
+                                    <span class="checkbox-text">{{ t.ui.methodLayer7 }}</span>
+                                    <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                        <span class="tip-content">
+                                            <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                            <span class="tip-row"><span class="t-val">{{ t.ui.methodLayer7Tip }}</span></span>
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                            <p class="help mb-0">{{ t.hints.blockMethods }}</p>
                         </div>
                     </div>
 
@@ -179,15 +232,29 @@
                     themeDark: 'Giao diện tối',
                     themeLight: 'Giao diện sáng',
                     home: 'Trang chủ',
+                    tipDetails: 'Chi tiết',
                     warn: 'Script này là gợi ý. Bạn nên test trong Safe Mode và kiểm tra ảnh hưởng (một số domain dùng CDN có thể gây chặn nhầm).',
                     note: 'Gợi ý: Nếu vẫn truy cập được do QUIC/DoH, hãy cân nhắc tắt QUIC trên trình duyệt, hoặc kết hợp chặn DNS (NextDNS/Pi-hole) theo domain.',
                     raw: 'Raw (prerouting) — chặn sớm, nhẹ CPU',
                     filter: 'Filter (forward) — dễ đọc, tương thích hơn',
-                    socialTip: 'Chọn các dịch vụ bạn muốn chặn. Tool sẽ tạo address-list theo domain và rule drop TCP/80, TCP/443, UDP/443.'
+                    socialTip: 'Chọn các dịch vụ bạn muốn chặn. Tool sẽ tạo rule theo các cách bạn chọn (dst-address-list / tls-host / content / layer7).',
+                    methodAddrList: 'Chặn theo dst-address-list (domain → IP động)',
+                    methodAddrListTip: 'Ưu: đơn giản, hợp với raw (chặn sớm), xử lý được HTTPS/QUIC nếu IP nằm trong list. Nhược: domain resolve có thể đổi IP/CDN, có thể chặn nhầm khi dùng chung IP.',
+                    methodTlsHost: 'Chặn theo tls-host (SNI) — HTTPS',
+                    methodTlsHostTip: 'Ưu: chặn theo domain khi truy cập HTTPS (SNI). Nhược: không chặn QUIC (UDP/443), không áp cho ECH/ESNI (tương lai), và không áp cho IP trực tiếp.',
+                    methodContent: 'Chặn theo content (HTTP Host header) — TCP/80',
+                    methodContentTip: 'Ưu: chặn nhanh với HTTP. Nhược: không hiệu quả với HTTPS vì payload mã hoá; có thể chặn nhầm khi match chuỗi trùng.',
+                    methodLayer7: 'Chặn theo Layer7 (regex) — nặng CPU',
+                    methodLayer7Tip: 'Ưu: linh hoạt (regex). Nhược: nặng CPU, chủ yếu hiệu quả với HTTP; không khuyến nghị cho router yếu hoặc lưu lượng lớn.'
+                    ,
+                    warnLayer7Raw: 'Bạn đang chọn Raw nhưng bật Layer7. Tool sẽ chỉ sinh Layer7 rule trong Filter (forward), không áp dụng trong Raw.'
+                    ,
+                    testedOn: 'Đã test ổn định trên RouterOS v7.22'
                 },
                 labels: {
                     lanList: 'Tên interface-list LAN',
                     rulePlacement: 'Vị trí rule',
+                    blockMethods: 'Cách chặn',
                     socials: 'Chọn mạng xã hội',
                     useSchedule: 'Bật lịch chặn theo khung giờ (mỗi ngày)',
                     timeRange: 'Khung giờ chặn (start → end)',
@@ -196,6 +263,7 @@
                 hints: {
                     lanList: 'Mặc định thường là LAN (theo defconf). Rule sẽ áp dụng cho traffic từ in-interface-list=LAN.',
                     rulePlacement: 'Raw giúp chặn sớm hơn. Filter dễ debug hơn. Nếu bạn dùng template firewall khác, chọn cái bạn quen.',
+                    blockMethods: 'Gợi ý: bật ít nhất 1 cách. Layer7 chỉ sinh rule trong Filter (forward). Content chỉ có ý nghĩa với HTTP (port 80). TLS Host dùng cho HTTPS (TCP/443).',
                     useSchedule: 'Nếu bật, tool sẽ tạo 2 scheduler: enable lúc start-time và disable lúc end-time (lặp mỗi ngày).',
                     timeRange: 'Định dạng HH:MM:SS (ví dụ 08:00:00). Nếu end < start, RouterOS vẫn chạy scheduler nhưng logic “qua đêm” không được xử lý trong tool này.',
                     startEnabled: 'Nếu tắt, rule sẽ được tạo ở trạng thái disabled=yes và bạn tự enable khi cần.'
@@ -211,15 +279,29 @@
                     themeDark: 'Dark theme',
                     themeLight: 'Light theme',
                     home: 'Home',
+                    tipDetails: 'Details',
                     warn: 'This is a starter template. Test in Safe Mode and review side effects (some domains may share CDNs).',
                     note: 'Tip: If access still works via QUIC/DoH, consider disabling QUIC on clients or combine with DNS blocking (NextDNS/Pi-hole) by domain.',
                     raw: 'Raw (prerouting) — early drop, lower CPU',
                     filter: 'Filter (forward) — easier to read, more compatible',
-                    socialTip: 'Pick services to block. The tool generates domain-based address-lists and drop rules for TCP/80, TCP/443, UDP/443.'
+                    socialTip: 'Pick services to block. The tool generates rules using the selected methods (dst-address-list / tls-host / content / layer7).',
+                    methodAddrList: 'Block by dst-address-list (domain → dynamic IP)',
+                    methodAddrListTip: 'Pros: simple, works well in Raw (early drop), can cover HTTPS/QUIC if IP is in list. Cons: CDN/shared IPs may cause collateral blocks; IPs may change.',
+                    methodTlsHost: 'Block by tls-host (SNI) — HTTPS',
+                    methodTlsHostTip: 'Pros: blocks HTTPS by domain (SNI). Cons: does not block QUIC (UDP/443), may not work with ECH/ESNI in future, not for direct IP access.',
+                    methodContent: 'Block by content (HTTP Host header) — TCP/80',
+                    methodContentTip: 'Pros: effective for plain HTTP. Cons: not effective for HTTPS (encrypted); can false-positive if substring matches.',
+                    methodLayer7: 'Block by Layer7 (regex) — high CPU',
+                    methodLayer7Tip: 'Pros: flexible matching (regex). Cons: CPU heavy, mostly useful for HTTP; not recommended on weak routers or high traffic.'
+                    ,
+                    warnLayer7Raw: 'You selected Raw but enabled Layer7. The tool only generates Layer7 rules in Filter (forward), not in Raw.'
+                    ,
+                    testedOn: 'Tested stable on RouterOS v7.22'
                 },
                 labels: {
                     lanList: 'LAN interface-list name',
                     rulePlacement: 'Rule placement',
+                    blockMethods: 'Blocking methods',
                     socials: 'Select social networks',
                     useSchedule: 'Enable schedule (daily time window)',
                     timeRange: 'Block time window (start → end)',
@@ -228,6 +310,7 @@
                 hints: {
                     lanList: 'Defaults to LAN (defconf). Rules match traffic with in-interface-list=LAN.',
                     rulePlacement: 'Raw drops earlier. Filter is easier to debug. Pick what matches your firewall style.',
+                    blockMethods: 'Tip: enable at least one method. Layer7 rules are generated in Filter (forward) only. Content is meaningful for HTTP (port 80). TLS Host is for HTTPS (TCP/443).',
                     useSchedule: 'If enabled, creates two schedulers: enable at start-time and disable at end-time (daily).',
                     timeRange: 'Format HH:MM:SS (e.g., 08:00:00). Overnight windows are not handled in this tool.',
                     startEnabled: 'If off, rules are created disabled=yes and you can enable manually.'
@@ -307,6 +390,21 @@
                     'zadn.vn', '*.zadn.vn',
                     'zaloapp.com', '*.zaloapp.com'
                 ]
+            },
+            {
+                key: 'windowsUpdate',
+                label: { vi: 'Windows Update', en: 'Windows Update' },
+                desc: { vi: 'windowsupdate.com, update.microsoft.com', en: 'windowsupdate.com, update.microsoft.com' },
+                domains: [
+                    'windowsupdate.com', '*.windowsupdate.com',
+                    'update.microsoft.com',
+                    'download.windowsupdate.com',
+                    'windowsupdate.microsoft.com',
+                    'wustat.windows.com',
+                    'ntservicepack.microsoft.com',
+                    'dl.delivery.mp.microsoft.com',
+                    'delivery.mp.microsoft.com'
+                ]
             }
         ];
 
@@ -339,6 +437,10 @@
                     form: {
                         lanList: 'LAN',
                         placement: 'raw', // raw | filter
+                        methodAddrList: true,
+                        methodTlsHost: false,
+                        methodContent: false,
+                        methodLayer7: false,
                         selected: ['facebook', 'tiktok'],
                         useSchedule: false,
                         startTime: '08:00:00',
@@ -358,6 +460,9 @@
                     }
                     return uniq(all);
                 },
+                selectedPlainDomains() {
+                    return uniq(this.selectedDomains.map(d => String(d || '').trim()).filter(Boolean).map(d => d.startsWith('*.') ? d.slice(2) : d));
+                },
                 generatedScript() {
                     const lanList = (this.form.lanList || 'LAN').trim() || 'LAN';
                     const placement = this.form.placement === 'filter' ? 'filter' : 'raw';
@@ -368,9 +473,11 @@
                     const useSchedule = !!this.form.useSchedule;
 
                     const domains = this.selectedDomains;
+                    const plainDomains = this.selectedPlainDomains;
 
                     const tag = 'SOCIALBLOCK';
                     const listName = 'SocialBlock-Domains';
+                    const l7Name = 'socialblock-l7';
                     const enableScriptName = 'socialblock-enable';
                     const disableScriptName = 'socialblock-disable';
                     const schedEnableName = 'socialblock-enable-daily';
@@ -382,19 +489,33 @@
                     lines.push(`# Social media block (tool-generated) — MikroTik Tools`);
                     lines.push(`# Placement: ${placement.toUpperCase()} | LAN list: ${lanList}`);
                     lines.push(`# Selected domains: ${domains.length ? domains.length : 0}`);
+                    lines.push(`# Methods: addr-list=${this.form.methodAddrList ? 'on' : 'off'}, tls-host=${this.form.methodTlsHost ? 'on' : 'off'}, content=${this.form.methodContent ? 'on' : 'off'}, layer7=${this.form.methodLayer7 ? 'on' : 'off'}`);
                     lines.push('');
 
-                    lines.push('# 1) Address-list (domains → dynamic IPs)');
-                    lines.push('/ip firewall address-list');
-                    lines.push(`:foreach i in=[find list="${listName}"] do={ remove $i }`);
-                    if (!domains.length) {
-                        lines.push(`# NOTE: No social network selected. Pick at least one.`);
-                    } else {
-                        for (const d of domains) {
-                            lines.push(`add list="${listName}" address=${d} comment="${tag}: ${d}" disabled=no`);
-                        }
+                    const useAnyMethod = !!(this.form.methodAddrList || this.form.methodTlsHost || this.form.methodContent || this.form.methodLayer7);
+                    const useAddrList = !!this.form.methodAddrList;
+                    const useTlsHost = !!this.form.methodTlsHost;
+                    const useContent = !!this.form.methodContent;
+                    const useLayer7 = !!this.form.methodLayer7;
+
+                    if (!useAnyMethod) {
+                        lines.push('# NOTE: No blocking method selected. Enable at least one method in UI.');
+                        lines.push('');
                     }
-                    lines.push('');
+
+                    if (useAddrList) {
+                        lines.push('# 1) Address-list (domains → dynamic IPs)');
+                        lines.push('/ip firewall address-list');
+                        lines.push(`:foreach i in=[find list="${listName}"] do={ remove $i }`);
+                        if (!domains.length) {
+                            lines.push(`# NOTE: No social network selected. Pick at least one.`);
+                        } else {
+                            for (const d of domains) {
+                                lines.push(`add list="${listName}" address=${d} comment="${tag}: ${d}" disabled=no`);
+                            }
+                        }
+                        lines.push('');
+                    }
 
                     const chain = placement === 'raw' ? 'prerouting' : 'forward';
                     const menu = placement === 'raw' ? '/ip firewall raw' : '/ip firewall filter';
@@ -402,12 +523,41 @@
 
                     lines.push(`# 2) Firewall rules (${placement})`);
                     lines.push(menu);
-                    lines.push(`# Drop web traffic to social domains (TCP/80, TCP/443, UDP/443)`);
                     lines.push(`# You can disable/enable all rules by comment prefix "${tag}:"`);
-                    lines.push(`add chain=${chain} action=drop comment="${tag}: drop tcp/80 by dst-address-list" protocol=tcp dst-port=80 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
-                    lines.push(`add chain=${chain} action=drop comment="${tag}: drop tcp/443 by dst-address-list" protocol=tcp dst-port=443 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
-                    lines.push(`add chain=${chain} action=drop comment="${tag}: drop udp/443 (QUIC) by dst-address-list" protocol=udp dst-port=443 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
+                    if (useAddrList) {
+                        lines.push(`# dst-address-list method (TCP/80, TCP/443, UDP/443)`);
+                        lines.push(`add chain=${chain} action=drop comment="${tag}: addrlist drop tcp/80" protocol=tcp dst-port=80 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
+                        lines.push(`add chain=${chain} action=drop comment="${tag}: addrlist drop tcp/443" protocol=tcp dst-port=443 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
+                        lines.push(`add chain=${chain} action=drop comment="${tag}: addrlist drop udp/443 (QUIC)" protocol=udp dst-port=443 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
+                    }
+                    if (useTlsHost) {
+                        lines.push(`# tls-host method (HTTPS SNI on TCP/443). Does NOT block QUIC (UDP/443).`);
+                        for (const d of domains) {
+                            lines.push(`add chain=${chain} action=drop comment="${tag}: tlshost ${d}" protocol=tcp dst-port=443 ${inIfListProp}=${lanList} tls-host=${d} ${disabledFlag}`);
+                        }
+                    }
+                    if (useContent) {
+                        lines.push(`# content method (HTTP on TCP/80). HTTPS payload is encrypted, so content won't help there.`);
+                        for (const d of plainDomains) {
+                            lines.push(`add chain=${chain} action=drop comment="${tag}: content ${d}" protocol=tcp dst-port=80 ${inIfListProp}=${lanList} content=${d} ${disabledFlag}`);
+                        }
+                    }
                     lines.push('');
+
+                    if (useLayer7) {
+                        lines.push('# 2b) Layer7 protocol + rules (Filter only)');
+                        lines.push('# NOTE: Layer7 matcher is CPU-heavy and primarily useful for HTTP. Not generated in Raw.');
+                        const esc = (s) => String(s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const re = plainDomains.length ? ('(' + plainDomains.map(esc).join('|') + ')') : '(example\\.com)';
+                        lines.push('/ip firewall layer7-protocol');
+                        lines.push(`:if ([:len [find name="${l7Name}"]] > 0) do={ remove [find name="${l7Name}"] }`);
+                        lines.push(`add name="${l7Name}" regexp="${re}" comment="${tag}: layer7"`);
+                        lines.push('');
+                        lines.push('/ip firewall filter');
+                        lines.push(`# Layer7 drop (TCP/80). If you need HTTPS blocking, prefer tls-host / addr-list.`);
+                        lines.push(`add chain=forward action=drop comment="${tag}: layer7 drop tcp/80" protocol=tcp dst-port=80 ${inIfListProp}=${lanList} layer7-protocol="${l7Name}" ${disabledFlag}`);
+                        lines.push('');
+                    }
 
                     lines.push('# 3) Enable/disable helper scripts (toggle rules by comment)');
                     lines.push('/system script');
@@ -417,12 +567,14 @@
                     lines.push(`  :local n 0;`);
                     lines.push(`  :foreach i in=[/ip firewall filter find comment~\\"^${tag}:\\"] do={ /ip firewall filter enable $i; :set n ($n+1); }`);
                     lines.push(`  :foreach i in=[/ip firewall raw find comment~\\"^${tag}:\\"] do={ /ip firewall raw enable $i; :set n ($n+1); }`);
+                    lines.push(`  :foreach i in=[/ip firewall layer7-protocol find comment~\\"^${tag}:\\"] do={ /ip firewall layer7-protocol enable $i; :set n ($n+1); }`);
                     lines.push(`  :log info \\"${tag}: enabled rules=\\".$n;`);
                     lines.push(`"`);
                     lines.push(`add name="${disableScriptName}" policy=read,write,test source="`);
                     lines.push(`  :local n 0;`);
                     lines.push(`  :foreach i in=[/ip firewall filter find comment~\\"^${tag}:\\"] do={ /ip firewall filter disable $i; :set n ($n+1); }`);
                     lines.push(`  :foreach i in=[/ip firewall raw find comment~\\"^${tag}:\\"] do={ /ip firewall raw disable $i; :set n ($n+1); }`);
+                    lines.push(`  :foreach i in=[/ip firewall layer7-protocol find comment~\\"^${tag}:\\"] do={ /ip firewall layer7-protocol disable $i; :set n ($n+1); }`);
                     lines.push(`  :log info \\"${tag}: disabled rules=\\".$n;`);
                     lines.push(`"`);
                     lines.push('');
