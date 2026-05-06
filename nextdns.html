@@ -240,7 +240,7 @@
                     maxConn: { aim: 'RouterOS giới hạn bao nhiêu phiên DoH chạy song song.', type: 'Số', def: '5' },
                     routerIp: { aim: 'Địa chỉ LAN của router — DHCP sẽ gán đây làm DNS cho máy trong LAN.', type: 'IPv4', def: '192.168.88.1' },
                     lanNet: { aim: 'Phải khớp address trong /ip dhcp-server network print (VD 192.168.88.0/24). Dùng cho block DHCP và NAT redirect trong script.', type: 'CIDR', def: '192.168.88.0/24' },
-                    plainDnsServers: { aim: 'Danh sách IPv4 ultralow của NextDNS (số có thể khác vùng — lấy trong NextDNS → Setup → Router). Nhiều IP cách nhau dấu phẩy.', type: 'IPv4, phẩy', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServers: { aim: 'Danh sách IPv4 ultralow của NextDNS (số có thể khác vùng — lấy trong NextDNS → Setup → Router). Nhiều IP cách nhau dấu phẩy.', type: 'IPv4, phẩy', def: '45.90.28.0,45.90.30.0' },
                     plainDnsServersV6: { aim: 'IPv6 ultralow tương tự; không dùng IPv6 thì để trống.', type: 'IPv6, phẩy', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
@@ -284,7 +284,7 @@
                     maxConn: { aim: 'RouterOS cap on concurrent DoH connections.', type: 'Number', def: '5' },
                     routerIp: { aim: 'Router LAN address DHCP should advertise as the DNS server.', type: 'IPv4', def: '192.168.88.1' },
                     lanNet: { aim: 'Must match /ip dhcp-server network address= (e.g. 192.168.88.0/24). Used by the DHCP + NAT snippets.', type: 'CIDR', def: '192.168.88.0/24' },
-                    plainDnsServers: { aim: 'Ultralow IPv4 list for servers=. IPs differ by region — copy from NextDNS → Setup → Router.', type: 'Comma-separated IPv4', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServers: { aim: 'Ultralow IPv4 list for servers=. IPs differ by region — copy from NextDNS → Setup → Router.', type: 'Comma-separated IPv4', def: '45.90.28.0,45.90.30.0' },
                     plainDnsServersV6: { aim: 'Ultralow IPv6 list; leave empty if IPv6 is unused.', type: 'Comma-separated IPv6', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
@@ -328,7 +328,7 @@
                         deviceName: '',
                         maxConn: '5',
                         useUltralowServers: true,
-                        plainDnsServers: '45.90.28.22,45.90.30.22',
+                        plainDnsServers: '45.90.28.0,45.90.30.0',
                         plainDnsServersV6: '2a07:a8c0::,2a07:a8c1::',
                         allowRemote: true,
                         verifyCert: true,
