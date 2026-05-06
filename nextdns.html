@@ -74,6 +74,7 @@
                     <div class="tool-nav-meta">
                         <div><strong>Nghĩa Zakshin</strong></div>
                         <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        <div class="tool-nav-meta-sub"><i class="fas fa-circle-check mr-1"></i> {{ t.ui.testedOn }}</div>
                     </div>
                 </div>
             </div>
@@ -265,7 +266,10 @@
                     dhcpDnsComment: 'Tuỳ chọn — DHCP trỏ DNS về router',
                     dnsRedirectComment: 'Tuỳ chọn — NAT redirect DNS (UDP/TCP 53) về router',
                     note: 'Cần RouterOS 7+. Sau khi dán chạy /ip dns print. IP ultralow có thể khác vùng — đối chiếu trong NextDNS.',
-                    copied: 'Đã sao chép!'
+                    copied: 'Đã sao chép!',
+                    testedOn: 'Đã test ổn định trên RouterOS v7.22',
+                    themeDark: 'Giao diện tối',
+                    themeLight: 'Giao diện sáng'
                 }
             },
             en: {
@@ -310,6 +314,7 @@
                     dnsRedirectComment: 'Optional — NAT DNS redirect (UDP/TCP 53) to router',
                     note: 'Requires RouterOS v7+. After paste run /ip dns print. Ultralow IPs may vary — verify inside NextDNS.',
                     copied: 'Copied!',
+                    testedOn: 'Tested stable on RouterOS v7.22',
                     themeDark: 'Dark theme',
                     themeLight: 'Light theme'
                 }

@@ -47,6 +47,7 @@
                     <div class="tool-nav-meta">
                         <div><strong>Nghĩa Zakshin</strong></div>
                         <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        <div class="tool-nav-meta-sub"><i class="fas fa-circle-check mr-1"></i> {{ t.ui.testedOn }}</div>
                     </div>
                 </div>
             </div>
@@ -59,12 +60,48 @@
 
                     <div class="field">
                         <label class="label">{{ t.labels.pppoeUser }}</label>
-                        <div class="control"><input class="input" v-model="form.pppoeUser" autocomplete="off"></div>
+                        <div class="control"><input class="input" v-model="form.pppoeUser" :placeholder="t.ui.pppoeUserPh" autocomplete="off"></div>
                     </div>
 
                     <div class="field">
                         <label class="label">{{ t.labels.pppoePass }}</label>
-                        <div class="control"><input class="input" v-model="form.pppoePass" autocomplete="off"></div>
+                        <div class="control"><input class="input" v-model="form.pppoePass" :placeholder="t.ui.pppoePassPh" autocomplete="off"></div>
+                        <p class="help mb-0">{{ t.ui.mtuNote }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.ifaceCount }}</label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="form.ifaceCount">
+                                    <option v-for="n in 24" :key="'ifc-' + n" :value="String(n)">{{ n }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="help mb-0">{{ t.ui.ifaceCountHelp }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.wanPort }}</label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="form.wanPort">
+                                    <option v-for="p in ifaceCountNum" :key="'wanp-' + p" :value="String(p)">ether{{ p }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="help mb-0">{{ t.ui.wanPortHelp }}</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ t.labels.lanPorts }}</label>
+                        <div class="wg-checkboxes">
+                            <label class="checkbox-row" v-for="p in ifaceCountNum" :key="'lanp-' + p">
+                                <input type="checkbox" :value="p" v-model="form.lanPorts" :disabled="Number(form.wanPort) === p">
+                                <span class="checkbox-text">ether{{ p }}</span>
+                            </label>
+                        </div>
+                        <p class="help mb-0">{{ t.ui.lanPortsHelp }}</p>
                     </div>
 
                     <div class="field">
@@ -76,13 +113,14 @@
 
                     <div v-if="form.hasWifi" class="field">
                         <label class="label">{{ t.labels.wifiSsid }}</label>
-                        <div class="control"><input class="input" v-model="form.wifiSsid" autocomplete="off"></div>
+                        <div class="control"><input class="input" v-model="form.wifiSsid" :placeholder="t.ui.wifiSsidPh" autocomplete="off"></div>
                         <p class="help mb-0">{{ t.ui.wifiSsidHelp }}</p>
                     </div>
 
                     <div v-if="form.hasWifi" class="field">
                         <label class="label">{{ t.labels.wifiPass }}</label>
-                        <div class="control"><input class="input" v-model="form.wifiPass" autocomplete="off"></div>
+                        <div class="control"><input class="input" v-model="form.wifiPass" :placeholder="t.ui.wifiPassPh" autocomplete="off"></div>
+                        <p v-if="wifiPassTooShort" class="help text-danger mb-0">{{ t.ui.wifiPassMin }}</p>
                     </div>
 
                     <div class="field">
@@ -102,11 +140,6 @@
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.ntpPrimary }}</label>
-                        <div class="control"><input class="input" v-model="form.ntpPrimary" autocomplete="off"></div>
-                    </div>
-
-                    <div class="field">
                         <label class="checkbox-row">
                             <input type="checkbox" v-model="form.disableServices">
                             <span class="checkbox-text">{{ t.ui.disableServices }}</span>
@@ -121,7 +154,7 @@
                 <section class="panel panel-script">
                     <div class="script-header">
                         <h2 class="section-title mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h2>
-                        <button type="button" class="copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                        <button type="button" class="copy-btn" @click="copyText('main-script')" :disabled="hasValidationError" :aria-disabled="hasValidationError"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
                     </div>
                     <pre id="main-script" class="script-pre">{{ generatedScript }}</pre>
                     <div class="callout mb-0">
@@ -140,12 +173,14 @@
                 labels: {
                     pppoeUser: 'PPPoE user',
                     pppoePass: 'PPPoE password',
+                    ifaceCount: 'Số lượng interface (ether)',
+                    wanPort: 'Cổng WAN (nối modem/ONT)',
+                    lanPorts: 'Các cổng LAN add vào bridge LAN',
                     wifiSsid: 'SSID WiFi (2.4/5)',
                     wifiPass: 'Mật khẩu WiFi (WPA2-PSK)',
                     lanGw: 'IP gateway LAN (bridge LAN)',
                     wifiGw: 'IP gateway WiFi (bridge WiFi)',
-                    dnsServers: 'DNS servers (phẩy)',
-                    ntpPrimary: 'NTP primary'
+                    dnsServers: 'DNS servers (phẩy)'
                 },
                 ui: {
                     serverConfig: 'Thông số',
@@ -154,24 +189,36 @@
                     copied: 'Đã sao chép!',
                     themeDark: 'Giao diện tối',
                     themeLight: 'Giao diện sáng',
+                    pppoeUserPh: 'Tên đăng nhập trong hợp đồng mạng',
+                    pppoePassPh: 'Mật khẩu trong hợp đồng mạng',
+                    mtuNote: 'Ghi chú: max-mtu=1500 là phổ biến ở Việt Nam; khi dùng ở nước ngoài chỉ số này có thể khác.',
+                    wifiSsidPh: 'MikroTik',
+                    wifiPassPh: 'Nhập mật khẩu WiFi (tối thiểu 8 ký tự)',
                     hasWifi: 'Thiết bị có WiFi (hiện phần cấu hình wireless)',
+                    ifaceCountHelp: 'Số cổng ether của router (vd hEX = 5). Danh sách chọn WAN/LAN sẽ tăng theo số này.',
+                    wanPortHelp: 'Chọn đúng cổng đang cắm modem/ONT. Script sẽ đặt tên cổng này là "WAN" và PPPoE sẽ chạy trên đó.',
+                    lanPortsHelp: 'Các cổng LAN được add vào bridge "LAN Network". Cổng WAN sẽ tự bị loại khỏi danh sách này.',
                     wifiSsidHelp: 'Tool sẽ đặt cùng SSID cho cả 2.4GHz và 5GHz (đúng theo script mẫu).',
+                    wifiPassMin: 'Mật khẩu WiFi phải có ít nhất 8 ký tự.',
                     dnsHelp: 'Ví dụ: 8.8.8.8,8.8.4.4 hoặc DNS nội bộ của bạn.',
                     disableServices: 'Tắt telnet/ftp/ssh/api/api-ssl (giữ www/winbox theo mặc định RouterOS)',
                     warn: 'Script khởi đầu: nên chạy trên router mới reset hoặc đã backup/export. Nếu router đang chạy cấu hình cũ, hãy kiểm tra trùng tên interface/bridge/DHCP/NAT.',
-                    note: 'Gợi ý: Dán trong Safe Mode (Winbox) để dễ rollback nếu sai. Nếu ISP không dùng PPPoE, bỏ phần PPPoE và thay bằng DHCP client/Static theo nhà mạng.'
+                    note: 'Gợi ý: Dán trong Safe Mode (Winbox) để dễ rollback nếu sai. Nếu ISP không dùng PPPoE, bỏ phần PPPoE và thay bằng DHCP client/Static theo nhà mạng.',
+                    testedOn: 'Đã test ổn định trên RouterOS v7.22'
                 }
             },
             en: {
                 labels: {
                     pppoeUser: 'PPPoE username',
                     pppoePass: 'PPPoE password',
+                    ifaceCount: 'Interface count (ether ports)',
+                    wanPort: 'WAN port (to modem/ONT)',
+                    lanPorts: 'LAN ports to add into LAN bridge',
                     wifiSsid: 'WiFi SSID (2.4/5)',
                     wifiPass: 'WiFi password (WPA2-PSK)',
                     lanGw: 'LAN gateway IP (LAN bridge)',
                     wifiGw: 'WiFi gateway IP (WiFi bridge)',
-                    dnsServers: 'DNS servers (comma-separated)',
-                    ntpPrimary: 'NTP primary'
+                    dnsServers: 'DNS servers (comma-separated)'
                 },
                 ui: {
                     serverConfig: 'Parameters',
@@ -180,12 +227,22 @@
                     copied: 'Copied!',
                     themeDark: 'Dark theme',
                     themeLight: 'Light theme',
+                    pppoeUserPh: 'PPPoE username from your ISP contract',
+                    pppoePassPh: 'PPPoE password from your ISP contract',
+                    mtuNote: 'Note: max-mtu=1500 is common in Vietnam; overseas it may differ depending on your ISP setup.',
+                    wifiSsidPh: 'MikroTik',
+                    wifiPassPh: 'Enter WiFi password (min 8 characters)',
                     hasWifi: 'This device has WiFi (show wireless config)',
+                    ifaceCountHelp: 'How many ether ports your router has (e.g. hEX = 5). WAN/LAN pickers scale with this number.',
+                    wanPortHelp: 'Pick the port connected to your modem/ONT. The script renames it to "WAN" and runs PPPoE on it.',
+                    lanPortsHelp: 'Selected ports will be added to the "LAN Network" bridge. The WAN port is automatically excluded.',
                     wifiSsidHelp: 'The tool sets the same SSID for both 2.4GHz and 5GHz (matching the template).',
+                    wifiPassMin: 'WiFi password must be at least 8 characters.',
                     dnsHelp: 'Example: 8.8.8.8,8.8.4.4 or your internal DNS.',
                     disableServices: 'Disable telnet/ftp/ssh/api/api-ssl (leave www/winbox as RouterOS default)',
                     warn: 'Startup script: best on a freshly reset router or after export/backup. On an existing config, review name collisions (interfaces/bridges/DHCP/NAT).',
-                    note: 'Tip: Paste in Safe Mode (Winbox) to rollback easily. If your ISP is not PPPoE, remove the PPPoE part and use DHCP client/static WAN config.'
+                    note: 'Tip: Paste in Safe Mode (Winbox) to rollback easily. If your ISP is not PPPoE, remove the PPPoE part and use DHCP client/static WAN config.',
+                    testedOn: 'Tested stable on RouterOS v7.22'
                 }
             }
         };
@@ -219,34 +276,70 @@
                     theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light',
                     showToast: false,
                     form: {
-                        pppoeUser: 'Tên đăng nhập trong hợp đồng mạng',
-                        pppoePass: 'Mật khẩu trong hợp đồng mạng',
+                        pppoeUser: '',
+                        pppoePass: '',
                         hasWifi: false,
-                        wifiSsid: 'MikroTik',
-                        wifiPass: 'Mật khẩu của WIFI',
+                        ifaceCount: '5',
+                        wanPort: '1',
+                        lanPorts: [2, 3, 4, 5],
+                        wifiSsid: '',
+                        wifiPass: '',
                         lanGw: '192.168.1.1',
                         wifiGw: '192.168.2.1',
                         dnsServers: '8.8.8.8,8.8.4.4',
-                        ntpPrimary: '91.209.94.10',
                         disableServices: true
                     }
                 };
             },
             computed: {
                 t() { return i18n[this.lang]; },
+                effectiveWifiPass() {
+                    const hasWifi = !!this.form.hasWifi;
+                    if (!hasWifi) return '';
+                    return String(this.form.wifiPass || '').trim();
+                },
+                ifaceCountNum() {
+                    const n = Number(this.form.ifaceCount);
+                    if (!Number.isFinite(n)) return 5;
+                    return Math.max(1, Math.min(24, Math.floor(n)));
+                },
+                wanPortNum() {
+                    const n = Number(this.form.wanPort);
+                    if (!Number.isFinite(n)) return 1;
+                    return Math.max(1, Math.min(this.ifaceCountNum, Math.floor(n)));
+                },
+                normalizedLanPorts() {
+                    const set = new Set((this.form.lanPorts || []).map(Number).filter(n => Number.isFinite(n) && n >= 1 && n <= this.ifaceCountNum));
+                    set.delete(this.wanPortNum);
+                    return Array.from(set).sort((a, b) => a - b);
+                },
+                wifiPassTooShort() {
+                    const hasWifi = !!this.form.hasWifi;
+                    if (!hasWifi) return false;
+                    return this.effectiveWifiPass.length < 8;
+                },
+                hasValidationError() {
+                    return this.wifiPassTooShort;
+                },
                 generatedScript() {
                     const pppoeUser = String(this.form.pppoeUser || '').trim() || 'user';
                     const pppoePass = String(this.form.pppoePass || '').trim() || 'pass';
                     const lanGw = String(this.form.lanGw || '').trim() || '192.168.1.1';
                     const dnsServers = String(this.form.dnsServers || '').trim() || '8.8.8.8,8.8.4.4';
-                    const ntpPrimary = String(this.form.ntpPrimary || '').trim() || '91.209.94.10';
 
                     const lan = derive24(lanGw);
                     const hasWifi = !!this.form.hasWifi;
                     const wifiSsid = hasWifi ? (String(this.form.wifiSsid || '').trim() || 'MikroTik') : '';
-                    const wifiPass = hasWifi ? (String(this.form.wifiPass || '').trim() || 'password') : '';
+                    const wifiPass = hasWifi ? this.effectiveWifiPass : '';
                     const wifiGw = hasWifi ? (String(this.form.wifiGw || '').trim() || '192.168.2.1') : '';
                     const wifi = hasWifi ? derive24(wifiGw) : null;
+
+                    if (hasWifi && String(wifiPass).length < 8) {
+                        return [
+                            '# Startup config (tool-generated) — MikroTik Tools',
+                            '# ERROR: ' + this.t.ui.wifiPassMin
+                        ].join('\n');
+                    }
 
                     const lines = [];
                     lines.push('# Startup config (tool-generated) — MikroTik Tools');
@@ -258,15 +351,15 @@
                     lines.push('');
 
                     lines.push('/interface ethernet');
-                    lines.push('set [ find default-name=ether1 ] name="LAN 1"');
-                    lines.push('set [ find default-name=ether2 ] name="LAN 2"');
-                    lines.push('set [ find default-name=ether3 ] name="LAN 3"');
-                    lines.push('set [ find default-name=ether4 ] name="LAN 4"');
-                    lines.push('set [ find default-name=ether5 ] name="LAN 5"');
+                    lines.push('set [ find default-name=ether' + this.wanPortNum + ' ] name="WAN"');
+                    for (let p = 1; p <= this.ifaceCountNum; p++) {
+                        if (p === this.wanPortNum) continue;
+                        lines.push('set [ find default-name=ether' + p + ' ] name="LAN ' + p + '"');
+                    }
                     lines.push('');
 
                     lines.push('/interface pppoe-client');
-                    lines.push('add add-default-route=yes disabled=no interface="LAN 1" max-mtu=1480 name=pppoe password=' + pppoePass + ' user=' + pppoeUser);
+                    lines.push('add add-default-route=yes disabled=no interface="WAN" max-mtu=1500 name=pppoe password=' + pppoePass + ' user=' + pppoeUser);
                     lines.push('');
 
                     if (hasWifi) {
@@ -299,10 +392,14 @@
                     lines.push('');
 
                     lines.push('/interface bridge port');
-                    lines.push('add bridge="LAN Network" interface="LAN 2"');
-                    lines.push('add bridge="LAN Network" interface="LAN 3"');
-                    lines.push('add bridge="LAN Network" interface="LAN 4"');
-                    lines.push('add bridge="LAN Network" interface="LAN 5"');
+                    const fallbackPorts = (() => {
+                        const arr = [];
+                        for (let p = 1; p <= this.ifaceCountNum; p++) if (p !== this.wanPortNum) arr.push(p);
+                        return arr;
+                    })();
+                    (this.normalizedLanPorts.length ? this.normalizedLanPorts : fallbackPorts).forEach((p) => {
+                        lines.push('add bridge="LAN Network" interface="LAN ' + p + '"');
+                    });
                     if (hasWifi) lines.push('add bridge="WIFI Network" interface="WIFI 2.4GHz"');
                     if (hasWifi) lines.push('add bridge="WIFI Network" interface="WIFI 5GHz"');
                     lines.push('');
@@ -347,8 +444,10 @@
                     lines.push('set time-zone-name=Asia/Ho_Chi_Minh');
                     lines.push('');
 
-                    lines.push('/system ntp client');
-                    lines.push('set enabled=yes primary-ntp=' + ntpPrimary);
+                    lines.push('/system ntp client set enabled=yes');
+                    lines.push('/system ntp client servers add address=time.windows.com');
+                    lines.push('/system ntp client servers add address=time.google.com');
+                    lines.push('/system ntp client servers add address=time.android.com');
                     lines.push('');
 
                     return lines.join('\n');
