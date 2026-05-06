@@ -420,42 +420,16 @@
                     if (this.form.template === 'rickfrey61') return this.genRickFrey61Script();
                     if (this.form.template === 'rickfrey61lite') return this.genRickFrey61LiteScript();
 
-                    const wanIf = (this.form.wanIf || 'ether1').trim() || 'ether1';
-                    const remoteNet = (this.form.remoteAccessNet || '192.168.88.0/24').trim() || '192.168.88.0/24';
                     const ntpP = (this.form.ntpPrimary || '216.239.35.0').trim() || '216.239.35.0';
                     const ntpS = (this.form.ntpSecondary || '129.250.35.250').trim() || '129.250.35.250';
 
                     const lines = [];
-                    lines.push('# Firewall baseline (suggested) — MikroTik Tools');
-                    lines.push('');
-                    lines.push('/interface list');
-                    lines.push('add comment=defconf name=WAN');
-                    lines.push('add comment=defconf name=LAN');
-                    lines.push('');
-                    lines.push('/interface list member');
-                    lines.push('add interface=' + wanIf + ' list=WAN');
-                    if (this.lanInterfaces.length) {
-                        for (const lanIf of this.lanInterfaces) lines.push('add interface=' + lanIf + ' list=LAN');
-                    } else {
-                        lines.push('# TODO: add your LAN interface(s) to list=LAN (e.g. bridge)');
-                    }
-                    lines.push('');
-                    lines.push('/ip firewall address-list');
-                    lines.push('add address=192.168.0.0/16 list=Bogon');
-                    lines.push('add address=10.0.0.0/8 list=Bogon');
-                    lines.push('add address=172.16.0.0/12 list=Bogon');
-                    lines.push('add address=127.0.0.0/8 list=Bogon');
-                    lines.push('add address=0.0.0.0/8 list=Bogon');
-                    lines.push('add address=169.254.0.0/16 list=Bogon');
-                    lines.push('add address=' + remoteNet + ' list=Remote_Access');
-                    lines.push('');
+
                     lines.push('/ip firewall filter');
                     lines.push('add action=accept chain=input comment="defconf: accept established,related,untracked" connection-state=established,related,untracked');
-                    if (this.form.allowRemoteInput) {
-                        lines.push('add action=accept chain=input comment="Allow remote mgmt from Remote_Access" src-address-list=Remote_Access');
-                    }
                     lines.push('add action=drop chain=input comment="defconf: drop invalid" connection-state=invalid');
                     lines.push('add action=accept chain=input comment="defconf: accept ICMP" protocol=icmp');
+                    lines.push('add action=accept chain=input comment="defconf: accept to local loopback (for CAPsMAN)" dst-address=127.0.0.1 in-interface=lo src-address=127.0.0.1');
                     lines.push('add action=drop chain=input comment="defconf: drop all not coming from LAN" in-interface-list=!LAN');
                     lines.push('');
                     lines.push('add action=accept chain=forward comment="defconf: accept in ipsec policy" ipsec-policy=in,ipsec');
@@ -463,55 +437,47 @@
                     lines.push('add action=fasttrack-connection chain=forward comment="defconf: fasttrack" connection-state=established,related');
                     lines.push('add action=accept chain=forward comment="defconf: accept established,related, untracked" connection-state=established,related,untracked');
                     lines.push('add action=drop chain=forward comment="defconf: drop invalid" connection-state=invalid');
-                    lines.push('add action=drop chain=forward comment="Drop Bogon Forward -> WAN" in-interface-list=WAN src-address-list=Bogon');
-                    if (this.form.acceptLanToWan) {
-                        lines.push('add action=accept chain=forward comment="Allow LAN to WAN" in-interface-list=LAN out-interface-list=WAN');
-                    }
-                    lines.push('add action=drop chain=forward comment="defconf: drop all from WAN not DSTNATed" connection-nat-state=!dstnat connection-state=new in-interface-list=WAN');
-                    lines.push('add action=drop chain=forward comment="defconf: drop everything else"');
+                    lines.push('add action=drop chain=forward comment="defconf: drop all from WAN not DSTNATed" connection-nat-state=!dstnat in-interface-list=WAN');
                     lines.push('');
                     lines.push('/ip firewall nat');
                     lines.push('add action=masquerade chain=srcnat comment="defconf: masquerade" ipsec-policy=out,none out-interface-list=WAN');
                     lines.push('');
 
                     if (this.form.includeIpv6Firewall) {
-                        lines.push('# IPv6 firewall (defconf)');
-                        lines.push('/ipv6 firewall {');
-                        lines.push('address-list add list=bad_ipv6 address=::/128 comment="defconf: unspecified address"');
-                        lines.push('address-list add list=bad_ipv6 address=::1 comment="defconf: lo"');
-                        lines.push('address-list add list=bad_ipv6 address=fec0::/10 comment="defconf: site-local"');
-                        lines.push('address-list add list=bad_ipv6 address=::ffff:0:0/96 comment="defconf: ipv4-mapped"');
-                        lines.push('address-list add list=bad_ipv6 address=::/96 comment="defconf: ipv4 compat"');
-                        lines.push('address-list add list=bad_ipv6 address=100::/64 comment="defconf: discard only "');
-                        lines.push('address-list add list=bad_ipv6 address=2001:db8::/32 comment="defconf: documentation"');
-                        lines.push('address-list add list=bad_ipv6 address=2001:10::/28 comment="defconf: ORCHID"');
-                        lines.push('address-list add list=bad_ipv6 address=3ffe::/16 comment="defconf: 6bone"');
-                        lines.push('filter add chain=input action=accept connection-state=established,related,untracked comment="defconf: accept established,related,untracked"');
-                        lines.push('filter add chain=input action=drop connection-state=invalid comment="defconf: drop invalid"');
-                        lines.push('filter add chain=input action=accept protocol=icmpv6 comment="defconf: accept ICMPv6"');
-                        lines.push('filter add chain=input action=accept protocol=udp dst-port=33434-33534 comment="defconf: accept UDP traceroute"');
-                        lines.push('filter add chain=input action=accept protocol=udp dst-port=546 src-address=fe80::/10 comment="defconf: accept DHCPv6-Client prefix delegation."');
-                        lines.push('filter add chain=input action=accept protocol=udp dst-port=500,4500 comment="defconf: accept IKE"');
-                        lines.push('filter add chain=input action=accept protocol=ipsec-ah comment="defconf: accept ipsec AH"');
-                        lines.push('filter add chain=input action=accept protocol=ipsec-esp comment="defconf: accept ipsec ESP"');
-                        lines.push('filter add chain=input action=accept ipsec-policy=in,ipsec comment="defconf: accept all that matches ipsec policy"');
-                        lines.push('filter add chain=input action=drop in-interface-list=!LAN comment="defconf: drop everything else not coming from LAN"');
-                        lines.push('filter add chain=forward action=accept connection-state=established,related,untracked comment="defconf: accept established,related,untracked"');
-                        lines.push('filter add chain=forward action=drop connection-state=invalid comment="defconf: drop invalid"');
-                        lines.push('filter add chain=forward action=drop src-address-list=bad_ipv6 comment="defconf: drop packets with bad src ipv6"');
-                        lines.push('filter add chain=forward action=drop dst-address-list=bad_ipv6 comment="defconf: drop packets with bad dst ipv6"');
-                        lines.push('filter add chain=forward action=drop protocol=icmpv6 hop-limit=equal:1 comment="defconf: rfc4890 drop hop-limit=1"');
-                        lines.push('filter add chain=forward action=accept protocol=icmpv6 comment="defconf: accept ICMPv6"');
-                        lines.push('filter add chain=forward action=accept protocol=139 comment="defconf: accept HIP"');
-                        lines.push('filter add chain=forward action=accept protocol=udp dst-port=500,4500 comment="defconf: accept IKE"');
-                        lines.push('filter add chain=forward action=accept protocol=ipsec-ah comment="defconf: accept ipsec AH"');
-                        lines.push('filter add chain=forward action=accept protocol=ipsec-esp comment="defconf: accept ipsec ESP"');
-                        lines.push('filter add chain=forward action=accept ipsec-policy=in,ipsec comment="defconf: accept all that matches ipsec policy"');
-                        lines.push('filter add chain=forward action=drop in-interface-list=!LAN comment="defconf: drop everything else not coming from LAN"');
-                        lines.push('filter add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN comment="Internet access from LAN"');
-                        lines.push('filter add chain=forward action=drop comment="Drop everything not explicitly allowed" log=yes log-prefix="blocked-not-whitelisted"');
-                        lines.push('#Khong nen mo defconf: drop everything else not coming from LAN va Drop everything not explicitly allowed');
-                        lines.push('}');
+                        lines.push('/ipv6 firewall address-list');
+                        lines.push('add address=::/128 comment="defconf: unspecified address" list=bad_ipv6');
+                        lines.push('add address=::1/128 comment="defconf: lo" list=bad_ipv6');
+                        lines.push('add address=fec0::/10 comment="defconf: site-local" list=bad_ipv6');
+                        lines.push('add address=::ffff:0.0.0.0/96 comment="defconf: ipv4-mapped" list=bad_ipv6');
+                        lines.push('add address=::/96 comment="defconf: ipv4 compat" list=bad_ipv6');
+                        lines.push('add address=100::/64 comment="defconf: discard only " list=bad_ipv6');
+                        lines.push('add address=2001:db8::/32 comment="defconf: documentation" list=bad_ipv6');
+                        lines.push('add address=2001:10::/28 comment="defconf: ORCHID" list=bad_ipv6');
+                        lines.push('add address=3ffe::/16 comment="defconf: 6bone" list=bad_ipv6');
+                        lines.push('/ipv6 firewall filter');
+                        lines.push('add action=accept chain=input comment="defconf: accept established,related,untracked" connection-state=established,related,untracked');
+                        lines.push('add action=drop chain=input comment="defconf: drop invalid" connection-state=invalid');
+                        lines.push('add action=accept chain=input comment="defconf: accept ICMPv6" protocol=icmpv6');
+                        lines.push('add action=accept chain=input comment="defconf: accept UDP traceroute" dst-port=33434-33534 protocol=udp');
+                        lines.push('add action=accept chain=input comment="defconf: accept DHCPv6-Client prefix delegation." dst-port=546 protocol=udp src-address=fe80::/10');
+                        lines.push('add action=accept chain=input comment="defconf: accept IKE" dst-port=500,4500 protocol=udp');
+                        lines.push('add action=accept chain=input comment="defconf: accept ipsec AH" protocol=ipsec-ah');
+                        lines.push('add action=accept chain=input comment="defconf: accept ipsec ESP" protocol=ipsec-esp');
+                        lines.push('add action=accept chain=input comment="defconf: accept all that matches ipsec policy" ipsec-policy=in,ipsec');
+                        lines.push('add action=drop chain=input comment="defconf: drop everything else not coming from LAN" in-interface-list=!LAN');
+                        lines.push('add action=fasttrack-connection chain=forward comment="defconf: fasttrack6" connection-state=established,related');
+                        lines.push('add action=accept chain=forward comment="defconf: accept established,related,untracked" connection-state=established,related,untracked');
+                        lines.push('add action=drop chain=forward comment="defconf: drop invalid" connection-state=invalid');
+                        lines.push('add action=drop chain=forward comment="defconf: drop packets with bad src ipv6" src-address-list=bad_ipv6');
+                        lines.push('add action=drop chain=forward comment="defconf: drop packets with bad dst ipv6" dst-address-list=bad_ipv6');
+                        lines.push('add action=drop chain=forward comment="defconf: rfc4890 drop hop-limit=1" hop-limit=equal:1 protocol=icmpv6');
+                        lines.push('add action=accept chain=forward comment="defconf: accept ICMPv6" protocol=icmpv6');
+                        lines.push('add action=accept chain=forward comment="defconf: accept HIP" protocol=139');
+                        lines.push('add action=accept chain=forward comment="defconf: accept IKE" dst-port=500,4500 protocol=udp');
+                        lines.push('add action=accept chain=forward comment="defconf: accept ipsec AH" protocol=ipsec-ah');
+                        lines.push('add action=accept chain=forward comment="defconf: accept ipsec ESP" protocol=ipsec-esp');
+                        lines.push('add action=accept chain=forward comment="defconf: accept all that matches ipsec policy" ipsec-policy=in,ipsec');
+                        lines.push('add action=drop chain=forward comment="defconf: drop everything else not coming from LAN" in-interface-list=!LAN');
                         lines.push('');
                     }
 
