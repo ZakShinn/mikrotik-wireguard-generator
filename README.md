@@ -17,7 +17,6 @@ Website chạy ngay trong trình duyệt để **tạo script RouterOS** dạng 
 - **Firewall**: khung firewall/hardening cơ bản (tham khảo).
 - **Cloudflare DDNS**: cập nhật record A/AAAA qua Cloudflare API + scheduler.
 - **Routing (Policy Routing)**: định tuyến theo nguồn/subnet (v7 routing rule / v6 mangle).
-- **Backup + Telegram**: backup/export theo lịch + **gửi thông báo/log qua Telegram** + tự dọn file cũ.
 
 ### Cách sử dụng (nhanh)
 1. Mở `https://mikrotik.hainghia.net`.
@@ -34,7 +33,6 @@ Website chạy ngay trong trình duyệt để **tạo script RouterOS** dạng 
 - `/startup`
 - `/social-block`
 - `/routing`
-- `/telegram-backup`
 
 ### Lưu ý bảo mật
 - Tất cả dữ liệu/script được tạo **trên trình duyệt của bạn** (client-side).
@@ -81,7 +79,6 @@ A static website that runs in your browser to **generate RouterOS scripts** for 
 - **Firewall**: starter firewall/hardening reference.
 - **Cloudflare DDNS**: update A/AAAA via Cloudflare API + scheduler.
 - **Policy Routing**: route by source/subnet (v7 rules / v6 mangle).
-- **Backup + Telegram**: scheduled backup/export + **Telegram notify/log** + auto cleanup.
 
 ### Quick usage
 1. Open `https://mikrotik.hainghia.net`.
