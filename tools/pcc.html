@@ -285,7 +285,10 @@
                 <section class="panel panel-script">
                     <h2 class="section-title"><i class="fas fa-code mr-2"></i> {{ t.ui.scriptPanelTitle }}</h2>
                     <div class="code-container">
-                        <button type="button" class="btn btn-dark btn-sm copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:.5rem">
+                            <div style="font-weight:700; color:var(--text)"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptPanelTitle }}</div>
+                            <button type="button" class="btn btn-dark btn-sm copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                        </div>
                         <pre id="main-script" class="script-pre">{{ scriptText }}</pre>
                     </div>
                 </section>
@@ -494,6 +497,7 @@
                             ? `# Lỗi cấu hình\n# ${this.validationError}\n`
                             : `# Configuration error\n# ${this.validationError}\n`);
                     }
+                    const isVi = this.lang === 'vi';
                     const wans = this.effectiveWans;
                     const n = Math.max(2, Math.min(999, wans.length || this.effectiveWanCount || 0));
                     const bridgeLan = String(this.form.bridgeLan || 'BridgeLAN').trim() || 'BridgeLAN';
@@ -504,11 +508,15 @@
                     const localRanges = uniqLines(this.form.localRanges);
                     const lines = [];
 
-                    lines.push(`# PCC load balancing — tool-generated`);
-                    lines.push(`# LAN in-interface: ${bridgeLan} | LAN list: ${lanListName} | WAN list: ${wanListName} | WANs: ${n} | PCC: ${pccMode}`);
+                    lines.push(isVi
+                        ? `# PCC cân bằng tải — tool-generated`
+                        : `# PCC load balancing — tool-generated`);
+                    lines.push(isVi
+                        ? `# LAN in-interface: ${bridgeLan} | LAN list: ${lanListName} | WAN list: ${wanListName} | WANs: ${n} | PCC: ${pccMode}`
+                        : `# LAN in-interface: ${bridgeLan} | LAN list: ${lanListName} | WAN list: ${wanListName} | WANs: ${n} | PCC: ${pccMode}`);
                     lines.push('');
 
-                    lines.push(`# 1) Interface-list WAN/LAN`);
+                    lines.push(isVi ? `# 1) Interface-list WAN/LAN` : `# 1) Interface-list WAN/LAN`);
                     lines.push(`/interface list add name=${wanListName}`);
                     for (let i = 0; i < n; i++) {
                         const w = wans[i];
@@ -518,13 +526,13 @@
                     lines.push(`/interface list member add interface=${bridgeLan} list=${lanListName}`);
                     lines.push('');
 
-                    lines.push(`# 2) Local ranges (bypass PCC)`);
+                    lines.push(isVi ? `# 2) Dải local (bypass PCC)` : `# 2) Local ranges (bypass PCC)`);
                     for (const r of localRanges.length ? localRanges : ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '224.0.0.0/4', '255.255.255.255']) {
                         lines.push(`/ip firewall address-list add address=${r} list=${lanListName}`);
                     }
                     lines.push('');
 
-                    lines.push(`# 3) NAT`);
+                    lines.push(isVi ? `# 3) NAT` : `# 3) NAT`);
                     if (this.form.useWanListNat) {
                         lines.push(`/ip firewall nat add chain=srcnat action=masquerade out-interface-list=${wanListName}`);
                     } else if (this.form.useAllPppMasq) {
@@ -534,27 +542,29 @@
                     }
                     lines.push('');
 
-                    lines.push(`# 4) Bypass PCC for local destinations`);
+                    lines.push(isVi ? `# 4) Bypass PCC cho đích local` : `# 4) Bypass PCC for local destinations`);
                     lines.push(`/ip firewall mangle add action=accept chain=prerouting dst-address-list=${lanListName} in-interface-list=${lanListName}`);
                     lines.push('');
 
                     if (this.form.disableIpv6) {
-                        lines.push(`# 5) IPv6 (optional): disable`);
+                        lines.push(isVi ? `# 5) IPv6 (tuỳ chọn): tắt` : `# 5) IPv6 (optional): disable`);
                         lines.push(`/ipv6 settings set accept-redirects=no accept-router-advertisements=no disable-ipv6=yes forward=no`);
                         lines.push('');
                     }
 
                     if (this.form.enableLteHelper && wans.slice(0, n).some(w => w.type === 'lte')) {
-                        lines.push(`# 6) LTE APN: avoid auto default route + no peer DNS`);
+                        lines.push(isVi
+                            ? `# 6) LTE APN: tránh default route tự động + tắt peer DNS`
+                            : `# 6) LTE APN: avoid auto default route + no peer DNS`);
                         lines.push(`/interface lte apn set [ find default=yes ] default-route-distance=255 use-peer-dns=no`);
                         lines.push('');
                     }
 
-                    lines.push(`# 7) Routing tables (RouterOS v7+)`);
+                    lines.push(isVi ? `# 7) Routing tables (RouterOS v7+)` : `# 7) Routing tables (RouterOS v7+)`);
                     for (let i = 1; i <= n; i++) lines.push(`/routing table add fib name=WAN${i}`);
                     lines.push('');
 
-                    lines.push(`# 8) Default routes per table`);
+                    lines.push(isVi ? `# 8) Default route theo từng table` : `# 8) Default routes per table`);
                     for (let i = 1; i <= n; i++) {
                         const w = wans[i - 1] || { outIf: `pppoe-out${i}`, gw: `pppoe-out${i}`, type: 'static' };
                         lines.push(`/ip route add distance=1 dst-address=0.0.0.0/0 gateway=${w.gw} routing-table=WAN${i}`);
@@ -564,7 +574,9 @@
                     if (this.form.enableDhcpHelper) {
                         const dhcps = wans.slice(0, n).map((w, idx) => ({ ...w, idx: idx + 1 })).filter(w => w.type === 'dhcp');
                         if (dhcps.length) {
-                            lines.push(`# 9) DHCP helper (optional): keep WANx route gateway in sync`);
+                            lines.push(isVi
+                                ? `# 9) DHCP helper (tuỳ chọn): đồng bộ gateway route WANx`
+                                : `# 9) DHCP helper (optional): keep WANx route gateway in sync`);
                             for (const w of dhcps) {
                                 lines.push(`/ip dhcp-client remove [/ip dhcp-client find interface=${w.outIf}]`);
                                 lines.push(`/ip dhcp-client add default-route-distance=102 interface=${w.outIf} add-default-route=no script=":if (\\$bound=1) do={:if ([/ip route get [find where dst-address=0.0.0.0/0 and routing-table=\\\"WAN${w.idx}\\\"] gateway] != \\$\\\"gateway-address\\\" . \\\"%${w.outIf}\\\") do={/ip route set [find where dst-address=0.0.0.0/0 and routing-table=\\\"WAN${w.idx}\\\"] gateway=(\\$\\\"gateway-address\\\" . \\\"%${w.outIf}\\\")}}" use-peer-dns=no use-peer-ntp=no`);
@@ -576,7 +588,9 @@
                     if (this.form.enableLteHelper) {
                         const ltes = wans.slice(0, n).map((w, idx) => ({ ...w, idx: idx + 1 })).filter(w => w.type === 'lte');
                         if (ltes.length) {
-                            lines.push(`# 10) LTE helper (optional): scheduler updates WANx route gateway`);
+                            lines.push(isVi
+                                ? `# 10) LTE helper (tuỳ chọn): scheduler cập nhật gateway route WANx`
+                                : `# 10) LTE helper (optional): scheduler updates WANx route gateway`);
                             for (const w of ltes) {
                                 lines.push(`/system scheduler add interval=1m name=${w.outIf} on-event=":if ([/interface get [/interface find name=${w.outIf}] running]=yes) do={ :local ltegw; :do {:set ltegw [/ip route get [find where dst-address=0.0.0.0/0 and vrf-interface=\\\"${w.outIf}\\\"] gateway]} on-error={:set ltegw \\\"${w.outIf}\\\"}; :if ([/ip route get [find where dst-address=0.0.0.0/0 and routing-table=\\\"WAN${w.idx}\\\"] gateway] != \\$\\\"ltegw\\\") do={/ip route set [find where dst-address=0.0.0.0/0 and routing-table=\\\"WAN${w.idx}\\\"] gateway=\\$\\\"ltegw\\\"}}" policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon start-time=startup`);
                             }
@@ -585,7 +599,9 @@
                     }
 
                     if (this.form.enableInboundMarks) {
-                        lines.push(`# 11) Return-path fix: mark inbound connections per WAN (INP1..INPn)`);
+                        lines.push(isVi
+                            ? `# 11) Fix return: mark inbound connections theo từng WAN (INP1..INPn)`
+                            : `# 11) Return-path fix: mark inbound connections per WAN (INP1..INPn)`);
                         for (let i = 1; i <= n; i++) {
                             const w = wans[i - 1];
                             lines.push(`/ip firewall mangle add action=mark-connection chain=input connection-mark=no-mark in-interface=${w.outIf} new-connection-mark=INP${i} passthrough=yes`);
@@ -594,20 +610,24 @@
                         lines.push('');
                     }
 
-                    lines.push(`# 12) PCC connection marking (${pccMode})`);
+                    lines.push(isVi
+                        ? `# 12) PCC connection marking (${pccMode})`
+                        : `# 12) PCC connection marking (${pccMode})`);
                     for (let i = 1; i <= n; i++) {
                         lines.push(`/ip firewall mangle add action=mark-connection chain=prerouting connection-mark=no-mark dst-address-type=!local in-interface-list=${lanListName} new-connection-mark=WAN${i} passthrough=yes per-connection-classifier=${pccBase}${i - 1}`);
                     }
                     lines.push('');
 
-                    lines.push(`# 13) Routing marking (LAN -> WANx)`);
+                    lines.push(isVi ? `# 13) Routing marking (LAN -> WANx)` : `# 13) Routing marking (LAN -> WANx)`);
                     for (let i = 1; i <= n; i++) {
                         lines.push(`/ip firewall mangle add action=mark-routing chain=prerouting connection-mark=WAN${i} in-interface-list=${lanListName} new-routing-mark=WAN${i} passthrough=no`);
                     }
                     lines.push('');
 
                     if (this.form.enableInboundMarks) {
-                        lines.push(`# 14) Routing marking for inbound-marked connections (return path)`);
+                        lines.push(isVi
+                            ? `# 14) Routing marking cho inbound-marked connections (return path)`
+                            : `# 14) Routing marking for inbound-marked connections (return path)`);
                         for (let i = 1; i <= n; i++) {
                             lines.push(`/ip firewall mangle add action=mark-routing chain=output connection-mark=INP${i} new-routing-mark=WAN${i} passthrough=no`);
                             lines.push(`/ip firewall mangle add action=mark-routing chain=prerouting connection-mark=INP${i} src-address-list=${lanListName} new-routing-mark=WAN${i} passthrough=no`);

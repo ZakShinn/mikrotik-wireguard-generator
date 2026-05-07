@@ -59,18 +59,51 @@
                     <h2 class="section-title"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.serverConfig }}</h2>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.pppoeUser }}</label>
+                        <label class="label">
+                            {{ t.labels.pppoeUser }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.pppoeUser }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.pppoeUser.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.pppoeUser.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.pppoeUser.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="form.pppoeUser" :placeholder="t.ui.pppoeUserPh" autocomplete="off"></div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.pppoePass }}</label>
+                        <label class="label">
+                            {{ t.labels.pppoePass }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.pppoePass }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.pppoePass.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.pppoePass.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.pppoePass.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="form.pppoePass" :placeholder="t.ui.pppoePassPh" autocomplete="off"></div>
                         <p class="help mb-0">{{ t.ui.mtuNote }}</p>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.ifaceCount }}</label>
+                        <label class="label">
+                            {{ t.labels.ifaceCount }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.ifaceCount }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.ifaceCount.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.ifaceCount.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.ifaceCount.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control">
                             <div class="select">
                                 <select v-model="form.ifaceCount">
@@ -78,11 +111,21 @@
                                 </select>
                             </div>
                         </div>
-                        <p class="help mb-0">{{ t.ui.ifaceCountHelp }}</p>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.wanPort }}</label>
+                        <label class="label">
+                            {{ t.labels.wanPort }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.wanPort }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.wanPort.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.wanPort.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.wanPort.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control">
                             <div class="select">
                                 <select v-model="form.wanPort">
@@ -90,59 +133,133 @@
                                 </select>
                             </div>
                         </div>
-                        <p class="help mb-0">{{ t.ui.wanPortHelp }}</p>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.lanPorts }}</label>
+                        <label class="label">
+                            {{ t.labels.lanPorts }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.lanPorts }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.lanPorts.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.lanPorts.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.lanPorts.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="wg-checkboxes">
                             <label class="checkbox-row" v-for="p in ifaceCountNum" :key="'lanp-' + p">
                                 <input type="checkbox" :value="p" v-model="form.lanPorts" :disabled="Number(form.wanPort) === p">
                                 <span class="checkbox-text">ether{{ p }}</span>
                             </label>
                         </div>
-                        <p class="help mb-0">{{ t.ui.lanPortsHelp }}</p>
                     </div>
 
                     <div class="field">
                         <label class="checkbox-row">
                             <input type="checkbox" v-model="form.hasWifi">
                             <span class="checkbox-text">{{ t.ui.hasWifi }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.hasWifi }}</span></span>
+                                </span>
+                            </span>
                         </label>
                     </div>
 
                     <div v-if="form.hasWifi" class="field">
-                        <label class="label">{{ t.labels.wifiSsid }}</label>
+                        <label class="label">
+                            {{ t.labels.wifiSsid }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.wifiSsid }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.wifiSsid.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.wifiSsid.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.wifiSsid.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="form.wifiSsid" :placeholder="t.ui.wifiSsidPh" autocomplete="off"></div>
-                        <p class="help mb-0">{{ t.ui.wifiSsidHelp }}</p>
                     </div>
 
                     <div v-if="form.hasWifi" class="field">
-                        <label class="label">{{ t.labels.wifiPass }}</label>
+                        <label class="label">
+                            {{ t.labels.wifiPass }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.wifiPass }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.wifiPass.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.wifiPass.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.wifiPass.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="form.wifiPass" :placeholder="t.ui.wifiPassPh" autocomplete="off"></div>
                         <p v-if="wifiPassTooShort" class="help text-danger mb-0">{{ t.ui.wifiPassMin }}</p>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.lanGw }}</label>
+                        <label class="label">
+                            {{ t.labels.lanGw }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.lanGw }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.lanGw.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.lanGw.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.lanGw.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="form.lanGw" inputmode="decimal"></div>
                     </div>
 
                     <div v-if="form.hasWifi" class="field">
-                        <label class="label">{{ t.labels.wifiGw }}</label>
+                        <label class="label">
+                            {{ t.labels.wifiGw }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.wifiGw }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.wifiGw.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.wifiGw.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.wifiGw.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="form.wifiGw" inputmode="decimal"></div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.dnsServers }}</label>
+                        <label class="label">
+                            {{ t.labels.dnsServers }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.dnsServers }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.dnsServers.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.dnsServers.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.dnsServers.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="form.dnsServers" autocomplete="off"></div>
-                        <p class="help mb-0">{{ t.ui.dnsHelp }}</p>
                     </div>
 
                     <div class="field">
                         <label class="checkbox-row">
                             <input type="checkbox" v-model="form.disableServices">
                             <span class="checkbox-text">{{ t.ui.disableServices }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.disableServices }}</span></span>
+                                </span>
+                            </span>
                         </label>
                     </div>
 
@@ -152,9 +269,9 @@
                 </section>
 
                 <section class="panel panel-script">
-                    <div class="script-header">
-                        <h2 class="section-title mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h2>
-                        <button type="button" class="copy-btn" @click="copyText('main-script')" :disabled="hasValidationError" :aria-disabled="hasValidationError"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:.5rem">
+                        <div style="font-weight:700; color:var(--text)"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</div>
+                        <button type="button" class="btn btn-dark btn-sm copy-btn" @click="copyText('main-script')" :disabled="hasValidationError" :aria-disabled="hasValidationError"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
                     </div>
                     <pre id="main-script" class="script-pre">{{ generatedScript }}</pre>
                     <div class="callout mb-0">
@@ -182,6 +299,20 @@
                     wifiGw: 'IP gateway WiFi (bridge WiFi)',
                     dnsServers: 'DNS servers (phẩy)'
                 },
+                hints: {
+                    pppoeUser: { aim: 'Tên đăng nhập PPPoE do ISP cấp (thường ghi trong hợp đồng/phiếu lắp đặt).', type: 'Chữ', def: 'user@isp' },
+                    pppoePass: { aim: 'Mật khẩu PPPoE do ISP cấp. Nếu ISP không dùng PPPoE, bạn có thể bỏ phần PPPoE trong script.', type: 'Chữ', def: 'password' },
+                    ifaceCount: { aim: 'Số cổng ether của router (vd hEX = 5).', type: 'Số', def: '5' },
+                    wanPort: { aim: 'Chọn cổng đang cắm modem/ONT. Script sẽ đổi tên cổng này thành "WAN" và PPPoE chạy trên đó.', type: 'etherN', def: 'ether1' },
+                    lanPorts: { aim: 'Các cổng LAN sẽ được add vào bridge "LAN Network". Cổng WAN được tự loại khỏi danh sách.', type: 'Danh sách', def: 'ether2..ether5' },
+                    hasWifi: 'Bật nếu router có WiFi để hiện phần cấu hình wireless (SSID/password + bridge WiFi).',
+                    wifiSsid: { aim: 'Tên WiFi (SSID). Tool sẽ áp cùng SSID cho 2.4GHz và 5GHz theo template.', type: 'Chữ', def: 'MikroTik' },
+                    wifiPass: { aim: 'Mật khẩu WiFi (WPA2-PSK). Tối thiểu 8 ký tự.', type: 'Chữ', def: 'yourStrongPass' },
+                    lanGw: { aim: 'IP gateway của LAN (trên bridge LAN). Thường dùng 192.168.1.1 hoặc 192.168.88.1.', type: 'IPv4', def: '192.168.1.1' },
+                    wifiGw: { aim: 'IP gateway của WiFi (trên bridge WiFi). Nên khác subnet với LAN nếu tách mạng.', type: 'IPv4', def: '192.168.2.1' },
+                    dnsServers: { aim: 'Danh sách DNS server, phân tách bằng dấu phẩy.', type: 'IPv4 list', def: '8.8.8.8,8.8.4.4' },
+                    disableServices: 'Tắt các service hay bị scan (telnet/ftp/ssh/api/api-ssl). Lưu ý kiểm tra lại www/winbox theo nhu cầu quản trị của bạn.'
+                },
                 ui: {
                     serverConfig: 'Thông số',
                     scriptTitle: 'Script RouterOS',
@@ -189,18 +320,17 @@
                     copied: 'Đã sao chép!',
                     themeDark: 'Giao diện tối',
                     themeLight: 'Giao diện sáng',
+                    tipDetails: 'Chi tiết',
+                    tipAim: 'Giải thích',
+                    tipType: 'Kiểu',
+                    tipDef: 'Ví dụ',
                     pppoeUserPh: 'Tên đăng nhập trong hợp đồng mạng',
                     pppoePassPh: 'Mật khẩu trong hợp đồng mạng',
                     mtuNote: 'Ghi chú: max-mtu=1500 là phổ biến ở Việt Nam; khi dùng ở nước ngoài chỉ số này có thể khác.',
                     wifiSsidPh: 'MikroTik',
                     wifiPassPh: 'Nhập mật khẩu WiFi (tối thiểu 8 ký tự)',
                     hasWifi: 'Thiết bị có WiFi (hiện phần cấu hình wireless)',
-                    ifaceCountHelp: 'Số cổng ether của router (vd hEX = 5). Danh sách chọn WAN/LAN sẽ tăng theo số này.',
-                    wanPortHelp: 'Chọn đúng cổng đang cắm modem/ONT. Script sẽ đặt tên cổng này là "WAN" và PPPoE sẽ chạy trên đó.',
-                    lanPortsHelp: 'Các cổng LAN được add vào bridge "LAN Network". Cổng WAN sẽ tự bị loại khỏi danh sách này.',
-                    wifiSsidHelp: 'Tool sẽ đặt cùng SSID cho cả 2.4GHz và 5GHz (đúng theo script mẫu).',
                     wifiPassMin: 'Mật khẩu WiFi phải có ít nhất 8 ký tự.',
-                    dnsHelp: 'Ví dụ: 8.8.8.8,8.8.4.4 hoặc DNS nội bộ của bạn.',
                     disableServices: 'Tắt telnet/ftp/ssh/api/api-ssl (giữ www/winbox theo mặc định RouterOS)',
                     warn: 'Script khởi đầu: nên chạy trên router mới reset hoặc đã backup/export. Nếu router đang chạy cấu hình cũ, hãy kiểm tra trùng tên interface/bridge/DHCP/NAT.',
                     note: 'Gợi ý: Dán trong Safe Mode (Winbox) để dễ rollback nếu sai. Nếu ISP không dùng PPPoE, bỏ phần PPPoE và thay bằng DHCP client/Static theo nhà mạng.',
@@ -220,6 +350,20 @@
                     wifiGw: 'WiFi gateway IP (WiFi bridge)',
                     dnsServers: 'DNS servers (comma-separated)'
                 },
+                hints: {
+                    pppoeUser: { aim: 'PPPoE username provided by your ISP (usually in your contract/install sheet).', type: 'Text', def: 'user@isp' },
+                    pppoePass: { aim: 'PPPoE password provided by your ISP. If your ISP is not PPPoE, remove/skip the PPPoE section in the script.', type: 'Text', def: 'password' },
+                    ifaceCount: { aim: 'How many ether ports your router has (e.g. hEX = 5).', type: 'Number', def: '5' },
+                    wanPort: { aim: 'Port connected to your modem/ONT. The script renames it to "WAN" and runs PPPoE on it.', type: 'etherN', def: 'ether1' },
+                    lanPorts: { aim: 'Ports added into the "LAN Network" bridge. The WAN port is automatically excluded.', type: 'List', def: 'ether2..ether5' },
+                    hasWifi: 'Enable if the device has WiFi to show wireless configuration (SSID/password + WiFi bridge).',
+                    wifiSsid: { aim: 'WiFi SSID. The template sets the same SSID for both 2.4GHz and 5GHz.', type: 'Text', def: 'MikroTik' },
+                    wifiPass: { aim: 'WiFi password (WPA2-PSK). Minimum 8 characters.', type: 'Text', def: 'yourStrongPass' },
+                    lanGw: { aim: 'LAN gateway IP (on LAN bridge). Common choices: 192.168.1.1 or 192.168.88.1.', type: 'IPv4', def: '192.168.1.1' },
+                    wifiGw: { aim: 'WiFi gateway IP (on WiFi bridge). Use a different subnet if you want WiFi separated from LAN.', type: 'IPv4', def: '192.168.2.1' },
+                    dnsServers: { aim: 'DNS server list, comma-separated.', type: 'IPv4 list', def: '8.8.8.8,8.8.4.4' },
+                    disableServices: 'Disables commonly scanned services (telnet/ftp/ssh/api/api-ssl). Review www/winbox based on your management needs.'
+                },
                 ui: {
                     serverConfig: 'Parameters',
                     scriptTitle: 'RouterOS script',
@@ -227,18 +371,17 @@
                     copied: 'Copied!',
                     themeDark: 'Dark theme',
                     themeLight: 'Light theme',
+                    tipDetails: 'Details',
+                    tipAim: 'Explain',
+                    tipType: 'Type',
+                    tipDef: 'Example',
                     pppoeUserPh: 'PPPoE username from your ISP contract',
                     pppoePassPh: 'PPPoE password from your ISP contract',
                     mtuNote: 'Note: max-mtu=1500 is common in Vietnam; overseas it may differ depending on your ISP setup.',
                     wifiSsidPh: 'MikroTik',
                     wifiPassPh: 'Enter WiFi password (min 8 characters)',
                     hasWifi: 'This device has WiFi (show wireless config)',
-                    ifaceCountHelp: 'How many ether ports your router has (e.g. hEX = 5). WAN/LAN pickers scale with this number.',
-                    wanPortHelp: 'Pick the port connected to your modem/ONT. The script renames it to "WAN" and runs PPPoE on it.',
-                    lanPortsHelp: 'Selected ports will be added to the "LAN Network" bridge. The WAN port is automatically excluded.',
-                    wifiSsidHelp: 'The tool sets the same SSID for both 2.4GHz and 5GHz (matching the template).',
                     wifiPassMin: 'WiFi password must be at least 8 characters.',
-                    dnsHelp: 'Example: 8.8.8.8,8.8.4.4 or your internal DNS.',
                     disableServices: 'Disable telnet/ftp/ssh/api/api-ssl (leave www/winbox as RouterOS default)',
                     warn: 'Startup script: best on a freshly reset router or after export/backup. On an existing config, review name collisions (interfaces/bridges/DHCP/NAT).',
                     note: 'Tip: Paste in Safe Mode (Winbox) to rollback easily. If your ISP is not PPPoE, remove the PPPoE part and use DHCP client/static WAN config.',
@@ -333,16 +476,21 @@
                     const wifiPass = hasWifi ? this.effectiveWifiPass : '';
                     const wifiGw = hasWifi ? (String(this.form.wifiGw || '').trim() || '192.168.2.1') : '';
                     const wifi = hasWifi ? derive24(wifiGw) : null;
+                    const isVi = this.lang === 'vi';
 
                     if (hasWifi && String(wifiPass).length < 8) {
                         return [
-                            '# Startup config (tool-generated) — MikroTik Tools',
-                            '# ERROR: ' + this.t.ui.wifiPassMin
+                            isVi
+                                ? '# Cấu hình khởi đầu (tool-generated) — MikroTik Tools'
+                                : '# Startup config (tool-generated) — MikroTik Tools',
+                            (isVi ? '# LỖI: ' : '# ERROR: ') + this.t.ui.wifiPassMin
                         ].join('\n');
                     }
 
                     const lines = [];
-                    lines.push('# Startup config (tool-generated) — MikroTik Tools');
+                    lines.push(isVi
+                        ? '# Cấu hình khởi đầu (tool-generated) — MikroTik Tools'
+                        : '# Startup config (tool-generated) — MikroTik Tools');
                     lines.push('');
 
                     lines.push('/interface bridge');
@@ -459,14 +607,17 @@
                     if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
                     this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
                 },
+                toast() {
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 2500);
+                },
                 async copyText(id) {
                     const el = document.getElementById(id);
                     if (!el) return;
                     const txt = el.innerText || el.textContent || '';
                     try {
                         await navigator.clipboard.writeText(txt);
-                        this.showToast = true;
-                        setTimeout(() => (this.showToast = false), 1200);
+                        this.toast();
                     } catch (e) {
                         const ta = document.createElement('textarea');
                         ta.value = txt;
@@ -474,8 +625,7 @@
                         ta.select();
                         document.execCommand('copy');
                         document.body.removeChild(ta);
-                        this.showToast = true;
-                        setTimeout(() => (this.showToast = false), 1200);
+                        this.toast();
                     }
                 }
             }

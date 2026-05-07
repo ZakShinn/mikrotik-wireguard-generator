@@ -216,9 +216,9 @@
                 </section>
 
                 <section class="panel panel-script">
-                    <div class="script-header">
-                        <h2 class="section-title mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h2>
-                        <button type="button" class="copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:.5rem">
+                        <div style="font-weight:700; color:var(--text)"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</div>
+                        <button type="button" class="btn btn-dark btn-sm copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
                     </div>
                     <pre id="main-script" class="script-pre">{{ generatedScript }}</pre>
                     <div class="callout mb-0">
@@ -425,6 +425,7 @@
                     const remoteNet = (this.form.remoteAccessNet || '192.168.88.0/24').trim() || '192.168.88.0/24';
 
                     const lines = [];
+                    const isVi = this.lang === 'vi';
 
                     lines.push('/ip firewall filter');
                     lines.push('add action=accept chain=input comment="defconf: accept established,related,untracked" connection-state=established,related,untracked');
@@ -483,7 +484,7 @@
                     }
 
                     if (this.form.hardening) {
-                        lines.push('# Hardening');
+                        lines.push(isVi ? '# Hardening (gia cố bảo mật)' : '# Hardening');
                         lines.push('/ip firewall service-port');
                         lines.push('set ftp disabled=yes');
                         lines.push('set tftp disabled=yes');
@@ -539,7 +540,8 @@
                     const ex = this.exemptNetworks.length ? this.exemptNetworks : [];
                     if (!ex.length) return '';
                     const lines = [];
-                    lines.push('# Parameters (tool-generated)');
+                    const isVi = this.lang === 'vi';
+                    lines.push(isVi ? '# Tham số (tool-generated)' : '# Parameters (tool-generated)');
                     lines.push('/ip firewall address-list');
                     for (const n of ex) lines.push('add list="Exempt Addresses" address=' + n + ' disabled=no');
                     return lines.join('\n');
@@ -1219,9 +1221,11 @@
                     return lines.join('\n');
                 },
                 copyText(id) {
-                    navigator.clipboard.writeText(document.getElementById(id).innerText);
+                    const el = document.getElementById(id);
+                    const txt = el ? el.innerText : '';
+                    navigator.clipboard.writeText(txt);
                     this.showToast = true;
-                    setTimeout(() => { this.showToast = false; }, 2000);
+                    setTimeout(() => { this.showToast = false; }, 2500);
                 }
             }
         }).mount('#app');

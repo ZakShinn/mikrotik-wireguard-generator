@@ -30,6 +30,7 @@ Website chạy ngay trong trình duyệt để **tạo script RouterOS** dạng 
 
 - `/wireguard`
 - `/wireguard-site-to-site`
+- `/eoip-tunnel`
 - `/hairpin-nat`
 - `/nextdns`
 - `/iptv`

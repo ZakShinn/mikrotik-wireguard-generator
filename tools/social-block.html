@@ -86,15 +86,36 @@
                     <h2 class="section-title"><i class="fas fa-sliders-h mr-2"></i> {{ t.ui.config }}</h2>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.lanList }}</label>
+                        <label class="label">
+                            {{ t.labels.lanList }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.lanList }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.lanList.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.lanList.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.lanList.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control">
                             <input class="input" v-model="form.lanList" placeholder="LAN">
-                            <p class="help mb-0">{{ t.hints.lanList }}</p>
                         </div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.rulePlacement }}</label>
+                        <label class="label">
+                            {{ t.labels.rulePlacement }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.rulePlacement }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.rulePlacement.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.rulePlacement.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.rulePlacement.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control">
                             <div class="select">
                                 <select v-model="form.placement">
@@ -102,12 +123,22 @@
                                     <option value="filter">{{ t.ui.filter }}</option>
                                 </select>
                             </div>
-                            <p class="help mb-0">{{ t.hints.rulePlacement }}</p>
                         </div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.blockMethods }}</label>
+                        <label class="label">
+                            {{ t.labels.blockMethods }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.blockMethods }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.blockMethods.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.blockMethods.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="t-val"><span class="tip-def">{{ t.hints.blockMethods.def }}</span></span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control">
                             <div v-if="form.placement === 'raw' && form.methodLayer7" class="callout" style="margin-bottom:10px;">
                                 <strong><i class="fas fa-triangle-exclamation mr-1"></i></strong> {{ t.ui.warnLayer7Raw }}
@@ -154,7 +185,6 @@
                                     </span>
                                 </label>
                             </div>
-                            <p class="help mb-0">{{ t.hints.blockMethods }}</p>
                         </div>
                     </div>
 
@@ -177,26 +207,46 @@
                         <label class="checkbox-row">
                             <input type="checkbox" v-model="form.useSchedule">
                             <span class="checkbox-text">{{ t.labels.useSchedule }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.useSchedule }}</span></span>
+                                </span>
+                            </span>
                         </label>
-                        <p class="help mb-0">{{ t.hints.useSchedule }}</p>
                     </div>
 
                     <div v-if="form.useSchedule" class="field">
-                        <label class="label">{{ t.labels.timeRange }}</label>
+                        <label class="label">
+                            {{ t.labels.timeRange }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.timeRange }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.timeRange.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.timeRange.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.timeRange.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
                             <input class="input" style="max-width:150px;" v-model="form.startTime" placeholder="08:00:00">
                             <span style="color:var(--muted);">→</span>
                             <input class="input" style="max-width:150px;" v-model="form.endTime" placeholder="17:00:00">
                         </div>
-                        <p class="help mb-0">{{ t.hints.timeRange }}</p>
                     </div>
 
                     <div class="field">
                         <label class="checkbox-row">
                             <input type="checkbox" v-model="form.startEnabled">
                             <span class="checkbox-text">{{ t.labels.startEnabled }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.startEnabled }}</span></span>
+                                </span>
+                            </span>
                         </label>
-                        <p class="help mb-0">{{ t.hints.startEnabled }}</p>
                     </div>
 
                     <div class="callout mb-0">
@@ -205,9 +255,9 @@
                 </section>
 
                 <section class="panel panel-script">
-                    <div class="script-header">
-                        <h2 class="section-title mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.script }}</h2>
-                        <button type="button" class="copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:.5rem">
+                        <div style="font-weight:700; color:var(--text)"><i class="fas fa-terminal mr-2"></i> {{ t.ui.script }}</div>
+                        <button type="button" class="btn btn-dark btn-sm copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
                     </div>
                     <pre id="main-script" class="script-pre">{{ generatedScript }}</pre>
                     <div class="callout mb-0">
@@ -233,6 +283,9 @@
                     themeLight: 'Giao diện sáng',
                     home: 'Trang chủ',
                     tipDetails: 'Chi tiết',
+                    tipAim: 'Giải thích',
+                    tipType: 'Kiểu',
+                    tipDef: 'Ví dụ',
                     warn: 'Script này là gợi ý. Bạn nên test trong Safe Mode và kiểm tra ảnh hưởng (một số domain dùng CDN có thể gây chặn nhầm).',
                     note: 'Gợi ý: Nếu vẫn truy cập được do QUIC/DoH, hãy cân nhắc tắt QUIC trên trình duyệt, hoặc kết hợp chặn DNS (NextDNS/Pi-hole) theo domain.',
                     raw: 'Raw (prerouting) — chặn sớm, nhẹ CPU',
@@ -261,11 +314,11 @@
                     startEnabled: 'Bật chặn ngay sau khi dán script'
                 },
                 hints: {
-                    lanList: 'Mặc định thường là LAN (theo defconf). Rule sẽ áp dụng cho traffic từ in-interface-list=LAN.',
-                    rulePlacement: 'Raw giúp chặn sớm hơn. Filter dễ debug hơn. Nếu bạn dùng template firewall khác, chọn cái bạn quen.',
-                    blockMethods: 'Gợi ý: bật ít nhất 1 cách. Layer7 chỉ sinh rule trong Filter (forward). Content chỉ có ý nghĩa với HTTP (port 80). TLS Host dùng cho HTTPS (TCP/443).',
+                    lanList: { aim: 'Tên interface-list LAN (thường có sẵn trong defconf). Rule sẽ match traffic từ in-interface-list=LAN.', type: 'Chữ', def: 'LAN' },
+                    rulePlacement: { aim: 'Chọn nơi đặt rule: Raw chặn sớm hơn; Filter dễ đọc/debug hơn.', type: 'Raw / Filter', def: 'Raw' },
+                    blockMethods: { aim: 'Chọn ít nhất 1 cách chặn. Lưu ý Layer7 chỉ sinh rule trong Filter.', type: 'Tùy chọn', def: 'Bật dst-address-list + tls-host (khuyến nghị)' },
                     useSchedule: 'Nếu bật, tool sẽ tạo 2 scheduler: enable lúc start-time và disable lúc end-time (lặp mỗi ngày).',
-                    timeRange: 'Định dạng HH:MM:SS (ví dụ 08:00:00). Nếu end < start, RouterOS vẫn chạy scheduler nhưng logic “qua đêm” không được xử lý trong tool này.',
+                    timeRange: { aim: 'Định dạng HH:MM:SS. Nếu end < start (qua đêm) thì logic “qua đêm” chưa được tool xử lý.', type: 'HH:MM:SS', def: '08:00:00 → 17:00:00' },
                     startEnabled: 'Nếu tắt, rule sẽ được tạo ở trạng thái disabled=yes và bạn tự enable khi cần.'
                 }
             },
@@ -280,6 +333,9 @@
                     themeLight: 'Light theme',
                     home: 'Home',
                     tipDetails: 'Details',
+                    tipAim: 'Explain',
+                    tipType: 'Type',
+                    tipDef: 'Example',
                     warn: 'This is a starter template. Test in Safe Mode and review side effects (some domains may share CDNs).',
                     note: 'Tip: If access still works via QUIC/DoH, consider disabling QUIC on clients or combine with DNS blocking (NextDNS/Pi-hole) by domain.',
                     raw: 'Raw (prerouting) — early drop, lower CPU',
@@ -308,11 +364,11 @@
                     startEnabled: 'Enable blocking right after import'
                 },
                 hints: {
-                    lanList: 'Defaults to LAN (defconf). Rules match traffic with in-interface-list=LAN.',
-                    rulePlacement: 'Raw drops earlier. Filter is easier to debug. Pick what matches your firewall style.',
-                    blockMethods: 'Tip: enable at least one method. Layer7 rules are generated in Filter (forward) only. Content is meaningful for HTTP (port 80). TLS Host is for HTTPS (TCP/443).',
+                    lanList: { aim: 'LAN interface-list name (usually exists in defconf). Rules match traffic from in-interface-list=LAN.', type: 'Text', def: 'LAN' },
+                    rulePlacement: { aim: 'Pick where to place rules: Raw drops earlier; Filter is easier to read/debug.', type: 'Raw / Filter', def: 'Raw' },
+                    blockMethods: { aim: 'Enable at least one method. Note: Layer7 rules are generated only in Filter.', type: 'Options', def: 'Enable dst-address-list + tls-host (recommended)' },
                     useSchedule: 'If enabled, creates two schedulers: enable at start-time and disable at end-time (daily).',
-                    timeRange: 'Format HH:MM:SS (e.g., 08:00:00). Overnight windows are not handled in this tool.',
+                    timeRange: { aim: 'Format HH:MM:SS. If end < start (overnight), the overnight logic is not handled by this tool.', type: 'HH:MM:SS', def: '08:00:00 → 17:00:00' },
                     startEnabled: 'If off, rules are created disabled=yes and you can enable manually.'
                 }
             }
@@ -467,6 +523,7 @@
                     const lanList = (this.form.lanList || 'LAN').trim() || 'LAN';
                     const placement = this.form.placement === 'filter' ? 'filter' : 'raw';
                     const startEnabled = !!this.form.startEnabled;
+                    const isVi = this.lang === 'vi';
 
                     const startTime = sanitizeTimeLike(this.form.startTime, '08:00:00');
                     const endTime = sanitizeTimeLike(this.form.endTime, '17:00:00');
@@ -486,10 +543,18 @@
                     const disabledFlag = startEnabled ? 'disabled=no' : 'disabled=yes';
 
                     const lines = [];
-                    lines.push(`# Social media block (tool-generated) — MikroTik Tools`);
-                    lines.push(`# Placement: ${placement.toUpperCase()} | LAN list: ${lanList}`);
-                    lines.push(`# Selected domains: ${domains.length ? domains.length : 0}`);
-                    lines.push(`# Methods: addr-list=${this.form.methodAddrList ? 'on' : 'off'}, tls-host=${this.form.methodTlsHost ? 'on' : 'off'}, content=${this.form.methodContent ? 'on' : 'off'}, layer7=${this.form.methodLayer7 ? 'on' : 'off'}`);
+                    lines.push(isVi
+                        ? `# Chặn mạng xã hội (tool-generated) — MikroTik Tools`
+                        : `# Social media block (tool-generated) — MikroTik Tools`);
+                    lines.push(isVi
+                        ? `# Vị trí rule: ${placement.toUpperCase()} | Interface-list LAN: ${lanList}`
+                        : `# Placement: ${placement.toUpperCase()} | LAN list: ${lanList}`);
+                    lines.push(isVi
+                        ? `# Số domain đã chọn: ${domains.length ? domains.length : 0}`
+                        : `# Selected domains: ${domains.length ? domains.length : 0}`);
+                    lines.push(isVi
+                        ? `# Phương pháp: addr-list=${this.form.methodAddrList ? 'on' : 'off'}, tls-host=${this.form.methodTlsHost ? 'on' : 'off'}, content=${this.form.methodContent ? 'on' : 'off'}, layer7=${this.form.methodLayer7 ? 'on' : 'off'}`
+                        : `# Methods: addr-list=${this.form.methodAddrList ? 'on' : 'off'}, tls-host=${this.form.methodTlsHost ? 'on' : 'off'}, content=${this.form.methodContent ? 'on' : 'off'}, layer7=${this.form.methodLayer7 ? 'on' : 'off'}`);
                     lines.push('');
 
                     const useAnyMethod = !!(this.form.methodAddrList || this.form.methodTlsHost || this.form.methodContent || this.form.methodLayer7);
@@ -499,16 +564,20 @@
                     const useLayer7 = !!this.form.methodLayer7;
 
                     if (!useAnyMethod) {
-                        lines.push('# NOTE: No blocking method selected. Enable at least one method in UI.');
+                        lines.push(isVi
+                            ? '# GHI CHÚ: Chưa chọn phương pháp chặn nào. Hãy bật ít nhất 1 phương pháp trong UI.'
+                            : '# NOTE: No blocking method selected. Enable at least one method in UI.');
                         lines.push('');
                     }
 
                     if (useAddrList) {
-                        lines.push('# 1) Address-list (domains → dynamic IPs)');
+                        lines.push(isVi ? '# 1) Address-list (domain → IP động)' : '# 1) Address-list (domains → dynamic IPs)');
                         lines.push('/ip firewall address-list');
                         lines.push(`:foreach i in=[find list="${listName}"] do={ remove $i }`);
                         if (!domains.length) {
-                            lines.push(`# NOTE: No social network selected. Pick at least one.`);
+                            lines.push(isVi
+                                ? `# GHI CHÚ: Chưa chọn dịch vụ nào. Hãy tick ít nhất 1 dịch vụ.`
+                                : `# NOTE: No social network selected. Pick at least one.`);
                         } else {
                             for (const d of domains) {
                                 lines.push(`add list="${listName}" address=${d} comment="${tag}: ${d}" disabled=no`);
@@ -521,23 +590,31 @@
                     const menu = placement === 'raw' ? '/ip firewall raw' : '/ip firewall filter';
                     const inIfListProp = 'in-interface-list';
 
-                    lines.push(`# 2) Firewall rules (${placement})`);
+                    lines.push(isVi ? `# 2) Firewall rules (${placement})` : `# 2) Firewall rules (${placement})`);
                     lines.push(menu);
-                    lines.push(`# You can disable/enable all rules by comment prefix "${tag}:"`);
+                    lines.push(isVi
+                        ? `# Bạn có thể bật/tắt tất cả rule bằng comment prefix "${tag}:"`
+                        : `# You can disable/enable all rules by comment prefix "${tag}:"`);
                     if (useAddrList) {
-                        lines.push(`# dst-address-list method (TCP/80, TCP/443, UDP/443)`);
+                        lines.push(isVi
+                            ? `# Cách dst-address-list (TCP/80, TCP/443, UDP/443)`
+                            : `# dst-address-list method (TCP/80, TCP/443, UDP/443)`);
                         lines.push(`add chain=${chain} action=drop comment="${tag}: addrlist drop tcp/80" protocol=tcp dst-port=80 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
                         lines.push(`add chain=${chain} action=drop comment="${tag}: addrlist drop tcp/443" protocol=tcp dst-port=443 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
                         lines.push(`add chain=${chain} action=drop comment="${tag}: addrlist drop udp/443 (QUIC)" protocol=udp dst-port=443 ${inIfListProp}=${lanList} dst-address-list="${listName}" ${disabledFlag}`);
                     }
                     if (useTlsHost) {
-                        lines.push(`# tls-host method (HTTPS SNI on TCP/443). Does NOT block QUIC (UDP/443).`);
+                        lines.push(isVi
+                            ? `# Cách tls-host (SNI HTTPS TCP/443). KHÔNG chặn QUIC (UDP/443).`
+                            : `# tls-host method (HTTPS SNI on TCP/443). Does NOT block QUIC (UDP/443).`);
                         for (const d of domains) {
                             lines.push(`add chain=${chain} action=drop comment="${tag}: tlshost ${d}" protocol=tcp dst-port=443 ${inIfListProp}=${lanList} tls-host=${d} ${disabledFlag}`);
                         }
                     }
                     if (useContent) {
-                        lines.push(`# content method (HTTP on TCP/80). HTTPS payload is encrypted, so content won't help there.`);
+                        lines.push(isVi
+                            ? `# Cách content (HTTP TCP/80). HTTPS bị mã hoá nên content không hiệu quả.`
+                            : `# content method (HTTP on TCP/80). HTTPS payload is encrypted, so content won't help there.`);
                         for (const d of plainDomains) {
                             lines.push(`add chain=${chain} action=drop comment="${tag}: content ${d}" protocol=tcp dst-port=80 ${inIfListProp}=${lanList} content=${d} ${disabledFlag}`);
                         }
@@ -545,8 +622,10 @@
                     lines.push('');
 
                     if (useLayer7) {
-                        lines.push('# 2b) Layer7 protocol + rules (Filter only)');
-                        lines.push('# NOTE: Layer7 matcher is CPU-heavy and primarily useful for HTTP. Not generated in Raw.');
+                        lines.push(isVi ? '# 2b) Layer7 protocol + rules (chỉ Filter)' : '# 2b) Layer7 protocol + rules (Filter only)');
+                        lines.push(isVi
+                            ? '# GHI CHÚ: Layer7 nặng CPU và chủ yếu hữu ích với HTTP. Tool không sinh Layer7 trong Raw.'
+                            : '# NOTE: Layer7 matcher is CPU-heavy and primarily useful for HTTP. Not generated in Raw.');
                         const esc = (s) => String(s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                         const re = plainDomains.length ? ('(' + plainDomains.map(esc).join('|') + ')') : '(example\\.com)';
                         lines.push('/ip firewall layer7-protocol');
@@ -554,12 +633,16 @@
                         lines.push(`add name="${l7Name}" regexp="${re}" comment="${tag}: layer7"`);
                         lines.push('');
                         lines.push('/ip firewall filter');
-                        lines.push(`# Layer7 drop (TCP/80). If you need HTTPS blocking, prefer tls-host / addr-list.`);
+                        lines.push(isVi
+                            ? `# Layer7 drop (TCP/80). Nếu cần chặn HTTPS, ưu tiên tls-host / addr-list.`
+                            : `# Layer7 drop (TCP/80). If you need HTTPS blocking, prefer tls-host / addr-list.`);
                         lines.push(`add chain=forward action=drop comment="${tag}: layer7 drop tcp/80" protocol=tcp dst-port=80 ${inIfListProp}=${lanList} layer7-protocol="${l7Name}" ${disabledFlag}`);
                         lines.push('');
                     }
 
-                    lines.push('# 3) Enable/disable helper scripts (toggle rules by comment)');
+                    lines.push(isVi
+                        ? '# 3) Script bật/tắt (toggle rule theo comment)'
+                        : '# 3) Enable/disable helper scripts (toggle rules by comment)');
                     lines.push('/system script');
                     lines.push(`:if ([:len [find name="${enableScriptName}"]] > 0) do={ remove [find name="${enableScriptName}"] }`);
                     lines.push(`:if ([:len [find name="${disableScriptName}"]] > 0) do={ remove [find name="${disableScriptName}"] }`);
@@ -580,7 +663,7 @@
                     lines.push('');
 
                     if (useSchedule) {
-                        lines.push('# 4) Scheduler (daily)');
+                        lines.push(isVi ? '# 4) Scheduler (hàng ngày)' : '# 4) Scheduler (daily)');
                         lines.push('/system scheduler');
                         lines.push(`:if ([:len [find name="${schedEnableName}"]] > 0) do={ remove [find name="${schedEnableName}"] }`);
                         lines.push(`:if ([:len [find name="${schedDisableName}"]] > 0) do={ remove [find name="${schedDisableName}"] }`);
@@ -588,12 +671,14 @@
                         lines.push(`add name="${schedDisableName}" start-time=${endTime} interval=1d on-event="/system script run ${disableScriptName}" disabled=no`);
                         lines.push('');
                     } else {
-                        lines.push('# 4) Scheduler (optional)');
-                        lines.push(`# Disabled in UI. If you want, enable "schedule" and set start/end time.`);
+                        lines.push(isVi ? '# 4) Scheduler (tuỳ chọn)' : '# 4) Scheduler (optional)');
+                        lines.push(isVi
+                            ? '# Đang tắt trong UI. Nếu muốn, bật "schedule" và đặt start/end time.'
+                            : '# Disabled in UI. If you want, enable "schedule" and set start/end time.');
                         lines.push('');
                     }
 
-                    lines.push('# Done.');
+                    lines.push(isVi ? '# Hoàn tất.' : '# Done.');
                     return lines.join('\n');
                 }
             },
@@ -603,10 +688,15 @@
                     if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
                     this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
                 },
-                copyText(id) {
-                    navigator.clipboard.writeText(document.getElementById(id).innerText);
+                toast() {
                     this.showToast = true;
-                    setTimeout(() => { this.showToast = false; }, 2000);
+                    setTimeout(() => { this.showToast = false; }, 2500);
+                },
+                copyText(id) {
+                    const el = document.getElementById(id);
+                    const txt = el ? el.innerText : '';
+                    navigator.clipboard.writeText(txt);
+                    this.toast();
                 }
             }
         }).mount('#app');

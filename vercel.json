@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/wireguard", "destination": "/tools/wireguard.html" },
     { "source": "/wireguard-site-to-site", "destination": "/tools/wireguard-site-to-site.html" },
+    { "source": "/eoip-tunnel", "destination": "/tools/eoip-tunnel.html" },
     { "source": "/hairpin-nat", "destination": "/tools/hairpin-nat.html" },
     { "source": "/nextdns", "destination": "/tools/nextdns.html" },
     { "source": "/iptv", "destination": "/tools/iptv.html" },
@@ -17,6 +18,7 @@
 
     { "source": "/wireguard/", "destination": "/wireguard", "permanent": true },
     { "source": "/wireguard-site-to-site/", "destination": "/wireguard-site-to-site", "permanent": true },
+    { "source": "/eoip-tunnel/", "destination": "/eoip-tunnel", "permanent": true },
     { "source": "/hairpin-nat/", "destination": "/hairpin-nat", "permanent": true },
     { "source": "/nextdns/", "destination": "/nextdns", "permanent": true },
     { "source": "/iptv/", "destination": "/iptv", "permanent": true },
@@ -29,6 +31,7 @@
 
     { "source": "/wireguard.html", "destination": "/wireguard", "permanent": true },
     { "source": "/wireguard-site-to-site.html", "destination": "/wireguard-site-to-site", "permanent": true },
+    { "source": "/eoip-tunnel.html", "destination": "/eoip-tunnel", "permanent": true },
     { "source": "/hairpin-nat.html", "destination": "/hairpin-nat", "permanent": true },
     { "source": "/Hairpin_NAT.html", "destination": "/hairpin-nat", "permanent": true },
     { "source": "/nextdns.html", "destination": "/nextdns", "permanent": true },

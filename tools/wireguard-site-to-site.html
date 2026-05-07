@@ -78,11 +78,33 @@
                     <h2 class="section-title"><i class="fas fa-sitemap mr-2"></i> {{ t.ui.configTitle }}</h2>
 
                     <div class="field">
-                        <label class="label">{{ t.labels.ifname }}</label>
+                        <label class="label">
+                            {{ t.labels.ifname }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.ifname }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.ifname.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.ifname.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.ifname.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.ifname" :placeholder="t.ui.ifPlaceholder"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.labels.port }}</label>
+                        <label class="label">
+                            {{ t.labels.port }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.port }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.port.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.port.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.port.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" type="number" v-model.number="form.port"></div>
                     </div>
 
@@ -90,10 +112,22 @@
                         <label class="checkbox-row">
                             <input type="checkbox" v-model="form.usePsk">
                             <span class="checkbox-text">{{ t.ui.usePsk }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.usePsk }}</span></span>
+                                </span>
+                            </span>
                         </label>
                         <label class="checkbox-row">
                             <input type="checkbox" v-model="form.addFirewallInput">
                             <span class="checkbox-text">{{ t.ui.addFirewallInput }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.addFirewallInput }}</span></span>
+                                </span>
+                            </span>
                         </label>
                     </div>
 
@@ -101,28 +135,88 @@
 
                     <h3 class="section-title" style="margin-top:0"><i class="fas fa-building mr-2"></i> {{ t.ui.siteA }}</h3>
                     <div class="field">
-                        <label class="label">{{ t.labels.siteName }}</label>
+                        <label class="label">
+                            {{ t.labels.siteName }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.siteName }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.siteName.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.siteName.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.siteName.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.a.name"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.labels.wan }}</label>
+                        <label class="label">
+                            {{ t.labels.wan }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.wan }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.wan.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.wan.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.wan.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.a.wan"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.labels.lan }}</label>
+                        <label class="label">
+                            {{ t.labels.lan }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.lan }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.lan.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.lan.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.lan.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.a.lanCidr"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.labels.tunnelIp }}</label>
+                        <label class="label">
+                            {{ t.labels.tunnelIp }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.tunnelIp }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.tunnelIp.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.tunnelIp.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.tunnelIp.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.a.tunnelIpCidr"></div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.ui.privateKey }}</label>
+                        <label class="label">
+                            {{ t.ui.privateKey }}
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.privateKey }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="keys.a.privateKey"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.ui.publicKey }}</label>
+                        <label class="label">
+                            {{ t.ui.publicKey }}
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.publicKey }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="keys.a.publicKey" readonly style="opacity:0.85"></div>
                     </div>
 
@@ -130,33 +224,101 @@
 
                     <h3 class="section-title" style="margin-top:0"><i class="fas fa-building mr-2"></i> {{ t.ui.siteB }}</h3>
                     <div class="field">
-                        <label class="label">{{ t.labels.siteName }}</label>
+                        <label class="label">
+                            {{ t.labels.siteName }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.siteName }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.siteName.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.siteName.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.siteName.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.b.name"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.labels.wan }}</label>
+                        <label class="label">
+                            {{ t.labels.wan }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.wan }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.wan.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.wan.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.wan.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.b.wan"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.labels.lan }}</label>
+                        <label class="label">
+                            {{ t.labels.lan }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.lan }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.lan.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.lan.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.lan.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.b.lanCidr"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.labels.tunnelIp }}</label>
+                        <label class="label">
+                            {{ t.labels.tunnelIp }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.tunnelIp }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.tunnelIp.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.tunnelIp.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.tunnelIp.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="form.b.tunnelIpCidr"></div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ t.ui.privateKey }}</label>
+                        <label class="label">
+                            {{ t.ui.privateKey }}
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.privateKey }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="keys.b.privateKey"></div>
                     </div>
                     <div class="field">
-                        <label class="label">{{ t.ui.publicKey }}</label>
+                        <label class="label">
+                            {{ t.ui.publicKey }}
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.publicKey }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model="keys.b.publicKey" readonly style="opacity:0.85"></div>
                     </div>
 
                     <div class="field" v-if="form.usePsk">
-                        <label class="label">{{ t.ui.psk }}</label>
+                        <label class="label">
+                            {{ t.ui.psk }}
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.ui.tipDetails }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.psk }}</span></span>
+                                </span>
+                            </span>
+                        </label>
                         <div class="control"><input class="input" v-model.trim="keys.psk"></div>
                     </div>
                 </section>
@@ -197,6 +359,19 @@
                     lan: 'Lớp mạng LAN',
                     tunnelIp: 'IP tunnel (CIDR /30)'
                 },
+                hints: {
+                    ifname: { aim: 'Tên interface WireGuard trên MikroTik. Nếu để trống, tool sẽ tự đặt wg-<tên-site>.', type: 'Chữ', def: 'wg' },
+                    port: { aim: 'UDP listen-port của WireGuard. Hai site nên dùng cùng port; mở port trên firewall/NAT nếu cần.', type: 'Số', def: '13231' },
+                    siteName: { aim: 'Dùng để gắn comment/tag cho rule và peer, giúp dễ tìm trong config.', type: 'Chữ', def: 'Hanoi' },
+                    wan: { aim: 'Public IP hoặc DDNS của site (dùng làm endpoint-address cho phía bên kia).', type: 'IP / hostname', def: 'vpn.example.com' },
+                    lan: { aim: 'Subnet LAN phía sau site để thêm route qua tunnel.', type: 'CIDR', def: '192.168.1.0/24' },
+                    tunnelIp: { aim: 'IP tunnel point-to-point (khuyến nghị /30). Mỗi site 1 IP khác nhau (ví dụ .1 và .2).', type: 'CIDR /30', def: '172.16.30.1/30' },
+                    usePsk: 'Bật để thêm WireGuard preshared-key (tăng an toàn). Khuyến nghị dùng.',
+                    addFirewallInput: 'Bật để tool sinh thêm rule input accept UDP listen-port trên router.',
+                    privateKey: 'Khóa riêng (private key) của site. Tool tạo key ngay trên trình duyệt; bạn có thể dán key riêng của bạn.',
+                    publicKey: 'Khóa công khai (public key) suy ra từ private key; dùng để khai báo ở peer phía bên kia.',
+                    psk: 'Khóa đối xứng dùng chung cho 2 site (preshared-key). Hai đầu phải giống nhau.'
+                },
                 ui: {
                     copied: 'Đã sao chép!',
                     copy: 'Copy',
@@ -211,7 +386,11 @@
                     psk: 'Preshared Key (PSK)',
                     usePsk: 'Dùng PSK (khuyến nghị)',
                     addFirewallInput: 'Thêm rule input cho UDP port',
-                    ifPlaceholder: 'Mặc định: wg (để trống = wg-(tên site))'
+                    ifPlaceholder: 'Mặc định: wg (để trống = wg-(tên site))',
+                    tipDetails: 'Chi tiết',
+                    tipAim: 'Giải thích',
+                    tipType: 'Kiểu',
+                    tipDef: 'Ví dụ'
                 }
             },
             en: {
@@ -222,6 +401,19 @@
                     wan: 'Public WAN IP / DDNS (Endpoint)',
                     lan: 'LAN CIDR',
                     tunnelIp: 'Tunnel IP (CIDR /30)'
+                },
+                hints: {
+                    ifname: { aim: 'WireGuard interface name on MikroTik. If empty, the tool uses wg-<site-name>.', type: 'Text', def: 'wg' },
+                    port: { aim: 'WireGuard UDP listen-port. Both sites should typically use the same port; open/forward it if needed.', type: 'Number', def: '13231' },
+                    siteName: { aim: 'Used as a tag/comment so you can search generated rules/peers easily.', type: 'Text', def: 'Hanoi' },
+                    wan: { aim: 'Public IP or DDNS hostname of the site (used as endpoint-address by the peer).', type: 'IP / hostname', def: 'vpn.example.com' },
+                    lan: { aim: 'LAN subnet behind the site to be routed through the tunnel.', type: 'CIDR', def: '192.168.1.0/24' },
+                    tunnelIp: { aim: 'Point-to-point tunnel IPs (recommended /30). Each site uses a different host IP (e.g. .1 and .2).', type: 'CIDR /30', def: '172.16.30.1/30' },
+                    usePsk: 'Enable to add a WireGuard preshared key (extra symmetric layer). Recommended.',
+                    addFirewallInput: 'Enable to generate an input firewall rule to accept the UDP listen-port.',
+                    privateKey: 'Site private key. Generated locally in your browser; you can paste your own if needed.',
+                    publicKey: 'Site public key derived from the private key; referenced by the remote peer.',
+                    psk: 'Shared symmetric key (preshared-key). Must be identical on both sites.'
                 },
                 ui: {
                     copied: 'Copied!',
@@ -237,7 +429,11 @@
                     psk: 'Preshared key (PSK)',
                     usePsk: 'Use PSK (recommended)',
                     addFirewallInput: 'Add input rule for UDP port',
-                    ifPlaceholder: 'Default: wg (empty = wg-(site name))'
+                    ifPlaceholder: 'Default: wg (empty = wg-(site name))',
+                    tipDetails: 'Details',
+                    tipAim: 'Explain',
+                    tipType: 'Type',
+                    tipDef: 'Example'
                 }
             }
         };
@@ -295,7 +491,7 @@
                         usePsk: true,
                         addFirewallInput: true,
                         a: { name: 'Hanoi', wan: '115.115.115.115', lanCidr: '192.168.1.0/24', tunnelIpCidr: '172.16.30.1/30' },
-                        b: { name: 'HCM', wan: '14.14.14.14', lanCidr: '172.16.0.0/16', tunnelIpCidr: '172.16.30.2/30' }
+                        b: { name: 'HCM', wan: '14.14.14.14', lanCidr: '192.168.2.0/24', tunnelIpCidr: '172.16.30.2/30' }
                     },
                     keys: {
                         a: { privateKey: '', publicKey: '' },
@@ -357,7 +553,10 @@
                     ].filter(Boolean).join(',');
 
                     const lines = [];
-                    lines.push(`# WireGuard Site-to-Site: ${safe(siteSelf.name)} -> ${safe(sitePeer.name)}`);
+                    const isVi = this.lang === 'vi';
+                    lines.push(isVi
+                        ? `# WireGuard site-to-site: ${safe(siteSelf.name)} -> ${safe(sitePeer.name)}`
+                        : `# WireGuard site-to-site: ${safe(siteSelf.name)} -> ${safe(sitePeer.name)}`);
                     lines.push('');
                     lines.push(`/interface wireguard add listen-port=${port} mtu=1420 name=${ifname} private-key=${quote(selfKeys.privateKey)}`);
                     if (this.form.addFirewallInput) {

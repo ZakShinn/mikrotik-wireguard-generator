@@ -44,7 +44,8 @@
         {"@type":"ListItem","position":5,"name":"Firewall (gợi ý)","item":"https://mikrotik.hainghia.net/firewall"},
         {"@type":"ListItem","position":6,"name":"Cloudflare DDNS","item":"https://mikrotik.hainghia.net/cloudflare-ddns"},
         {"@type":"ListItem","position":7,"name":"Chặn mạng xã hội","item":"https://mikrotik.hainghia.net/social-block"},
-        {"@type":"ListItem","position":8,"name":"Định tuyến (Policy Routing)","item":"https://mikrotik.hainghia.net/routing"}
+        {"@type":"ListItem","position":8,"name":"Định tuyến (Policy Routing)","item":"https://mikrotik.hainghia.net/routing"},
+        {"@type":"ListItem","position":9,"name":"Cheat PPPoE (Premium)","item":"https://mikrotik.hainghia.net/cheat-pppoe"}
       ]}
     ]}
     </script>
@@ -116,6 +117,17 @@
             </article>
             <article class="tool-card">
                 <div class="tool-card-header">
+                    <div class="tool-icon nat"><i class="fas fa-diagram-project"></i></div>
+                    <div>
+                        <h2>{{ t.tools.eoip.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
+                        <p class="sub">{{ t.tools.eoip.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.eoip.desc }}</p>
+                <a class="cta cta-nat" href="tools/eoip-tunnel.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
                     <div class="tool-icon nat"><i class="fas fa-network-wired"></i></div>
                     <div>
                         <h2>{{ t.tools.nat.title }}</h2>
@@ -160,6 +172,17 @@
             </article>
             <article class="tool-card">
                 <div class="tool-card-header">
+                    <div class="tool-icon nd"><i class="fas fa-crown"></i></div>
+                    <div>
+                        <h2>{{ t.tools.pppoeCheat.title }} <span class="badge-beta">{{ t.badgePremium }}</span></h2>
+                        <p class="sub">{{ t.tools.pppoeCheat.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.pppoeCheat.desc }}</p>
+                <a class="cta cta-nd" href="tools/cheat-pppoe.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
                     <div class="tool-icon wg"><i class="fas fa-shield-halved"></i></div>
                     <div>
                         <h2>{{ t.tools.fw.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
@@ -201,6 +224,17 @@
                 </div>
                 <p class="desc">{{ t.tools.rt.desc }}</p>
                 <a class="cta cta-nd" href="tools/routing.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
+                    <div class="tool-icon nd"><i class="fas fa-code-branch"></i></div>
+                    <div>
+                        <h2>{{ t.tools.pcc.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
+                        <p class="sub">{{ t.tools.pcc.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.pcc.desc }}</p>
+                <a class="cta cta-nd" href="tools/pcc.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
             </article>
         </section>
 
@@ -257,6 +291,7 @@
                 nav: { tools: 'Công cụ', feedback: 'Phản hồi', status: 'Trạng thái', donate: 'Ủng hộ', themeDark: 'Giao diện tối', themeLight: 'Giao diện sáng' },
                 badge: 'RouterOS',
                 badgeBeta: 'Beta',
+                badgePremium: 'Premium',
                 hero: {
                     title: 'Công cụ web cho MikroTik',
                     subtitle: 'WireGuard, Hairpin NAT, NextDNS, IPTV — điền form, copy script dán Terminal. Chạy trong trình duyệt.'
@@ -272,6 +307,11 @@
                         title: 'WireGuard Site-to-Site',
                         sub: 'VPN giữa 2 chi nhánh',
                         desc: 'Sinh 2 script RouterOS: interface, peer, IP tunnel /30, route LAN↔LAN.'
+                    },
+                    eoip: {
+                        title: 'EoIP Tunnel',
+                        sub: 'Bridge L2 / Route L3',
+                        desc: 'Sinh 2 script RouterOS tạo EoIP (GRE/L2), IP tunnel /30, và bridge/route tuỳ chọn.'
                     },
                     nat: {
                         title: 'Hairpin NAT',
@@ -293,6 +333,11 @@
                         sub: 'Khởi tạo LAN/WiFi',
                         desc: 'Sinh script khởi đầu: bridge LAN/WiFi, PPPoE, WiFi 2.4/5, DHCP, NAT, DNS, NTP.'
                     },
+                    pppoeCheat: {
+                        title: 'Cheat PPPoE',
+                        sub: 'Premium',
+                        desc: 'Cheat-sheet PPPoE theo nhà mạng'
+                    },
                     fw: {
                         title: 'Firewall',
                         sub: 'Đang hoàn thiện',
@@ -312,6 +357,11 @@
                         title: 'Định tuyến (Policy Routing)',
                         sub: 'PPPoE / Ether / VPN',
                         desc: 'Định tuyến theo subnet/nguồn qua pppoe-out, ether, WireGuard/VPN… Sinh script routing table + rule (v7) hoặc mangle (v6).'
+                    },
+                    pcc: {
+                        title: 'PCC',
+                        sub: 'Cân bằng tải nhiều WAN',
+                        desc: 'Sinh script PCC (Per Connection Classifier) để load-balance/failover nhiều đường truyền — chỉnh theo nhu cầu thực tế.'
                     }
                 },
                 feedback: {
@@ -335,6 +385,7 @@
                 nav: { tools: 'Tools', feedback: 'Feedback', status: 'Status', donate: 'Donate', themeDark: 'Dark theme', themeLight: 'Light theme' },
                 badge: 'RouterOS',
                 badgeBeta: 'Beta',
+                badgePremium: 'Premium',
                 hero: {
                     title: 'MikroTik tools in your browser',
                     subtitle: 'WireGuard, Hairpin NAT, NextDNS, IPTV — fill the form, copy the script into Terminal.'
@@ -350,6 +401,11 @@
                         title: 'WireGuard Site-to-Site',
                         sub: 'Branch-to-branch VPN',
                         desc: 'Generates two RouterOS scripts: interface, peer, /30 tunnel IPs, and LAN↔LAN routes.'
+                    },
+                    eoip: {
+                        title: 'EoIP Tunnel',
+                        sub: 'L2 bridge / L3 routes',
+                        desc: 'Generates two RouterOS scripts for EoIP (GRE/L2), /30 tunnel IPs, and optional bridge/routes.'
                     },
                     nat: {
                         title: 'Hairpin NAT',
@@ -371,6 +427,11 @@
                         sub: 'LAN/WiFi bootstrap',
                         desc: 'Generate a starter script: LAN/WiFi bridges, PPPoE, dual-band WiFi, DHCP, NAT, DNS, NTP.'
                     },
+                    pppoeCheat: {
+                        title: 'PPPoE Cheat',
+                        sub: 'Premium',
+                        desc: 'PPPoE cheat-sheet by ISP'
+                    },
                     fw: {
                         title: 'Firewall',
                         sub: 'Work in progress',
@@ -390,6 +451,11 @@
                         title: 'Policy Routing',
                         sub: 'PPPoE / Ether / VPN',
                         desc: 'Route selected source subnets via pppoe-out, ether, WireGuard/VPN… Generates routing table + rules (v7) or mangle (v6).'
+                    },
+                    pcc: {
+                        title: 'PCC',
+                        sub: 'Multi-WAN load balancing',
+                        desc: 'Generate PCC (Per Connection Classifier) scripts for multi-WAN load-balance/failover — adjust to your real topology.'
                     }
                 },
                 feedback: {

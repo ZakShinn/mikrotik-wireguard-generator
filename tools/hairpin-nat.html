@@ -144,11 +144,9 @@
                 </section>
 
                 <section class="panel panel-script nat-panel-script">
-                    <div class="script-header">
-                        <h2 class="section-title mb-0"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</h2>
-                        <button type="button" class="copy-btn" @click="copyText('main-script')">
-                            <i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}
-                        </button>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:.5rem">
+                        <div style="font-weight:700; color:var(--text)"><i class="fas fa-terminal mr-2"></i> {{ t.ui.scriptTitle }}</div>
+                        <button type="button" class="btn btn-dark btn-sm copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
                     </div>
 
                     <pre id="main-script" class="script-pre">/ip firewall address-list
@@ -271,10 +269,15 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
                     if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
                     this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
                 },
-                copyText(id) {
-                    navigator.clipboard.writeText(document.getElementById(id).innerText);
+                toast() {
                     this.showToast = true;
-                    setTimeout(() => { this.showToast = false; }, 2000);
+                    setTimeout(() => { this.showToast = false; }, 2500);
+                },
+                copyText(id) {
+                    const el = document.getElementById(id);
+                    const txt = el ? el.innerText : '';
+                    navigator.clipboard.writeText(txt);
+                    this.toast();
                 }
             },
             mounted() {
