@@ -48,11 +48,13 @@ Website chạy ngay trong trình duyệt để **tạo script RouterOS** dạng 
 
 Trang chủ có mục **Ủng hộ tác giả** trong `[index.html](index.html)`: chuyển khoản MB Bank (STK `0968884946`), PayPal [paypal.me/Zakshin](https://paypal.me/Zakshin), hoặc liên hệ qua [Facebook tác giả](https://www.facebook.com/profile.php?id=100006985387032).
 
-
-
-  
-
-
+<p align="center">
+  <img src="https://img.vietqr.io/image/MB-0968884946-compact.png?addTag=ZakshinTools" alt="VietQR MB Bank — 0968884946" width="220">
+  &nbsp;&nbsp;
+  <a href="https://paypal.me/Zakshin" title="paypal.me/Zakshin"><img src="Paypal.png" alt="PayPal — paypal.me/Zakshin" width="220"></a>
+  &nbsp;&nbsp;
+  <a href="https://www.facebook.com/profile.php?id=100006985387032" title="Facebook Zakshin"><img src="Logo.png" alt="Zakshin — Facebook" width="220"></a>
+</p>
 
 ### Ghi nhận & giấy phép
 
