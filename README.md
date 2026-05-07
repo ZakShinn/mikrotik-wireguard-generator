@@ -95,8 +95,15 @@ The home page has a **Support the author** section in `[index.html](index.html)`
   &nbsp;&nbsp;
   <a href="https://paypal.me/Zakshin" title="paypal.me/Zakshin"><img src="Paypal.png" alt="PayPal — paypal.me/Zakshin" width="220"></a>
   &nbsp;&nbsp;
+<<<<<<< HEAD
   <a href="https://www.facebook.com/profile.php?id=100006985387032" title="Zakshin on Facebook"><img src="Logo.png" alt="Zakshin — Facebook" width="220"></a>
 </p>
+=======
+  <a href="https://www.facebook.com/profile.php?id=100006985387032" title="Facebook Zakshin"><img src="Logo.png" alt="Zakshin — Facebook" width="220"></a>
+</p>
+
+  
+>>>>>>> 1135e5c21200b2fb584ddb79b61c33f3935e50a5
 
 ### Credits & license
 
