@@ -90,9 +90,13 @@ A static website that runs in your browser to **generate RouterOS scripts** for 
 
 The home page has a **Support the author** section in `[index.html](index.html)`: MB Bank transfer (`0968884946`), PayPal [paypal.me/Zakshin](https://paypal.me/Zakshin), or the [author’s Facebook page](https://www.facebook.com/profile.php?id=100006985387032).
 
-
-
-  
+<p align="center">
+  <img src="https://img.vietqr.io/image/MB-0968884946-compact.png?addTag=ZakshinTools" alt="VietQR MB Bank — 0968884946" width="220">
+  &nbsp;&nbsp;
+  <a href="https://paypal.me/Zakshin" title="paypal.me/Zakshin"><img src="Paypal.png" alt="PayPal — paypal.me/Zakshin" width="220"></a>
+  &nbsp;&nbsp;
+  <a href="https://www.facebook.com/profile.php?id=100006985387032" title="Zakshin on Facebook"><img src="Logo.png" alt="Zakshin — Facebook" width="220"></a>
+</p>
 
 ### Credits & license
 
