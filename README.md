@@ -7,7 +7,7 @@
 ## Tiếng Việt
 
 ### MikroTik Tools là gì?
-Website tĩnh (HTML + Vue 3) chạy ngay trong trình duyệt để **tạo script RouterOS** dạng **copy/paste** vào Terminal MikroTik.
+Website chạy ngay trong trình duyệt để **tạo script RouterOS** dạng **copy/paste** vào Terminal MikroTik.
 
 ### Có những tính năng gì?
 - **WireGuard**: tạo script router + file client `.conf` + QR.
@@ -17,7 +17,6 @@ Website tĩnh (HTML + Vue 3) chạy ngay trong trình duyệt để **tạo scri
 - **Firewall**: khung firewall/hardening cơ bản (tham khảo).
 - **Cloudflare DDNS**: cập nhật record A/AAAA qua Cloudflare API + scheduler.
 - **Routing (Policy Routing)**: định tuyến theo nguồn/subnet (v7 routing rule / v6 mangle).
-- **Backup + Telegram**: backup/export theo lịch + **gửi thông báo/log qua Telegram** + tự dọn file cũ.
 
 ### Cách sử dụng (nhanh)
 1. Mở `https://mikrotik.hainghia.net`.
@@ -34,7 +33,6 @@ Website tĩnh (HTML + Vue 3) chạy ngay trong trình duyệt để **tạo scri
 - `/startup`
 - `/social-block`
 - `/routing`
-- `/telegram-backup`
 
 ### Lưu ý bảo mật
 - Tất cả dữ liệu/script được tạo **trên trình duyệt của bạn** (client-side).
@@ -71,7 +69,7 @@ npx serve .
 ## English
 
 ### What is MikroTik Tools?
-A static website (HTML + Vue 3) that runs in your browser to **generate RouterOS scripts** for **copy/paste** into MikroTik Terminal.
+A static website that runs in your browser to **generate RouterOS scripts** for **copy/paste** into MikroTik Terminal.
 
 ### Features
 - **WireGuard**: router scripts + client `.conf` + QR.
@@ -81,7 +79,6 @@ A static website (HTML + Vue 3) that runs in your browser to **generate RouterOS
 - **Firewall**: starter firewall/hardening reference.
 - **Cloudflare DDNS**: update A/AAAA via Cloudflare API + scheduler.
 - **Policy Routing**: route by source/subnet (v7 rules / v6 mangle).
-- **Backup + Telegram**: scheduled backup/export + **Telegram notify/log** + auto cleanup.
 
 ### Quick usage
 1. Open `https://mikrotik.hainghia.net`.

@@ -44,8 +44,7 @@
         {"@type":"ListItem","position":5,"name":"Firewall (gợi ý)","item":"https://mikrotik.hainghia.net/firewall"},
         {"@type":"ListItem","position":6,"name":"Cloudflare DDNS","item":"https://mikrotik.hainghia.net/cloudflare-ddns"},
         {"@type":"ListItem","position":7,"name":"Chặn mạng xã hội","item":"https://mikrotik.hainghia.net/social-block"},
-        {"@type":"ListItem","position":8,"name":"Định tuyến (Policy Routing)","item":"https://mikrotik.hainghia.net/routing"},
-        {"@type":"ListItem","position":9,"name":"Backup + Telegram notify","item":"https://mikrotik.hainghia.net/telegram-backup"}
+        {"@type":"ListItem","position":8,"name":"Định tuyến (Policy Routing)","item":"https://mikrotik.hainghia.net/routing"}
       ]}
     ]}
     </script>
@@ -119,7 +118,7 @@
                 <div class="tool-card-header">
                     <div class="tool-icon nd"><i class="fas fa-filter"></i></div>
                     <div>
-                        <h2>{{ t.tools.nd.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
+                        <h2>{{ t.tools.nd.title }}</h2>
                         <p class="sub">{{ t.tools.nd.sub }}</p>
                     </div>
                 </div>
@@ -130,7 +129,7 @@
                 <div class="tool-card-header">
                     <div class="tool-icon iptv"><i class="fas fa-tv"></i></div>
                     <div>
-                        <h2>{{ t.tools.iptv.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
+                        <h2>{{ t.tools.iptv.title }}</h2>
                         <p class="sub">{{ t.tools.iptv.sub }}</p>
                     </div>
                 </div>
@@ -141,7 +140,7 @@
                 <div class="tool-card-header">
                     <div class="tool-icon nat"><i class="fas fa-wand-magic-sparkles"></i></div>
                     <div>
-                        <h2>{{ t.tools.startup.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
+                        <h2>{{ t.tools.startup.title }}</h2>
                         <p class="sub">{{ t.tools.startup.sub }}</p>
                     </div>
                 </div>
@@ -174,7 +173,7 @@
                 <div class="tool-card-header">
                     <div class="tool-icon nat"><i class="fas fa-ban"></i></div>
                     <div>
-                        <h2>{{ t.tools.sb.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
+                        <h2>{{ t.tools.sb.title }}</h2>
                         <p class="sub">{{ t.tools.sb.sub }}</p>
                     </div>
                 </div>
@@ -191,17 +190,6 @@
                 </div>
                 <p class="desc">{{ t.tools.rt.desc }}</p>
                 <a class="cta cta-nd" href="routing.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
-            </article>
-            <article class="tool-card">
-                <div class="tool-card-header">
-                    <div class="tool-icon nd"><i class="fas fa-paper-plane"></i></div>
-                    <div>
-                        <h2>{{ t.tools.tg.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
-                        <p class="sub">{{ t.tools.tg.sub }}</p>
-                    </div>
-                </div>
-                <p class="desc">{{ t.tools.tg.desc }}</p>
-                <a class="cta cta-nd" href="telegram-backup.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
             </article>
         </section>
 
@@ -285,7 +273,7 @@
                         desc: 'Gợi ý VLAN IPTV trên WAN và IGMP proxy nối sang TV — chỉnh theo nhà mạng.'
                     },
                     startup: {
-                        title: 'Startup Script',
+                        title: 'Script cấu hình ban đầu',
                         sub: 'Khởi tạo LAN/WiFi',
                         desc: 'Sinh script khởi đầu: bridge LAN/WiFi, PPPoE, WiFi 2.4/5, DHCP, NAT, DNS, NTP.'
                     },
@@ -308,11 +296,6 @@
                         title: 'Định tuyến (Policy Routing)',
                         sub: 'PPPoE / Ether / VPN',
                         desc: 'Định tuyến theo subnet/nguồn qua pppoe-out, ether, WireGuard/VPN… Sinh script routing table + rule (v7) hoặc mangle (v6).'
-                    },
-                    tg: {
-                        title: 'Backup + Telegram',
-                        sub: 'Backup/Export + notify',
-                        desc: 'Sinh script RouterOS backup/export theo lịch, tự dọn file cũ, gửi thông báo/log trạng thái qua Telegram.'
                     }
                 },
                 feedback: {
@@ -363,7 +346,7 @@
                         desc: 'Starter VLAN-on-WAN and IGMP proxy wiring for TV — adjust per ISP.'
                     },
                     startup: {
-                        title: 'Startup Script',
+                        title: 'Initial setup script',
                         sub: 'LAN/WiFi bootstrap',
                         desc: 'Generate a starter script: LAN/WiFi bridges, PPPoE, dual-band WiFi, DHCP, NAT, DNS, NTP.'
                     },
@@ -386,11 +369,6 @@
                         title: 'Policy Routing',
                         sub: 'PPPoE / Ether / VPN',
                         desc: 'Route selected source subnets via pppoe-out, ether, WireGuard/VPN… Generates routing table + rules (v7) or mangle (v6).'
-                    },
-                    tg: {
-                        title: 'Backup + Telegram',
-                        sub: 'Backup/Export + notify',
-                        desc: 'Generate a RouterOS scheduled backup/export script, auto cleanup, and Telegram notify/log.'
                     }
                 },
                 feedback: {

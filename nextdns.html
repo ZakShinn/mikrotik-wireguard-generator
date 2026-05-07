@@ -74,6 +74,7 @@
                     <div class="tool-nav-meta">
                         <div><strong>Nghĩa Zakshin</strong></div>
                         <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        <div class="tool-nav-meta-sub"><i class="fas fa-circle-check mr-1"></i> {{ t.ui.testedOn }}</div>
                     </div>
                 </div>
             </div>
@@ -240,7 +241,7 @@
                     maxConn: { aim: 'RouterOS giới hạn bao nhiêu phiên DoH chạy song song.', type: 'Số', def: '5' },
                     routerIp: { aim: 'Địa chỉ LAN của router — DHCP sẽ gán đây làm DNS cho máy trong LAN.', type: 'IPv4', def: '192.168.88.1' },
                     lanNet: { aim: 'Phải khớp address trong /ip dhcp-server network print (VD 192.168.88.0/24). Dùng cho block DHCP và NAT redirect trong script.', type: 'CIDR', def: '192.168.88.0/24' },
-                    plainDnsServers: { aim: 'Danh sách IPv4 ultralow của NextDNS (số có thể khác vùng — lấy trong NextDNS → Setup → Router). Nhiều IP cách nhau dấu phẩy.', type: 'IPv4, phẩy', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServers: { aim: 'Danh sách IPv4 ultralow của NextDNS (số có thể khác vùng — lấy trong NextDNS → Setup → Router). Nhiều IP cách nhau dấu phẩy.', type: 'IPv4, phẩy', def: '45.90.28.0,45.90.30.0' },
                     plainDnsServersV6: { aim: 'IPv6 ultralow tương tự; không dùng IPv6 thì để trống.', type: 'IPv6, phẩy', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
@@ -265,7 +266,10 @@
                     dhcpDnsComment: 'Tuỳ chọn — DHCP trỏ DNS về router',
                     dnsRedirectComment: 'Tuỳ chọn — NAT redirect DNS (UDP/TCP 53) về router',
                     note: 'Cần RouterOS 7+. Sau khi dán chạy /ip dns print. IP ultralow có thể khác vùng — đối chiếu trong NextDNS.',
-                    copied: 'Đã sao chép!'
+                    copied: 'Đã sao chép!',
+                    testedOn: 'Đã test ổn định trên RouterOS v7.22',
+                    themeDark: 'Giao diện tối',
+                    themeLight: 'Giao diện sáng'
                 }
             },
             en: {
@@ -284,7 +288,7 @@
                     maxConn: { aim: 'RouterOS cap on concurrent DoH connections.', type: 'Number', def: '5' },
                     routerIp: { aim: 'Router LAN address DHCP should advertise as the DNS server.', type: 'IPv4', def: '192.168.88.1' },
                     lanNet: { aim: 'Must match /ip dhcp-server network address= (e.g. 192.168.88.0/24). Used by the DHCP + NAT snippets.', type: 'CIDR', def: '192.168.88.0/24' },
-                    plainDnsServers: { aim: 'Ultralow IPv4 list for servers=. IPs differ by region — copy from NextDNS → Setup → Router.', type: 'Comma-separated IPv4', def: '45.90.28.22,45.90.30.22' },
+                    plainDnsServers: { aim: 'Ultralow IPv4 list for servers=. IPs differ by region — copy from NextDNS → Setup → Router.', type: 'Comma-separated IPv4', def: '45.90.28.0,45.90.30.0' },
                     plainDnsServersV6: { aim: 'Ultralow IPv6 list; leave empty if IPv6 is unused.', type: 'Comma-separated IPv6', def: '2a07:a8c0::,2a07:a8c1::' }
                 },
                 ui: {
@@ -310,6 +314,7 @@
                     dnsRedirectComment: 'Optional — NAT DNS redirect (UDP/TCP 53) to router',
                     note: 'Requires RouterOS v7+. After paste run /ip dns print. Ultralow IPs may vary — verify inside NextDNS.',
                     copied: 'Copied!',
+                    testedOn: 'Tested stable on RouterOS v7.22',
                     themeDark: 'Dark theme',
                     themeLight: 'Light theme'
                 }
@@ -328,7 +333,7 @@
                         deviceName: '',
                         maxConn: '5',
                         useUltralowServers: true,
-                        plainDnsServers: '45.90.28.22,45.90.30.22',
+                        plainDnsServers: '45.90.28.0,45.90.30.0',
                         plainDnsServersV6: '2a07:a8c0::,2a07:a8c1::',
                         allowRemote: true,
                         verifyCert: true,

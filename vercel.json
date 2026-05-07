@@ -8,7 +8,6 @@
     { "source": "/cloudflare-ddns", "destination": "/cloudflare-ddns.html" },
     { "source": "/startup", "destination": "/startup.html" },
     { "source": "/social-block", "destination": "/social-block.html" },
-    { "source": "/telegram-backup", "destination": "/telegram-backup.html" },
     { "source": "/routing", "destination": "/routing.html" }
   ],
   "redirects": [
@@ -22,7 +21,6 @@
     { "source": "/cloudflare-ddns/", "destination": "/cloudflare-ddns", "permanent": true },
     { "source": "/startup/", "destination": "/startup", "permanent": true },
     { "source": "/social-block/", "destination": "/social-block", "permanent": true },
-    { "source": "/telegram-backup/", "destination": "/telegram-backup", "permanent": true },
     { "source": "/routing/", "destination": "/routing", "permanent": true },
 
     { "source": "/wireguard.html", "destination": "/wireguard", "permanent": true },
@@ -38,7 +36,6 @@
     { "source": "/cloudflare-ddns.html", "destination": "/cloudflare-ddns", "permanent": true },
     { "source": "/startup.html", "destination": "/startup", "permanent": true },
     { "source": "/social-block.html", "destination": "/social-block", "permanent": true },
-    { "source": "/telegram-backup.html", "destination": "/telegram-backup", "permanent": true },
     { "source": "/routing.html", "destination": "/routing", "permanent": true },
     { "source": "/Routing.html", "destination": "/routing", "permanent": true },
     { "source": "/Routing", "destination": "/routing", "permanent": true }
