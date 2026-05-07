@@ -105,6 +105,17 @@
             </article>
             <article class="tool-card">
                 <div class="tool-card-header">
+                    <div class="tool-icon wg"><i class="fas fa-link"></i></div>
+                    <div>
+                        <h2>{{ t.tools.wgS2S.title }} <span class="badge-beta">{{ t.badgeBeta }}</span></h2>
+                        <p class="sub">{{ t.tools.wgS2S.sub }}</p>
+                    </div>
+                </div>
+                <p class="desc">{{ t.tools.wgS2S.desc }}</p>
+                <a class="cta cta-wg" href="tools/wireguard-site-to-site.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+            </article>
+            <article class="tool-card">
+                <div class="tool-card-header">
                     <div class="tool-icon nat"><i class="fas fa-network-wired"></i></div>
                     <div>
                         <h2>{{ t.tools.nat.title }}</h2>
@@ -257,6 +268,11 @@
                         sub: 'VPN',
                         desc: 'Script router, file .conf client, QR tải về.'
                     },
+                    wgS2S: {
+                        title: 'WireGuard Site-to-Site',
+                        sub: 'VPN giữa 2 chi nhánh',
+                        desc: 'Sinh 2 script RouterOS: interface, peer, IP tunnel /30, route LAN↔LAN.'
+                    },
                     nat: {
                         title: 'Hairpin NAT',
                         sub: 'Mở port + xem từ trong LAN',
@@ -329,6 +345,11 @@
                         title: 'WireGuard',
                         sub: 'VPN',
                         desc: 'Router script, client .conf files, QR downloads.'
+                    },
+                    wgS2S: {
+                        title: 'WireGuard Site-to-Site',
+                        sub: 'Branch-to-branch VPN',
+                        desc: 'Generates two RouterOS scripts: interface, peer, /30 tunnel IPs, and LAN↔LAN routes.'
                     },
                     nat: {
                         title: 'Hairpin NAT',
