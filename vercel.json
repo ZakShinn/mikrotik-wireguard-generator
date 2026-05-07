@@ -1,14 +1,15 @@
 {
   "rewrites": [
-    { "source": "/wireguard", "destination": "/wireguard.html" },
-    { "source": "/hairpin-nat", "destination": "/hairpin-nat.html" },
-    { "source": "/nextdns", "destination": "/nextdns.html" },
-    { "source": "/iptv", "destination": "/iptv.html" },
-    { "source": "/firewall", "destination": "/firewall.html" },
-    { "source": "/cloudflare-ddns", "destination": "/cloudflare-ddns.html" },
-    { "source": "/startup", "destination": "/startup.html" },
-    { "source": "/social-block", "destination": "/social-block.html" },
-    { "source": "/routing", "destination": "/routing.html" }
+    { "source": "/wireguard", "destination": "/tools/wireguard.html" },
+    { "source": "/hairpin-nat", "destination": "/tools/hairpin-nat.html" },
+    { "source": "/nextdns", "destination": "/tools/nextdns.html" },
+    { "source": "/iptv", "destination": "/tools/iptv.html" },
+    { "source": "/firewall", "destination": "/tools/firewall.html" },
+    { "source": "/cloudflare-ddns", "destination": "/tools/cloudflare-ddns.html" },
+    { "source": "/startup", "destination": "/tools/startup.html" },
+    { "source": "/social-block", "destination": "/tools/social-block.html" },
+    { "source": "/routing", "destination": "/tools/routing.html" },
+    { "source": "/pcc", "destination": "/tools/pcc.html" }
   ],
   "redirects": [
     { "source": "/index.html", "destination": "/", "permanent": true },
@@ -22,6 +23,7 @@
     { "source": "/startup/", "destination": "/startup", "permanent": true },
     { "source": "/social-block/", "destination": "/social-block", "permanent": true },
     { "source": "/routing/", "destination": "/routing", "permanent": true },
+    { "source": "/pcc/", "destination": "/pcc", "permanent": true },
 
     { "source": "/wireguard.html", "destination": "/wireguard", "permanent": true },
     { "source": "/hairpin-nat.html", "destination": "/hairpin-nat", "permanent": true },
@@ -37,6 +39,7 @@
     { "source": "/startup.html", "destination": "/startup", "permanent": true },
     { "source": "/social-block.html", "destination": "/social-block", "permanent": true },
     { "source": "/routing.html", "destination": "/routing", "permanent": true },
+    { "source": "/pcc.html", "destination": "/pcc", "permanent": true },
     { "source": "/Routing.html", "destination": "/routing", "permanent": true },
     { "source": "/Routing", "destination": "/routing", "permanent": true }
   ],

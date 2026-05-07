@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){try{var k=localStorage.getItem('mikrotik-theme');var d=false;if(k==='dark')d=true;else if(k!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)d=true;if(d)document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Load Balancing (PCC) — MikroTik Tools | Zakshin</title>
+    <meta name="description" content="Tạo script MikroTik RouterOS để cộng băng thông (load balancing) theo PCC (Per Connection Classifier) cho 2–4 WAN: mangle PCC, routing table/mark, default routes và NAT.">
+    <meta name="keywords" content="MikroTik, RouterOS, PCC, Per Connection Classifier, load balancing, cộng băng thông, mangle, routing mark">
+    <meta name="author" content="Nghĩa Zakshin">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://mikrotik.hainghia.net/pcc">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="../sitemap.xml">
+    <link rel="icon" type="image/png" href="../Logo.png">
+    <link rel="apple-touch-icon" href="../Logo.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <meta name="theme-color" content="#f5f7fa">
+    <meta name="format-detection" content="telephone=no">
+
+    <meta property="og:site_name" content="MikroTik Tools — Zakshin">
+    <meta property="og:title" content="Load Balancing (PCC) — MikroTik Tools | Zakshin">
+    <meta property="og:description" content="Sinh script RouterOS load balancing theo PCC cho 2–4 WAN — chạy hoàn toàn trên trình duyệt.">
+    <meta property="og:url" content="https://mikrotik.hainghia.net/pcc">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:image" content="https://mikrotik.hainghia.net/Logo.png">
+    <meta property="og:image:alt" content="MikroTik PCC Load Balancing tool">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Load Balancing (PCC) — MikroTik Tools | Zakshin">
+    <meta name="twitter:description" content="Generate RouterOS PCC load balancing scripts (2–4 WAN).">
+    <meta name="twitter:image" content="https://mikrotik.hainghia.net/Logo.png">
+
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"WebApplication","name":"Load Balancing (PCC) — MikroTik Tools","url":"https://mikrotik.hainghia.net/pcc","applicationCategory":"NetworkingApplication","operatingSystem":"Web Browser","browserRequirements":"Requires JavaScript.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Nghĩa Zakshin","url":"https://github.com/ZakShinn"},"description":"Sinh script RouterOS cộng băng thông (load balancing) theo PCC cho 2–4 WAN."},
+      {"@type":"BreadcrumbList","itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Trang chủ","item":"https://mikrotik.hainghia.net/"},
+        {"@type":"ListItem","position":2,"name":"Load Balancing (PCC)","item":"https://mikrotik.hainghia.net/pcc"}
+      ]}
+    ]}
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/site.css">
+    <script src="../assets/theme-ui.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="app-shell">
+    <div class="noise" aria-hidden="true"></div>
+    <div id="app" class="app-shell">
+        <div v-if="showToast" class="toast-msg">
+            <i class="fas fa-check-circle text-success mr-2"></i> {{ t.ui.copied }}
+        </div>
+
+        <nav class="tool-nav">
+            <div class="tool-nav-inner">
+                <div class="tool-nav-row">
+                    <div class="tool-nav-brand">
+                        <a href="../index.html" class="btn btn-ghost btn-sm btn-icon" title="Trang chủ" aria-label="Trang chủ"><i class="fas fa-home"></i></a>
+                        <span class="tool-nav-logo" aria-hidden="true"><img src="../Logo.png" alt="" width="34" height="34" decoding="async"></span>
+                        <h1 class="tool-nav-title"><i class="fas fa-arrows-split-up-and-left accent-icon"></i> PCC</h1>
+                    </div>
+                    <div class="tool-nav-actions">
+                        <div class="wg-actions-stack">
+                            <button type="button" class="btn btn-ghost btn-sm btn-icon" @click="toggleTheme" :aria-label="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark" :title="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark">
+                                <i :class="theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-ghost btn-sm" @click="lang = lang === 'vi' ? 'en' : 'vi'">
+                                <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
+                            </button>
+                            <button type="button" class="btn btn-primary-solid" @click="generate">
+                                <i class="fas fa-rocket mr-2"></i> {{ t.ui.btnGenerate }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tool-nav-meta">
+                        <div><strong>Nghĩa Zakshin</strong></div>
+                        <div class="tool-nav-meta-sub">MikroTik Tools</div>
+                        <div class="tool-nav-meta-sub"><i class="fas fa-circle-info mr-1"></i> {{ t.ui.testedHint }}</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="tool-main">
+            <div class="layout-split layout-split-wg">
+                <section class="panel">
+                    <h2 class="section-title"><i class="fas fa-sliders mr-2"></i> {{ t.ui.config }}</h2>
+
+                    <div class="field">
+                        <label class="label">
+                            {{ t.labels.rosVersion }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.rosVersion }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.rosVersion.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.rosVersion.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.rosVersion.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="form.rosVersion">
+                                    <option value="v7">RouterOS v7+ (routing table)</option>
+                                    <option value="v6">RouterOS v6 (routing-mark)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">
+                            {{ t.labels.wanCount }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.wanCount }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.wanCount.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.wanCount.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.wanCount.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model.number="form.wanCount">
+                                    <option :value="2">2 WAN</option>
+                                    <option :value="3">3 WAN</option>
+                                    <option :value="4">4 WAN</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field" v-for="(v, k) in fieldMeta" :key="k">
+                        <label class="label">
+                            {{ t.labels[k] }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels[k] }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints[k].aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints[k].type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints[k].def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <div class="control"><input class="input" v-model="form[k]"></div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">
+                            {{ t.labels.localSubnets }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.localSubnets }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.localSubnets.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.localSubnets.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.localSubnets.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <div class="control">
+                            <textarea class="input" v-model="form.localSubnets" rows="5" style="resize:vertical" placeholder="192.168.88.0/24&#10;10.0.0.0/8"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">
+                            {{ t.labels.pccMode }}
+                            <span class="info-tip" tabindex="0">
+                                <i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.pccMode }}</span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipAim }}:</span> <span class="t-val">{{ t.hints.pccMode.aim }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipType }}:</span> <span class="t-val">{{ t.hints.pccMode.type }}</span></span>
+                                    <span class="tip-row"><span class="t-label">{{ t.ui.tipDef }}:</span> <span class="tip-code">{{ t.hints.pccMode.def }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="form.pccMode">
+                                    <option value="both-addresses-and-ports">both-addresses-and-ports</option>
+                                    <option value="both-addresses">both-addresses</option>
+                                    <option value="src-address">src-address</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wg-checkboxes">
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.includeOutput">
+                            <span class="checkbox-text">{{ t.labels.includeOutput }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.includeOutput }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.includeOutput }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.addFailoverMain">
+                            <span class="checkbox-text">{{ t.labels.addFailoverMain }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.addFailoverMain }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.addFailoverMain }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.checkGatewayPing">
+                            <span class="checkbox-text">{{ t.labels.checkGatewayPing }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.checkGatewayPing }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.checkGatewayPing }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                        <label class="checkbox-row">
+                            <input type="checkbox" v-model="form.addMasq">
+                            <span class="checkbox-text">{{ t.labels.addMasq }}</span>
+                            <span class="info-tip" tabindex="0"><i class="fas fa-circle-question"></i>
+                                <span class="tip-content">
+                                    <span class="tip-header">{{ t.labels.addMasq }}</span>
+                                    <span class="tip-row"><span class="t-val">{{ t.hints.addMasq }}</span></span>
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="callout mb-0">
+                        <strong><i class="fas fa-triangle-exclamation mr-1"></i></strong> {{ t.ui.warn }}
+                    </div>
+                </section>
+
+                <section class="panel panel-script">
+                    <h2 class="section-title"><i class="fas fa-code mr-2"></i> {{ t.ui.scriptPanelTitle }}</h2>
+                    <div class="code-container">
+                        <button type="button" class="btn btn-dark btn-sm copy-btn" @click="copyText('main-script')"><i class="fas fa-copy mr-1"></i> {{ t.ui.copy }}</button>
+                        <pre id="main-script" class="script-pre">{{ script }}</pre>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        const i18n = {
+            vi: {
+                labels: {
+                    rosVersion: 'Phiên bản RouterOS',
+                    wanCount: 'Số đường WAN',
+                    lanIf: 'Interface LAN (in-interface)',
+                    wan1If: 'WAN1: out-interface',
+                    wan1Gw: 'WAN1: gateway',
+                    wan2If: 'WAN2: out-interface',
+                    wan2Gw: 'WAN2: gateway',
+                    wan3If: 'WAN3: out-interface',
+                    wan3Gw: 'WAN3: gateway',
+                    wan4If: 'WAN4: out-interface',
+                    wan4Gw: 'WAN4: gateway',
+                    localSubnets: 'Mạng LAN/Local (bỏ qua PCC)',
+                    pccMode: 'Kiểu PCC',
+                    includeOutput: 'Cân bằng traffic từ router (output chain)',
+                    addFailoverMain: 'Thêm default route failover ở main',
+                    checkGatewayPing: 'check-gateway=ping cho default routes',
+                    addMasq: 'Thêm NAT masquerade theo từng WAN'
+                },
+                hints: {
+                    rosVersion: { aim: 'v7 dùng routing table, v6 dùng routing-mark. Script vẫn dựa trên mangle PCC.', type: 'Select', def: 'RouterOS v7+' },
+                    wanCount: { aim: 'Chọn 2–4 WAN. Script sẽ tạo PCC chia đều theo số WAN.', type: 'Select', def: '2 WAN' },
+                    lanIf: { aim: 'Interface nhận traffic từ mạng nội bộ để chạy PCC ở chain=prerouting.', type: 'Text', def: 'bridge' },
+                    wan1If: { aim: 'Interface đường ra WAN1 (PPPoE/ether/VLAN). Dùng cho NAT và nhận diện.', type: 'Text', def: 'pppoe-out1' },
+                    wan1Gw: { aim: 'Gateway WAN1: có thể là tên interface (PPPoE) hoặc IP next-hop (DHCP/Static).', type: 'Text', def: 'pppoe-out1 / 192.168.1.1' },
+                    wan2If: { aim: 'Interface đường ra WAN2.', type: 'Text', def: 'pppoe-out2' },
+                    wan2Gw: { aim: 'Gateway WAN2.', type: 'Text', def: 'pppoe-out2 / 192.168.2.1' },
+                    wan3If: { aim: 'Interface đường ra WAN3 (nếu dùng).', type: 'Text', def: 'ether3' },
+                    wan3Gw: { aim: 'Gateway WAN3.', type: 'Text', def: '10.0.0.1' },
+                    wan4If: { aim: 'Interface đường ra WAN4 (nếu dùng).', type: 'Text', def: 'ether4' },
+                    wan4Gw: { aim: 'Gateway WAN4.', type: 'Text', def: '10.0.1.1' },
+                    localSubnets: { aim: 'Các mạng nội bộ/VPN/site-to-site... sẽ được đưa vào address-list LOCAL để mangle “bỏ qua” (không cân bằng) khi đi nội bộ.', type: 'Textarea (mỗi dòng 1 CIDR)', def: '192.168.88.0/24' },
+                    pccMode: { aim: 'Chọn cách “chia” kết nối. both-addresses-and-ports thường phân phối đều hơn; both-addresses ổn định theo cặp IP; src-address “dính” theo client.', type: 'Select', def: 'both-addresses-and-ports' },
+                    includeOutput: 'Bật nếu muốn cân bằng traffic do chính router tạo ra (DNS, NTP, update, ping từ router...).',
+                    addFailoverMain: 'Tạo default route ở main với distance tăng dần (1..N) để router vẫn có Internet khi bạn không set default khác.',
+                    checkGatewayPing: 'Thêm check-gateway=ping cho các default route (chỉ hoạt động khi gateway là IP next-hop, không áp cho PPPoE interface).',
+                    addMasq: 'Thêm 1 rule masquerade cho mỗi WAN (out-interface=...). Nếu bạn đã có NAT sẵn, cân nhắc tắt để tránh trùng.'
+                },
+                ui: {
+                    tipAim: 'Giải thích',
+                    tipType: 'Kiểu',
+                    tipDef: 'Ví dụ',
+                    btnGenerate: 'Tạo script',
+                    config: 'Thông số',
+                    scriptPanelTitle: 'Script dán Terminal',
+                    copy: 'Copy',
+                    copied: 'Đã sao chép!',
+                    warn: 'Script này là mẫu tham khảo. PCC sai có thể “lệch đường” hoặc mất mạng. Khuyến nghị test trong Safe Mode và đọc lại thứ tự mangle/NAT hiện có trước khi dán.',
+                    testedHint: 'PCC mangle + routing table/mark'
+                }
+            },
+            en: {
+                labels: {
+                    rosVersion: 'RouterOS version',
+                    wanCount: 'Number of WAN uplinks',
+                    lanIf: 'LAN interface (in-interface)',
+                    wan1If: 'WAN1: out-interface',
+                    wan1Gw: 'WAN1: gateway',
+                    wan2If: 'WAN2: out-interface',
+                    wan2Gw: 'WAN2: gateway',
+                    wan3If: 'WAN3: out-interface',
+                    wan3Gw: 'WAN3: gateway',
+                    wan4If: 'WAN4: out-interface',
+                    wan4Gw: 'WAN4: gateway',
+                    localSubnets: 'Local/LAN subnets (bypass PCC)',
+                    pccMode: 'PCC mode',
+                    includeOutput: 'Balance router-originated traffic (output chain)',
+                    addFailoverMain: 'Add failover default routes in main',
+                    checkGatewayPing: 'Use check-gateway=ping for default routes',
+                    addMasq: 'Add NAT masquerade per WAN'
+                },
+                hints: {
+                    rosVersion: { aim: 'v7 uses routing tables, v6 uses routing-mark. Script still relies on mangle PCC.', type: 'Select', def: 'RouterOS v7+' },
+                    wanCount: { aim: 'Pick 2–4 WAN. Script splits PCC equally.', type: 'Select', def: '2 WAN' },
+                    lanIf: { aim: 'Inbound interface for LAN traffic (prerouting) where PCC is applied.', type: 'Text', def: 'bridge' },
+                    wan1If: { aim: 'WAN1 egress interface (PPPoE/ether/VLAN). Used for NAT and labeling.', type: 'Text', def: 'pppoe-out1' },
+                    wan1Gw: { aim: 'WAN1 gateway: interface name (PPPoE) or next-hop IP (DHCP/static).', type: 'Text', def: 'pppoe-out1 / 192.168.1.1' },
+                    wan2If: { aim: 'WAN2 egress interface.', type: 'Text', def: 'pppoe-out2' },
+                    wan2Gw: { aim: 'WAN2 gateway.', type: 'Text', def: 'pppoe-out2 / 192.168.2.1' },
+                    wan3If: { aim: 'WAN3 egress interface (optional).', type: 'Text', def: 'ether3' },
+                    wan3Gw: { aim: 'WAN3 gateway.', type: 'Text', def: '10.0.0.1' },
+                    wan4If: { aim: 'WAN4 egress interface (optional).', type: 'Text', def: 'ether4' },
+                    wan4Gw: { aim: 'WAN4 gateway.', type: 'Text', def: '10.0.1.1' },
+                    localSubnets: { aim: 'Local/VPN/site-to-site subnets go into address-list LOCAL so PCC rules won’t touch internal flows.', type: 'Textarea (one CIDR per line)', def: '192.168.88.0/24' },
+                    pccMode: { aim: 'How connections are classified. both-addresses-and-ports usually spreads better; both-addresses keeps per-IP-pair stickiness; src-address sticks by client.', type: 'Select', def: 'both-addresses-and-ports' },
+                    includeOutput: 'Enable if you want to balance traffic generated by the router itself (DNS/NTP/updates/pings).',
+                    addFailoverMain: 'Creates main-table default routes with distances (1..N) so the router still has Internet without other defaults.',
+                    checkGatewayPing: 'Adds check-gateway=ping (works when gateway is an IP next-hop; not for PPPoE interface gateway).',
+                    addMasq: 'Adds one masquerade rule per WAN (out-interface=...). Turn off if you already have NAT to avoid duplicates.'
+                },
+                ui: {
+                    tipAim: 'Explain',
+                    tipType: 'Type',
+                    tipDef: 'Example',
+                    btnGenerate: 'Generate script',
+                    config: 'Parameters',
+                    scriptPanelTitle: 'RouterOS paste script',
+                    copy: 'Copy',
+                    copied: 'Copied!',
+                    warn: 'Template only. Wrong PCC can break routing. Test in Safe Mode and review your existing mangle/NAT order before applying.',
+                    testedHint: 'PCC mangle + routing table/mark'
+                }
+            }
+        };
+
+        function uniqLines(text) {
+            const out = [];
+            const seen = new Set();
+            for (const raw of String(text || '').split('\n')) {
+                const s = raw.replace(/#.*/g, '').trim();
+                if (!s) continue;
+                if (seen.has(s)) continue;
+                seen.add(s);
+                out.push(s);
+            }
+            return out;
+        }
+
+        function safeName(value, fallback) {
+            const v = String(value || '').trim();
+            if (!v) return fallback;
+            return v.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '_');
+        }
+
+        function isGatewayLikelyInterface(gw) {
+            const s = String(gw || '').trim();
+            if (!s) return false;
+            if (/^\d{1,3}(\.\d{1,3}){3}$/.test(s)) return false;
+            if (/^\d{1,3}(\.\d{1,3}){3}%/.test(s)) return false;
+            return true;
+        }
+
+        createApp({
+            data() {
+                return {
+                    lang: 'vi',
+                    theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light',
+                    showToast: false,
+                    script: '',
+                    form: {
+                        rosVersion: 'v7',
+                        wanCount: 2,
+                        lanIf: 'bridge',
+                        wan1If: 'pppoe-out1',
+                        wan1Gw: 'pppoe-out1',
+                        wan2If: 'pppoe-out2',
+                        wan2Gw: 'pppoe-out2',
+                        wan3If: 'ether3',
+                        wan3Gw: '10.0.0.1',
+                        wan4If: 'ether4',
+                        wan4Gw: '10.0.1.1',
+                        localSubnets: '192.168.88.0/24',
+                        pccMode: 'both-addresses-and-ports',
+                        includeOutput: true,
+                        addFailoverMain: true,
+                        checkGatewayPing: false,
+                        addMasq: true
+                    },
+                    fieldMeta: {
+                        lanIf: '',
+                        wan1If: '', wan1Gw: '',
+                        wan2If: '', wan2Gw: '',
+                        wan3If: '', wan3Gw: '',
+                        wan4If: '', wan4Gw: ''
+                    }
+                };
+            },
+            computed: {
+                t() { return i18n[this.lang]; },
+                effectiveWans() {
+                    const n = Math.max(2, Math.min(4, parseInt(this.form.wanCount, 10) || 2));
+                    const wans = [];
+                    for (let i = 1; i <= n; i++) {
+                        const outIf = String(this.form[`wan${i}If`] || '').trim();
+                        const gw = String(this.form[`wan${i}Gw`] || '').trim() || outIf;
+                        wans.push({
+                            idx: i,
+                            outIf: outIf || `wan${i}`,
+                            gw: gw || outIf || `wan${i}`,
+                            connMark: safeName(`PCC_WAN${i}_CONN`, `PCC_WAN${i}_CONN`),
+                            routeMark: safeName(`to_wan${i}`, `to_wan${i}`),
+                            tableName: safeName(`to_wan${i}`, `to_wan${i}`)
+                        });
+                    }
+                    return wans;
+                },
+                localList() {
+                    return uniqLines(this.form.localSubnets);
+                }
+            },
+            methods: {
+                toggleTheme() {
+                    if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
+                    this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
+                },
+                copyText(id) {
+                    navigator.clipboard.writeText(document.getElementById(id).innerText);
+                    this.showToast = true;
+                    setTimeout(() => { this.showToast = false; }, 3000);
+                },
+                generate() {
+                    const ros = this.form.rosVersion === 'v6' ? 'v6' : 'v7';
+                    const lanIf = String(this.form.lanIf || '').trim() || 'bridge';
+                    const wans = this.effectiveWans;
+                    const locals = this.localList;
+                    const pccMode = String(this.form.pccMode || 'both-addresses-and-ports').trim();
+                    const includeOutput = !!this.form.includeOutput;
+                    const addFailoverMain = !!this.form.addFailoverMain;
+                    const checkGatewayPing = !!this.form.checkGatewayPing;
+                    const addMasq = !!this.form.addMasq;
+
+                    const pccTotal = wans.length;
+                    const pccBase = `${pccMode}:${pccTotal}/`;
+                    const lines = [];
+
+                    lines.push(`# PCC Load Balancing (tool-generated) — MikroTik Tools`);
+                    lines.push(`# RouterOS: ${ros} | WANs: ${pccTotal} | LAN in-if: ${lanIf} | PCC: ${pccMode}`);
+                    lines.push('');
+
+                    lines.push(`# --- Address-list LOCAL (bypass PCC for internal networks)`);
+                    lines.push('/ip firewall address-list');
+                    lines.push(`:foreach i in=[find where list="LOCAL"] do={ remove $i }`);
+                    if (locals.length) {
+                        for (const s of locals) lines.push(`add list="LOCAL" address=${s} comment="LOCAL (tool)"`);
+                    } else {
+                        lines.push(`# NOTE: No local subnets provided. Add your LAN/VPN CIDRs to avoid marking internal traffic.`);
+                    }
+                    lines.push('');
+
+                    if (ros === 'v7') {
+                        lines.push(`# --- Routing tables (RouterOS v7+)`);
+                        lines.push('/routing table');
+                        for (const w of wans) {
+                            lines.push(`:if ([:len [find where name="${w.tableName}"]] = 0) do={ add fib name="${w.tableName}" }`);
+                        }
+                        lines.push('');
+                    }
+
+                    lines.push(`# --- Mangle PCC`);
+                    lines.push('/ip firewall mangle');
+                    lines.push(`# Clean old rules created by this tool tag`);
+                    lines.push(`:foreach i in=[find where comment~"^PCC: "] do={ remove $i }`);
+                    lines.push('');
+                    lines.push(`# 0) Bypass LOCAL destinations (LAN/VPN/...)`);
+                    lines.push(`add chain=prerouting action=accept dst-address-list=LOCAL in-interface=${lanIf} comment="PCC: bypass LOCAL (prerouting)"`);
+                    if (includeOutput) lines.push(`add chain=output action=accept dst-address-list=LOCAL comment="PCC: bypass LOCAL (output)"`);
+                    lines.push('');
+                    lines.push(`# 1) Mark connections by PCC (new connections from LAN only, to non-local)`);
+                    for (let i = 0; i < wans.length; i++) {
+                        const w = wans[i];
+                        lines.push(`add chain=prerouting in-interface=${lanIf} connection-mark=no-mark dst-address-type=!local action=mark-connection new-connection-mark=${w.connMark} passthrough=yes per-connection-classifier=${pccBase}${i} comment="PCC: ${w.connMark} (pcc ${i}/${pccTotal})"`);
+                    }
+                    lines.push('');
+                    lines.push(`# 2) Mark routing based on connection-mark`);
+                    for (const w of wans) {
+                        if (ros === 'v7') {
+                            lines.push(`add chain=prerouting in-interface=${lanIf} connection-mark=${w.connMark} action=mark-routing new-routing-mark=${w.tableName} passthrough=no comment="PCC: route ${w.tableName} (prerouting)"`);
+                        } else {
+                            lines.push(`add chain=prerouting in-interface=${lanIf} connection-mark=${w.connMark} action=mark-routing new-routing-mark=${w.routeMark} passthrough=no comment="PCC: route ${w.routeMark} (prerouting)"`);
+                        }
+                    }
+                    if (includeOutput) {
+                        lines.push('');
+                        lines.push(`# 3) (Optional) Router-originated traffic (output chain)`);
+                        for (let i = 0; i < wans.length; i++) {
+                            const w = wans[i];
+                            lines.push(`add chain=output connection-mark=no-mark dst-address-type=!local action=mark-connection new-connection-mark=${w.connMark} passthrough=yes per-connection-classifier=${pccBase}${i} comment="PCC: ${w.connMark} (output pcc ${i}/${pccTotal})"`);
+                        }
+                        for (const w of wans) {
+                            if (ros === 'v7') {
+                                lines.push(`add chain=output connection-mark=${w.connMark} action=mark-routing new-routing-mark=${w.tableName} passthrough=no comment="PCC: route ${w.tableName} (output)"`);
+                            } else {
+                                lines.push(`add chain=output connection-mark=${w.connMark} action=mark-routing new-routing-mark=${w.routeMark} passthrough=no comment="PCC: route ${w.routeMark} (output)"`);
+                            }
+                        }
+                    }
+                    lines.push('');
+
+                    lines.push(`# --- Default routes per WAN table/mark`);
+                    lines.push('/ip route');
+                    for (const w of wans) {
+                        const rtSelector = ros === 'v7' ? `routing-table="${w.tableName}"` : `routing-mark="${w.routeMark}"`;
+                        lines.push(`:foreach i in=[find where dst-address="0.0.0.0/0" and ${rtSelector}] do={ remove $i }`);
+                        const gwArg = w.gw;
+                        const cg = (checkGatewayPing && !isGatewayLikelyInterface(gwArg)) ? ' check-gateway=ping' : '';
+                        if (ros === 'v7') {
+                            lines.push(`add dst-address=0.0.0.0/0 gateway=${gwArg} routing-table=${w.tableName}${cg} comment="PCC: default via ${gwArg} (${w.tableName})"`);
+                        } else {
+                            lines.push(`add dst-address=0.0.0.0/0 gateway=${gwArg} routing-mark=${w.routeMark}${cg} comment="PCC: default via ${gwArg} (${w.routeMark})"`);
+                        }
+                    }
+                    lines.push('');
+
+                    if (addFailoverMain) {
+                        lines.push(`# --- Main table default routes (failover for router itself)`);
+                        lines.push(`# NOTE: If you already manage main default routes, disable this option to avoid duplicates.`);
+                        for (let i = 0; i < wans.length; i++) {
+                            const w = wans[i];
+                            const gwArg = w.gw;
+                            const cg = (checkGatewayPing && !isGatewayLikelyInterface(gwArg)) ? ' check-gateway=ping' : '';
+                            const dist = i + 1;
+                            lines.push(`add dst-address=0.0.0.0/0 gateway=${gwArg} distance=${dist}${cg} comment="PCC: main failover via ${gwArg} (dist ${dist})"`);
+                        }
+                        lines.push('');
+                    }
+
+                    if (addMasq) {
+                        lines.push(`# --- NAT masquerade (optional)`);
+                        lines.push('/ip firewall nat');
+                        lines.push(`# NOTE: Review existing NAT rules to avoid duplicates.`);
+                        for (const w of wans) {
+                            lines.push(`add chain=srcnat action=masquerade out-interface=${w.outIf} comment="PCC: masquerade via ${w.outIf}"`);
+                        }
+                        lines.push('');
+                    }
+
+                    lines.push('# Done.');
+                    this.script = lines.join('\n');
+                }
+            },
+            mounted() {
+                const onTheme = (e) => { this.theme = e.detail.theme; };
+                window.addEventListener('mikrotik-theme-effective-change', onTheme);
+                this._offTheme = () => window.removeEventListener('mikrotik-theme-effective-change', onTheme);
+            },
+            beforeUnmount() {
+                if (this._offTheme) this._offTheme();
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
+
