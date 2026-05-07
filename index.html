@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <script>(function(){try{var k=localStorage.getItem('mikrotik-theme');var d=false;if(k==='dark')d=true;else if(k!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)d=true;if(d)document.documentElement.classList.add('theme-dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>MikroTik Tools — WireGuard, Hairpin NAT, NextDNS, IPTV | Zakshin</title>
-    <meta name="description" content="Công cụ web miễn phí cho MikroTik RouterOS: WireGuard, Hairpin NAT, NextDNS (DoH), IPTV (VLAN/IGMP). Script copy-paste, xử lý trên trình duyệt.">
-    <meta name="keywords" content="MikroTik, RouterOS, WireGuard, Hairpin NAT, NextDNS, IPTV, DNS over HTTPS, IGMP proxy, Zakshin">
+    <title>MikroTik Tools — WireGuard, Hairpin NAT, DoH DNS, IPTV | Zakshin</title>
+    <meta name="description" content="Công cụ web miễn phí cho MikroTik RouterOS: WireGuard, Hairpin NAT, DoH DNS (NextDNS/Cloudflare/Google), IPTV (VLAN/IGMP). Script copy-paste, xử lý trên trình duyệt.">
+    <meta name="keywords" content="MikroTik, RouterOS, WireGuard, Hairpin NAT, DoH, NextDNS, Cloudflare, Google, IPTV, DNS over HTTPS, IGMP proxy, Zakshin">
     <meta name="author" content="Nghĩa Zakshin">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://mikrotik.hainghia.net/">
@@ -19,7 +19,7 @@
 
     <meta property="og:site_name" content="MikroTik Tools — Zakshin">
     <meta property="og:title" content="MikroTik Tools — Công cụ web cho RouterOS | Zakshin">
-    <meta property="og:description" content="WireGuard, Hairpin NAT, NextDNS, IPTV cho MikroTik — script sẵn, miễn phí, client-side.">
+    <meta property="og:description" content="WireGuard, Hairpin NAT, DoH DNS, IPTV cho MikroTik — script sẵn, miễn phí, client-side.">
     <meta property="og:url" content="https://mikrotik.hainghia.net/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="vi_VN">
@@ -34,12 +34,12 @@
 
     <script type="application/ld+json">
     {"@context":"https://schema.org","@graph":[
-      {"@type":"WebSite","@id":"https://mikrotik.hainghia.net/#website","url":"https://mikrotik.hainghia.net/","name":"MikroTik Tools — Zakshin","description":"Công cụ web cho MikroTik RouterOS: WireGuard, Hairpin NAT, NextDNS, IPTV.","inLanguage":["vi-VN","en-US"],"publisher":{"@id":"https://mikrotik.hainghia.net/#org"}},
+      {"@type":"WebSite","@id":"https://mikrotik.hainghia.net/#website","url":"https://mikrotik.hainghia.net/","name":"MikroTik Tools — Zakshin","description":"Công cụ web cho MikroTik RouterOS: WireGuard, Hairpin NAT, DoH DNS, IPTV.","inLanguage":["vi-VN","en-US"],"publisher":{"@id":"https://mikrotik.hainghia.net/#org"}},
       {"@type":"Organization","@id":"https://mikrotik.hainghia.net/#org","name":"Zakshin","url":"https://mikrotik.hainghia.net/"},
       {"@type":"ItemList","name":"Công cụ MikroTik","itemListElement":[
         {"@type":"ListItem","position":1,"name":"WireGuard (MT-WG Gen)","item":"https://mikrotik.hainghia.net/wireguard"},
         {"@type":"ListItem","position":2,"name":"Hairpin NAT","item":"https://mikrotik.hainghia.net/hairpin-nat"},
-        {"@type":"ListItem","position":3,"name":"NextDNS","item":"https://mikrotik.hainghia.net/nextdns"},
+        {"@type":"ListItem","position":3,"name":"DoH DNS","item":"https://mikrotik.hainghia.net/doh"},
         {"@type":"ListItem","position":4,"name":"IPTV","item":"https://mikrotik.hainghia.net/iptv"},
         {"@type":"ListItem","position":5,"name":"Firewall (gợi ý)","item":"https://mikrotik.hainghia.net/firewall"},
         {"@type":"ListItem","position":6,"name":"Cloudflare DDNS","item":"https://mikrotik.hainghia.net/cloudflare-ddns"},
@@ -146,7 +146,7 @@
                     </div>
                 </div>
                 <p class="desc">{{ t.tools.nd.desc }}</p>
-                <a class="cta cta-nd" href="tools/nextdns.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
+                <a class="cta cta-nd" href="tools/doh.html">{{ t.tools.cta }} <i class="fas fa-arrow-right"></i></a>
             </article>
             <article class="tool-card">
                 <div class="tool-card-header">
