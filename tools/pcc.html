@@ -126,6 +126,7 @@
                         <div class="control">
                             <input class="input" type="number" min="2" max="999" step="1" v-model.number="form.wanCount">
                             <p class="help mb-0">{{ t.ui.wanCountHelp }}</p>
+                            <p v-if="wanCountError" class="help mb-0" style="color:var(--danger)">{{ wanCountError }}</p>
                         </div>
                     </div>
 
@@ -145,6 +146,7 @@
                         <div class="control">
                             <textarea class="input" v-model="form.wanCustom" rows="6" style="resize:vertical" placeholder="pppoe-out1 pppoe-out1&#10;ether1 192.168.1.1&#10;wg0 wg0"></textarea>
                             <p class="help mb-0">{{ t.ui.wanCustomHelp }}</p>
+                            <p v-if="wanCustomError" class="help mb-0" style="color:var(--danger)">{{ wanCustomError }}</p>
                         </div>
                     </div>
 
@@ -266,7 +268,7 @@
                     balanceMode: 'Chế độ cân bằng tải',
                     bridgeLan: 'Bridge mạng LAN (in-interface)',
                     lanListName: 'Interface-list LAN',
-                    localRanges: 'Dãy IP local (bypass PCC)',
+                    localRanges: 'Dãy IP ngoại lệ (bypass PCC)',
                     useAllPppMasq: 'NAT: masquerade out-interface=all-ppp',
                     disableIpv6: 'Tắt IPv6 (khuyến nghị nếu chưa dùng)'
                 },
@@ -292,8 +294,8 @@
                     wanCountHelp: 'Nhập từ 2 đến 999. Lưu ý: số rất lớn sẽ tạo script rất dài (copy/paste chậm).',
                     wanCustomHelp: 'Gợi ý: PPPoE/WireGuard có thể để gateway = tên interface. WAN DHCP/Static thường là IP gateway. (Tối đa 999 dòng)',
                     balanceModeMax: 'Max speed tất cả',
-                    balanceModeDevice: 'Chia theo thiết bị',
-                    balanceModeHelp: 'Max speed: both-addresses-and-ports. Theo thiết bị: src-address (mỗi máy thường “dính” 1 WAN, giảm đổi đường).',
+                    balanceModeDevice: 'Chia theo thiết bị (khuyến nghị)',
+                    balanceModeHelp: 'Khuyến nghị: “Chia theo thiết bị” giúp ổn định (ít đổi đường) và giảm lỗi app/game/ngân hàng do IP thay đổi. “Max speed” có thể đều tải hơn nhưng dễ đổi WAN giữa các kết nối, đôi khi gây lỗi session.',
                     localRangesHelp: 'Nên nhập đầy đủ LAN/VLAN/VPN (đích nội bộ) để PCC không can thiệp các kết nối nội bộ. Có thể giữ preset RFC1918 nếu bạn chỉ cần cơ bản.',
                     ipv6Note: 'Lưu ý IPv6: Script có dòng tắt IPv6 để tránh “lệch đường” khi bạn chưa cấu hình IPv6. Nếu bạn đang dùng IPv6 (prefix delegation / RA), hãy xoá dòng /ipv6 settings... hoặc cấu hình PCC/route cho IPv6 riêng.',
                     warn: 'Dùng theo dạng “thần chú”: hãy cấu hình PPPoE, DNS, IP LAN, DHCP trước. Sau đó dán script này là chạy. Lưu ý: nếu router đã có interface-list/NAT/mangle trùng tên, có thể báo lỗi hoặc bị trùng rule — nên kiểm tra và test Safe Mode.',
@@ -334,8 +336,8 @@
                     wanCountHelp: 'Enter a number between 2 and 999. Note: a huge number will generate a very long script.',
                     wanCustomHelp: 'Tip: PPPoE/WireGuard can use interface-as-gateway. DHCP/static WAN often uses an IP next-hop gateway. (Up to 999 lines)',
                     balanceModeMax: 'Max speed (all traffic)',
-                    balanceModeDevice: 'Per device',
-                    balanceModeHelp: 'Max speed: both-addresses-and-ports. Per device: src-address (stickiness per client).',
+                    balanceModeDevice: 'Per device (recommended)',
+                    balanceModeHelp: 'Recommended: “Per device” keeps sessions stable (less WAN/IP hopping), reducing issues with apps/games/banking that are sensitive to IP changes. “Max speed” may spread load better but can cause more session quirks.',
                     localRangesHelp: 'Add all internal destination ranges so PCC won’t touch internal flows. Keeping RFC1918 presets is fine for basic setups.',
                     ipv6Note: 'IPv6 note: This script disables IPv6 to avoid unexpected routing when IPv6 is not configured. If you use IPv6 (prefix delegation / RA), remove the /ipv6 settings... line or add a proper IPv6 PCC/routing setup.',
                     warn: '“Mantra” style: configure PPPoE, DNS, LAN IP, DHCP first. Then paste the script. If you already have interface-list/NAT/mangle with the same names, review to avoid duplicates and test in Safe Mode.',
@@ -366,7 +368,7 @@
                     form: {
                         wanMode: 'auto-pppoe',
                         wanCount: 2,
-                        balanceMode: 'max',
+                        balanceMode: 'device',
                         bridgeLan: 'BridgeLAN',
                         lanListName: 'LAN',
                         localRanges: '10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n224.0.0.0/4\n255.255.255.255',
@@ -380,8 +382,11 @@
             computed: {
                 t() { return i18n[this.lang]; },
                 effectiveWanCount() {
-                    const n = parseInt(this.form.wanCount, 10) || 2;
-                    return Math.max(2, Math.min(999, n));
+                    const n = Number(this.form.wanCount);
+                    if (!Number.isFinite(n)) return null;
+                    const i = Math.trunc(n);
+                    if (i < 2 || i > 999) return null;
+                    return i;
                 },
                 effectiveWans() {
                     if (this.form.wanMode === 'custom') {
@@ -398,14 +403,38 @@
                         return out.slice(0, 999);
                     }
                     const n = this.effectiveWanCount;
+                    if (!n) return [];
                     return Array.from({ length: n }, (_, i) => {
                         const idx = i + 1;
                         return { outIf: `pppoe-out${idx}`, gw: `pppoe-out${idx}` };
                     });
                 },
-                scriptText() {
+                wanCountError() {
+                    if (this.form.wanMode !== 'auto-pppoe') return '';
+                    const n = Number(this.form.wanCount);
+                    if (!Number.isFinite(n)) return this.lang === 'vi' ? 'Vui lòng nhập số.' : 'Please enter a number.';
+                    const i = Math.trunc(n);
+                    if (i < 2 || i > 999) return this.lang === 'vi' ? 'Số WAN phải trong khoảng 2–999.' : 'WAN count must be between 2 and 999.';
+                    return '';
+                },
+                wanCustomError() {
+                    if (this.form.wanMode !== 'custom') return '';
                     const wans = this.effectiveWans;
-                    const n = Math.max(2, Math.min(999, wans.length || this.effectiveWanCount));
+                    if (wans.length < 2) return this.lang === 'vi' ? 'Cần ít nhất 2 dòng WAN (mỗi dòng: interface gateway).' : 'Provide at least 2 WAN lines (interface gateway).';
+                    if (wans.length > 999) return this.lang === 'vi' ? 'Tối đa 999 dòng WAN.' : 'Maximum 999 WAN lines.';
+                    return '';
+                },
+                validationError() {
+                    return this.wanCountError || this.wanCustomError;
+                },
+                scriptText() {
+                    if (this.validationError) {
+                        return (this.lang === 'vi'
+                            ? `# Lỗi cấu hình\n# ${this.validationError}\n`
+                            : `# Configuration error\n# ${this.validationError}\n`);
+                    }
+                    const wans = this.effectiveWans;
+                    const n = Math.max(2, Math.min(999, wans.length || this.effectiveWanCount || 0));
                     const bridgeLan = String(this.form.bridgeLan || 'BridgeLAN').trim() || 'BridgeLAN';
                     const lanListName = String(this.form.lanListName || 'LAN').trim() || 'LAN';
                     const pccMode = this.form.balanceMode === 'device' ? 'src-address' : 'both-addresses-and-ports';
