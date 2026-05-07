@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/site.css">
     <script src="../assets/theme-ui.js"></script>
+    <script src="../assets/lang-ui.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body class="app-shell">
@@ -254,7 +255,7 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
         createApp({
             data() {
                 return {
-                    lang: 'vi',
+                    lang: typeof MikrotikLang !== 'undefined' ? MikrotikLang.get() : 'vi',
                     theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light',
                     showToast: false,
                     skipMasquerade: false,
@@ -264,7 +265,10 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
             },
             computed: { t() { return i18n[this.lang]; } },
             methods: {
-                toggleLang() { this.lang = this.lang === 'vi' ? 'en' : 'vi'; },
+                toggleLang() {
+                    if (typeof MikrotikLang !== 'undefined') this.lang = MikrotikLang.toggle();
+                    else this.lang = this.lang === 'vi' ? 'en' : 'vi';
+                },
                 toggleTheme() {
                     if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
                     this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
@@ -284,9 +288,13 @@ add action=dst-nat chain=dstnat comment="External Port Forward - {{ form.purpose
                 const onTheme = (e) => { this.theme = e.detail.theme; };
                 window.addEventListener('mikrotik-theme-effective-change', onTheme);
                 this._offTheme = () => window.removeEventListener('mikrotik-theme-effective-change', onTheme);
+                const onLang = (e) => { this.lang = (e && e.detail && e.detail.lang) ? e.detail.lang : this.lang; };
+                window.addEventListener('mikrotik-lang-change', onLang);
+                this._offLang = () => window.removeEventListener('mikrotik-lang-change', onLang);
             },
             beforeUnmount() {
                 if (this._offTheme) this._offTheme();
+                if (this._offLang) this._offLang();
             }
         }).mount('#app');
     </script>

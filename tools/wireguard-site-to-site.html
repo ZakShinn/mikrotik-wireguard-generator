@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/site.css">
     <script src="../assets/theme-ui.js"></script>
+    <script src="../assets/lang-ui.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="../wireguard.js"></script>
 </head>
@@ -55,7 +56,7 @@
                             <button type="button" class="btn btn-ghost btn-sm btn-icon" @click="toggleTheme" :aria-label="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark" :title="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark">
                                 <i :class="theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
                             </button>
-                            <button type="button" class="btn btn-ghost btn-sm" @click="lang = lang === 'vi' ? 'en' : 'vi'">
+                            <button type="button" class="btn btn-ghost btn-sm" @click="toggleLang">
                                 <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
                             </button>
                             <button type="button" class="btn btn-primary-solid" @click="generateKeys">
@@ -482,7 +483,7 @@
         createApp({
             data() {
                 return {
-                    lang: 'vi',
+                    lang: typeof MikrotikLang !== 'undefined' ? MikrotikLang.get() : 'vi',
                     theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light',
                     showToast: false,
                     form: {
@@ -506,6 +507,10 @@
                 scriptB() { return this.buildScript('b', this.form.b, this.form.a, this.keys.b, this.keys.a); }
             },
             methods: {
+                toggleLang() {
+                    if (typeof MikrotikLang !== 'undefined') this.lang = MikrotikLang.toggle();
+                    else this.lang = this.lang === 'vi' ? 'en' : 'vi';
+                },
                 toggleTheme() {
                     if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
                     this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';

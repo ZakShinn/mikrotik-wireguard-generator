@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/site.css">
     <script src="../assets/theme-ui.js"></script>
+    <script src="../assets/lang-ui.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body class="app-shell">
@@ -70,7 +71,7 @@
                             <button type="button" class="btn btn-ghost btn-sm btn-icon" @click="toggleTheme" :aria-label="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark" :title="theme === 'dark' ? t.ui.themeLight : t.ui.themeDark">
                                 <i :class="theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
                             </button>
-                            <button type="button" class="btn btn-ghost btn-sm" @click="lang = lang === 'vi' ? 'en' : 'vi'">
+                            <button type="button" class="btn btn-ghost btn-sm" @click="toggleLang">
                                 <i class="fas fa-globe mr-1"></i> {{ lang === 'vi' ? 'English' : 'Tiếng Việt' }}
                             </button>
                             <button type="button" class="btn btn-primary-solid" @click="generate">
@@ -317,7 +318,7 @@ PersistentKeepalive = 10</pre>
         createApp({
             data() {
                 return {
-                    lang: 'vi', theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light', usePsk: true, allowDns: true, showToast: false,
+                    lang: typeof MikrotikLang !== 'undefined' ? MikrotikLang.get() : 'vi', theme: typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light', usePsk: true, allowDns: true, showToast: false,
                     form: { server: 'ddns.hainghia.net', port: 13333, interface: 'wg-vpn', dns: '1.1.1.1', network: '172.33.0', allowedIps: '0.0.0.0/0', start: 2, count: 2 },
                     fieldMeta: { server: '', port: '', interface: '', dns: '', network: '', allowedIps: '', start: '', count: '' },
                     clients: {}, serverKeys: { privateKey: genKey(), publicKey: genKey() }
@@ -354,6 +355,10 @@ PersistentKeepalive = 10</pre>
                 }
             },
             methods: {
+                toggleLang() {
+                    if (typeof MikrotikLang !== 'undefined') this.lang = MikrotikLang.toggle();
+                    else this.lang = this.lang === 'vi' ? 'en' : 'vi';
+                },
                 toggleTheme() {
                     if (typeof MikrotikTheme !== 'undefined') MikrotikTheme.toggle();
                     this.theme = typeof MikrotikTheme !== 'undefined' ? MikrotikTheme.get() : 'light';
@@ -404,9 +409,14 @@ PersistentKeepalive = 10</pre>
                 const onTheme = (e) => { this.theme = e.detail.theme; };
                 window.addEventListener('mikrotik-theme-effective-change', onTheme);
                 this._offTheme = () => window.removeEventListener('mikrotik-theme-effective-change', onTheme);
+
+                const onLang = (e) => { this.lang = (e && e.detail && e.detail.lang) ? e.detail.lang : this.lang; };
+                window.addEventListener('mikrotik-lang-change', onLang);
+                this._offLang = () => window.removeEventListener('mikrotik-lang-change', onLang);
             },
             beforeUnmount() {
                 if (this._offTheme) this._offTheme();
+                if (this._offLang) this._offLang();
             }
         }).mount('#app');
     </script>
